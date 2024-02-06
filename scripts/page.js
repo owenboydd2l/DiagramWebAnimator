@@ -9,7 +9,7 @@ function SetupTimer()
 {
     
     document.addEventListener('mousemove', (event) => {
-        document.getElementById('currentposition').innerHTML = window.event.clientX + ', ' + window.event.clientY;
+        document.getElementById('currentposition').innerHTML = event.clientX + ', ' + event.clientY;
         
         $('#pageScrollTop').text( document.body.scrollTop );
         
@@ -17,8 +17,8 @@ function SetupTimer()
         
         let diagramTransform = TransformFromElement(diagram_area);	
         
-        let mousePosition = { 'X' : window.event.clientX, 
-            'Y' : window.event.clientY + document.body.scrollTop};
+        let mousePosition = { 'X' : event.clientX, 
+            'Y' : event.clientY + document.body.scrollTop};
         
         document.getElementById('imagePosition').innerHTML = JSON.stringify(diagramTransform);
         
@@ -55,7 +55,7 @@ function SetupTimer()
             
             let percentPosition = PixelToPercent(diagramArea, relativeClickPosition.X, relativeClickPosition.Y);
             
-            targetElement.innerHTML = JSON.stringify( percentPosition);
+            targetElement.innerText = JSON.stringify( percentPosition);
             
             SetImagePosition( targetIndicator, percentPosition.X, percentPosition.Y );
                 
@@ -188,3 +188,73 @@ function startTween()
     }
     requestAnimationFrame(animate)
 }
+
+let globalEventCache = [];
+
+function CreateNewEvent()
+{
+    let newEvent = new FlowEvent( id = uuidv4(), orderID = globalEventCache.length, -1, null, null, 2000, null);
+
+    globalEventCache.push(newEvent)
+
+    UpdateEventList();
+}
+
+function UpdateEventList()
+{
+    $('#controlTable').empty();
+
+    globalEventCache.forEach(element => {
+        
+        var newTableRow = document.createElement("tr");
+
+        if(element.id == selectedID)
+        {
+            newTableRow.style.backgroundColor = 'red';
+        }
+        
+        var chk = document.createElement("input");
+        chk.setAttribute("type", "button");
+        chk.setAttribute("value", "select");
+        chk.addEventListener("click", function () { SelectEventRow(element); });
+
+        AddCellToRow(newTableRow, [ chk ]);
+        
+        AddTextCellToRow(newTableRow, element.orderID);
+
+        $('#controlTable')[0].appendChild(newTableRow);
+
+    });
+}
+
+let selectedID = null;
+
+function SelectEventRow(event)
+{
+    selectedID = event.id;   
+    
+    UpdateEventList();
+}
+
+function AddTextCellToRow(row, content)
+{
+    var newCell = document.createElement("td");
+    newCell.innerText = content;
+    row.appendChild(newCell);
+}
+
+function AddCellToRow(row, elementList)
+{
+    var newCell = document.createElement("td");
+    elementList.forEach(element => {
+        newCell.appendChild(element);
+    });
+    
+    row.appendChild(newCell);
+}
+
+function uuidv4() {
+    return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c =>
+      (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+    );
+  }
