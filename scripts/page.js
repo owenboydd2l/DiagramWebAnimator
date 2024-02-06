@@ -32,9 +32,12 @@ function SetupTimer()
             let targetElement = null;
     
             let targetIndicator = null;
+
+            let isStart = false;
             
             if(activateMode == STARTMODE)
             {
+                isStart = true;
                 targetElement = document.getElementById('startData');							
                 targetIndicator =startIndicator;
                     
@@ -58,9 +61,9 @@ function SetupTimer()
             targetElement.innerText = JSON.stringify( percentPosition);
             
             SetImagePosition( targetIndicator, percentPosition.X, percentPosition.Y );
+
+            cacheMousePosition = percentPosition;
                 
-            
-            
         }
         else
         {
@@ -71,7 +74,12 @@ function SetupTimer()
         
     });
     
+
+    UpdateAssetList();
+
 }
+
+let cacheMousePosition = {};
 
 function TransformFromElement(targetElement)
 {
@@ -138,7 +146,25 @@ function CreateNewIndicator(indicatorElement, isStart = false)
 
 function ActivateImage(image)
 {		
-    activateMode = NONE;
+    let foundEvent = globalEventCache.find( (ev) => ev.id == selectedID);
+
+    if(foundEvent !== undefined)
+    {
+        if(activateMode == STARTMODE)
+        {
+            foundEvent.startOffset = cacheMousePosition;            
+        }
+        else if (activateMode == ENDMODE)
+        {
+            foundEvent.endPosition = cacheMousePosition;
+        }
+
+        UpdateEventList();
+    }    
+
+    activateMode = NONE;    
+
+    
 }
 
 function PixelToPercent(image, x, y)
@@ -191,70 +217,7 @@ function startTween()
 
 let globalEventCache = [];
 
-function CreateNewEvent()
-{
-    let newEvent = new FlowEvent( id = uuidv4(), orderID = globalEventCache.length, -1, null, null, 2000, null);
-
-    globalEventCache.push(newEvent)
-
-    UpdateEventList();
-}
-
-function UpdateEventList()
-{
-    $('#controlTable').empty();
-
-    globalEventCache.forEach(element => {
-        
-        var newTableRow = document.createElement("tr");
-
-        if(element.id == selectedID)
-        {
-            newTableRow.style.backgroundColor = 'red';
-        }
-        
-        var chk = document.createElement("input");
-        chk.setAttribute("type", "button");
-        chk.setAttribute("value", "select");
-        chk.addEventListener("click", function () { SelectEventRow(element); });
-
-        AddCellToRow(newTableRow, [ chk ]);
-        
-        AddTextCellToRow(newTableRow, element.orderID);
-
-        $('#controlTable')[0].appendChild(newTableRow);
-
-    });
-}
-
 let selectedID = null;
 
-function SelectEventRow(event)
-{
-    selectedID = event.id;   
-    
-    UpdateEventList();
-}
+let assetList = [ new Asset(1, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTukEhbRDPETDiNMl5ZO8Lm3nQRSzPLnvdsPK30nTmMig&s') ];
 
-function AddTextCellToRow(row, content)
-{
-    var newCell = document.createElement("td");
-    newCell.innerText = content;
-    row.appendChild(newCell);
-}
-
-function AddCellToRow(row, elementList)
-{
-    var newCell = document.createElement("td");
-    elementList.forEach(element => {
-        newCell.appendChild(element);
-    });
-    
-    row.appendChild(newCell);
-}
-
-function uuidv4() {
-    return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c =>
-      (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-    );
-  }
