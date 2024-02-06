@@ -244,12 +244,17 @@ function PlayAllEvents()
     SetImagePosition(startIndicator, foundEvent.startOffset.X, foundEvent.startOffset.Y);
     SetImagePosition(endIndicator, foundEvent.endPosition.X, foundEvent.endPosition.Y);
 
+    
+
     let startPosition = ObjectToPosition(startIndicator);
     let endPosition = ObjectToPosition(endIndicator);
 
     const startCoords = {x: startPosition.X - (boxTransform.width / 2.0), y: startPosition.Y};
     const endCoords = {x: endPosition.X - (boxTransform.width / 2.0), y: endPosition.Y};
     
+    startIndicator.style.zIndex = -1;
+    endIndicator.style.zIndex = -1;
+
     const tween = new TWEEN.Tween(startCoords, false) // Create a new tween that modifies 'coords'.
         .to(endCoords, 2000) 
         .easing(TWEEN.Easing.Quadratic.InOut) // Use an easing function to make the animation smooth.
