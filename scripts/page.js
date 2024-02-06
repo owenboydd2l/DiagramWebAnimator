@@ -201,11 +201,10 @@ function startTween()
         .to(endCoords, 2000) 
         .easing(TWEEN.Easing.Quadratic.InOut) // Use an easing function to make the animation smooth.
         .onUpdate(() => {
-            // Called after tween.js updates 'coords'.
-            // Move 'box' to the position described by 'coords' with a CSS translation.
             box.style.setProperty('transform', 'translate(' + startCoords.x + 'px, ' + startCoords.y + 'px)')
         })
-        .start() // Start the tween immediately.
+        .onComplete()
+        .start(); // Start the tween immediately.
 
     // Setup the animation loop.
     function animate(time) {
@@ -221,3 +220,49 @@ let selectedID = null;
 
 let assetList = [ new Asset(1, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTukEhbRDPETDiNMl5ZO8Lm3nQRSzPLnvdsPK30nTmMig&s') ];
 
+function OnFinishTween()
+{
+    console.log("Finished tween");
+    runningEventIndex++;
+
+    if(runningEventIndex >= globalEventCache.length)
+        runningEventIndex = 0;
+    else
+        PlayAllEvents();
+}
+
+let runningEventIndex = 0;
+
+function PlayAllEvents()
+{
+    const box = document.getElementById('box') // Get the element we want to animate.
+
+    let boxTransform = TransformFromElement(box);
+
+    let foundEvent = globalEventCache[runningEventIndex];
+
+    SetImagePosition(startIndicator, foundEvent.startOffset.X, foundEvent.startOffset.Y);
+    SetImagePosition(endIndicator, foundEvent.endPosition.X, foundEvent.endPosition.Y);
+
+    let startPosition = ObjectToPosition(startIndicator);
+    let endPosition = ObjectToPosition(endIndicator);
+
+    const startCoords = {x: startPosition.X - (boxTransform.width / 2.0), y: startPosition.Y};
+    const endCoords = {x: endPosition.X - (boxTransform.width / 2.0), y: endPosition.Y};
+    
+    const tween = new TWEEN.Tween(startCoords, false) // Create a new tween that modifies 'coords'.
+        .to(endCoords, 2000) 
+        .easing(TWEEN.Easing.Quadratic.InOut) // Use an easing function to make the animation smooth.
+        .onUpdate(() => {
+            box.style.setProperty('transform', 'translate(' + startCoords.x + 'px, ' + startCoords.y + 'px)')
+        })
+        .onComplete(OnFinishTween)
+        .start(); // Start the tween immediately.
+
+    // Setup the animation loop.
+    function animate(time) {
+        tween.update(time)
+        requestAnimationFrame(animate)
+    }
+    requestAnimationFrame(animate)
+}
