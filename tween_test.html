@@ -17,6 +17,14 @@
 				pointer-events:none;
 			}
 		</style>
+
+		<script src="scripts/EntityID.js"></script>
+		<script src="scripts/OrderEntity.js"></script>
+
+		<script src="scripts/AnimationStage.js"></script>
+		<script src="scripts/FlowAnimation.js"></script>
+		<script src="scripts/FlowEvent.js"></script>
+		
 		
 		<script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
 
@@ -221,7 +229,7 @@
 			<div id='isOverArea'></div>
 			<div id='pageScrollTop'></div>
 		</div>
-		<div id='diagram_area' style="width: 75%; margin-left:50px;margin-top: 400px; position:relative;">
+		<div id='diagram_area' style="width: 75%; margin-left:50px;margin-top: 100px; position:relative;">
 			<img id="box" src='1950399.webp'></img>
 			<img id='diagram_image' src='Blank diagram.png' onclick='ActivateImage(this)' style='width: 100%' />
 		</div>
@@ -229,8 +237,9 @@
 		<input type='button' onclick='startTween()' value='Play' />
 		<input type='button' onclick='SetStart()' value='Set Start' />
 		<input type='button' onclick='SetEnd()' value='Set End' />
-		<div id='startData'></div>
-		<div id='endData'></div>
+		<br />
+		Start: <span id='startData'></span><br />
+		End: <span id='endData'></span>
 		
 	</body>
 </html>
