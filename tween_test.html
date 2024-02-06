@@ -14,6 +14,7 @@
 				width: 50px;
 				height: 50px;
 				position:absolute;
+				pointer-events:none;
 			}
 		</style>
 		
@@ -121,13 +122,13 @@
 			function SetStart()
 			{
 				activateMode = STARTMODE;
-				startIndicator = CreateNewIndicator(startIndicator);
+				startIndicator = CreateNewIndicator(startIndicator, true);
 			}
 			
 			function SetEnd()
 			{
 				activateMode = ENDMODE;
-				endIndicator = CreateNewIndicator(endIndicator);
+				endIndicator = CreateNewIndicator(endIndicator, false);
 			}
 			
 			function ViewToImagePosition(clientX, clientY)
@@ -140,15 +141,19 @@
 				return { 'X' : (clientX - offsetLeft), 'Y' : (clientY - offsetTop) };
 			}
 			
-			function CreateNewIndicator(indicatorElement)
+			function CreateNewIndicator(indicatorElement, isStart = false)
 			{
 				if(indicatorElement === undefined || indicatorElement == null)
 				{
 					indicatorElement = document.createElement("img");
 					let diagramArea = document.getElementById('diagram_area');
 					diagramArea.insertBefore(indicatorElement, diagramArea.firstChild);
-							
-					indicatorElement.setAttribute('src', '800px-Circle_-_black_simple.svg.png');
+					
+					if(isStart)
+						indicatorElement.setAttribute('src', '800px-Circle_-_green_simple.png');
+					else
+						indicatorElement.setAttribute('src', '800px-Circle_-_black_simple.svg.png');
+
 					indicatorElement.classList.add('indicator');
 				}
 				
@@ -174,26 +179,29 @@
 			
 			function ObjectToPosition(image)
 			{
-				return { 'X' : image.offsetLeft,
-					'Y' : image.offsetTop };
+				return { 'X' : image.offsetLeft + (image.offsetWidth / 2.0),
+					'Y' : image.offsetTop - (image.offsetHeight / 2.0) };
 			}
 			
 			function startTween()
 			{
 				const box = document.getElementById('box') // Get the element we want to animate.
 
+				let boxTransform = TransformFromElement(box);
+
 				let startPosition = ObjectToPosition(startIndicator);
 				let endPosition = ObjectToPosition(endIndicator);
 
-				const coords = {x: startPosition.X, y: startPosition.Y} // Start at (0, 0)
+				const startCoords = {x: startPosition.X - (boxTransform.width / 2.0), y: startPosition.Y};
+				const endCoords = {x: endPosition.X - (boxTransform.width / 2.0), y: endPosition.Y};
 
-				const tween = new TWEEN.Tween(coords, false) // Create a new tween that modifies 'coords'.
-					.to({x: endPosition.X, y: endPosition.Y}, 1000) // Move to (300, 200) in 1 second.
+				const tween = new TWEEN.Tween(startCoords, false) // Create a new tween that modifies 'coords'.
+					.to(endCoords, 2000) 
 					.easing(TWEEN.Easing.Quadratic.InOut) // Use an easing function to make the animation smooth.
 					.onUpdate(() => {
 						// Called after tween.js updates 'coords'.
 						// Move 'box' to the position described by 'coords' with a CSS translation.
-						box.style.setProperty('transform', 'translate(' + coords.x + 'px, ' + coords.y + 'px)')
+						box.style.setProperty('transform', 'translate(' + startCoords.x + 'px, ' + startCoords.y + 'px)')
 					})
 					.start() // Start the tween immediately.
 
