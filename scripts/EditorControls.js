@@ -27,11 +27,27 @@ function uuidv4() {
     );
   }
 
-  function SelectEventRow(event)
+function SelectEventRow(event)
 {
     selectedID = event.id;   
     
     UpdateEventList();
+
+    var foundEvent = globalEventCache.find( (ev) => ev.id == selectedID);
+
+    if(foundEvent.startOffset != null)
+    {
+        startIndicator = CreateNewIndicator(startIndicator, true);
+
+        SetImagePosition(startIndicator, foundEvent.startOffset.X, foundEvent.startOffset.Y);
+    }
+
+    if(foundEvent.endPosition != null)
+    {
+        endIndicator = CreateNewIndicator(endIndicator, false);
+
+        SetImagePosition(endIndicator, foundEvent.endPosition.X, foundEvent.endPosition.Y);
+    }
 }
 
 function AddTextCellToRow(row, content)
