@@ -281,7 +281,10 @@ function OnFinishTween()
     if(runningEventIndex >= globalEventCache.length)
     {
         console.log("Finished all tweens");
-        GetCacheBox().style.display = 'none';
+        let box = GetCacheBox()
+        box.style.display = 'none';
+        box.style.width = box.getAttribute('data-start-width');
+        box.style.height = box.getAttribute('data-start-height');
         ClearEditorSettings();
     }
     else
@@ -307,16 +310,24 @@ function GetCacheBox()
         let diagramArea = $('#diagram_area')[0];
         diagramArea.insertBefore(box, diagramArea.firstChild);
         */
-       box = document.getElementById('box');       
+        box = document.getElementById('box');
+
+        
+       
     }
 
-    box.style.display = 'inline-block';
+    box.style.display = 'inline-block';   
 
     return box;
 }
 
 function PlayAllEvents()
 {
+    let box = GetCacheBox();
+    
+    box.setAttribute('data-start-width', box.offsetWidth);
+    box.setAttribute('data-start-height', box.offsetHeight);
+
     ChangeStreamlineMode(false);
     SetupAllEventTween();
 }
@@ -357,13 +368,23 @@ function SetupAllEventTween()
             
             let progress = (startPosition.X - startCoords.x) / (startPosition.X - endCoords.x);            
 
-            let invertedParabolaVal = 4 * Math.pow(progress, 2) - (4/1 * progress) + 1;
-
-            if(foundEvent.transformType == null)
-                invertedParabolaVal = 1.0;
+            //let invertedParabolaVal = 4 * Math.pow(progress, 2) - (4/1 * progress) + 1;//secret knowledge O_o
             
-            let newWidth = boxTransform.width  * invertedParabolaVal;
-            let newHeight = boxTransform.height * invertedParabolaVal;
+            let newHeight = box.getAttribute('data-start-height');
+            let newWidth = box.getAttribute('data-start-width');
+
+
+            if (foundEvent.transformType == TRANSFORM_SHRINK)
+            {
+                newHeight *= lerp(1,0.01, progress);
+                newWidth *= lerp(1,0.01, progress);
+            }
+            else if (foundEvent.transformType == TRANSFORM_GROW)
+            {
+                newHeight *= lerp(0.01,1, progress);
+                newWidth *= lerp(0.01,1, progress);
+            }
+            
             box.style.width = newWidth;
             box.style.height = newHeight;            
             box.style.setProperty('transform', 'translate(' + (startCoords.x - (newWidth / 2.0)) + 'px, ' + (startCoords.y) + 'px)')
@@ -379,3 +400,7 @@ function SetupAllEventTween()
     }
     requestAnimationFrame(animate)
 }
+
+function lerp( a, b, alpha ) {
+    return a + alpha * ( b - a );
+   }
