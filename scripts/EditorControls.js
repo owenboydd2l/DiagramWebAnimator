@@ -4,6 +4,16 @@ const STREAMLINESTAGE_END = 1;
 let streamlineStage = STREAMLINESTAGE_START;
 let isStreamlineMode = false;
 
+let pathPreviewMode = false; 
+
+
+function ChangePathPreviewMode()
+{
+    pathPreviewMode = !pathPreviewMode;
+
+    UpdatePathPreview();
+}
+
 function ChangeStreamlineMode(in_isNewStreamlineMode)
 {
     isStreamlineMode = in_isNewStreamlineMode;
@@ -122,6 +132,36 @@ function CreateNewEvent(in_startOffset = null, in_endPosition = null)
     UpdateEventList();
 }
 
+function UpdatePathPreview()
+{
+    let diagramCanvas = $('#diagram_canvas')[0];
+    let canvasContext = diagramCanvas.getContext('2d');
+    canvasContext.clearRect(0, 0, diagramCanvas.offsetWidth, diagramCanvas.offsetHeight);
+
+    if(!pathPreviewMode)
+        return;
+
+    let previewData = [];
+
+    for(let i=0; i < globalEventCache.length; ++i)
+    {
+        previewData.push( { start : globalEventCache[i].startOffset, end : globalEventCache[i].endPosition });
+    }
+
+    let diagramArea = $('#diagram_area')[0];
+    
+    for(let j=0; j < previewData.length; ++j)
+    {
+        console.log(previewData[j].start.X * diagramArea.offsetWidth);
+        canvasContext.beginPath(); 
+        canvasContext.moveTo( previewData[j].start.X * diagramArea.offsetWidth, previewData[j].start.Y * diagramArea.offsetHeight);
+        canvasContext.lineTo( previewData[j].end.X * diagramArea.offsetWidth, previewData[j].end.Y * diagramArea.offsetHeight);
+        canvasContext.strokeStyle = "red";
+        canvasContext.stroke();
+    }    
+    
+}
+
 function UpdateEventList()
 {
     $('#controlTable').empty();
@@ -148,8 +188,6 @@ function UpdateEventList()
             AddCellToRow(newTableRow, [ selectButton ]);
         }
 
-        
-
         AddTextCellToRow(newTableRow, element.orderID);
 
         {
@@ -174,6 +212,8 @@ function UpdateEventList()
         $('#controlTable')[0].appendChild(newTableRow);
 
     });
+
+    UpdatePathPreview();
 }
 
 function ChangeFlowEventTarget(id)

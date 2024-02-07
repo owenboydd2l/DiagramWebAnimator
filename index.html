@@ -3,6 +3,16 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/20.0.0/tween.umd.js"></script>
 		
 		<style>
+
+			.previewPath
+			{
+				position:absolute;
+				pointer-events: none;
+				width:20px;
+				height:5px;
+				background-color: black;
+			}
+
 			.box {
 				width: 100px;
 				height: 100px;
@@ -50,6 +60,15 @@
 				width:5px;
 			}
 
+			.diagramCanvas
+			{
+				pointer-events: none; 
+				position:absolute;
+				left:0;
+				top:0;
+				
+			}
+
 		</style>
 
 		<script src="scripts/EntityID.js"></script>
@@ -67,7 +86,7 @@
 
 		<script type="text/javascript" src="scripts/page.js"></script>
 	</head>
-	<body style='background-color:grey' onload='SetupTimer()'>
+	<body style='background-color:grey' onload='SetupTimer()' onresize="ResizeDiagramCanvas()">
 		<div style="position:fixed; top:0;">
 			<div id='currentposition'></div>
 			<div id='imagePosition'></div>
@@ -75,8 +94,9 @@
 			<div id='pageScrollTop'></div>
 		</div>
 		<div id='diagram_area' style="width: 75%; margin-left:50px;margin-top: 100px; position:relative;">
-			<img id="box" class="box" style="display:none;" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTukEhbRDPETDiNMl5ZO8Lm3nQRSzPLnvdsPK30nTmMig&s" />
-			<img id='diagram_image' src='images/Blank diagram.png' onclick='ActivateImage(this)' style='width: 100%' />
+			<img id="box" class="box" style="display:none;" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTukEhbRDPETDiNMl5ZO8Lm3nQRSzPLnvdsPK30nTmMig&s" />			
+			<canvas id="diagram_canvas" class="diagramCanvas"></canvas>
+			<img id='diagram_image' src='images/Blank diagram.png' onclick='ActivateImage(this)' style='width: 100%' />			
 		</div>
 		<div class="floatingControls">
 				
@@ -95,8 +115,10 @@
 				<input type='button' onclick='startTween()' value='Play Event' /><br />
 				<input type='button' onclick='SetStart()' value='Set Start' />
 				<input type='button' onclick='SetEnd()' value='Set End' />
+				
 				<br >
 				<input type='button' onclick='ChangeStreamlineMode(!isStreamlineMode)' value='Streamline Mode' />
+				<input type='button' onclick='ChangePathPreviewMode()' value='Path Preview' />
 		</div>
 		
 		<br />

@@ -18,6 +18,16 @@ let assetList = [ new Asset(1, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:
     new Asset(3, 'images/1950399.webp') ];
 
 
+function ResizeDiagramCanvas()
+{
+    let diagramCanvas = $('#diagram_canvas')[0];
+
+    diagramCanvas.setAttribute('width', diagramCanvas.parentElement.offsetWidth + "px");
+    diagramCanvas.setAttribute('height', diagramCanvas.parentElement.offsetHeight + "px");
+
+    UpdatePathPreview();
+}
+
 
 function IsOverlap( objectTransform, point)
 {
@@ -32,9 +42,9 @@ function PerformLocationCheck(event)
         
     $('#pageScrollTop').text( document.body.scrollTop );
     
-    let diagram_area = document.getElementById('diagram_area');					
+    let diagram_area = document.getElementById('diagram_area');
     
-    let diagramTransform = TransformFromElement(diagram_area);	
+    let diagramTransform = TransformFromElement(diagram_area);
     
     let mousePosition = { 'X' : event.clientX, 
         'Y' : event.clientY + document.body.scrollTop};
@@ -102,6 +112,8 @@ function SetupTimer()
 
     UpdateAssetList();
 
+    ResizeDiagramCanvas();
+
 }
 
 
@@ -149,8 +161,7 @@ function CreateNewIndicator(indicatorElement, isStart = false)
     {
         console.log('creating new indicator');
         indicatorElement = document.createElement("img");
-        let diagramArea = document.getElementById('diagram_area');
-        diagramArea.insertBefore(indicatorElement, diagramArea.firstChild);
+        AddElementToDiagram(indicatorElement);
         
         if(isStart)
             indicatorElement.setAttribute('src', 'images/800px-Circle_-_green_simple.png');
@@ -162,6 +173,12 @@ function CreateNewIndicator(indicatorElement, isStart = false)
     
     return indicatorElement;
 }			
+
+function AddElementToDiagram(element)
+{
+    let diagramArea = $('#diagram_area')[0];
+    diagramArea.insertBefore(element, diagramArea.firstChild);
+}
 
 function PerformSingleEventStep()
 {
