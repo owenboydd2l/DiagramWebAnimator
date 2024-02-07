@@ -350,10 +350,24 @@ function SetupAllEventTween()
     endIndicator.style.zIndex = -1;
 
     const tween = new TWEEN.Tween(startCoords, false) // Create a new tween that modifies 'coords'.
-        .to(endCoords, 2000) 
+        .to(endCoords, 3000) 
         .easing(TWEEN.Easing.Quadratic.InOut) // Use an easing function to make the animation smooth.
         .onUpdate(() => {
-            box.style.setProperty('transform', 'translate(' + (startCoords.x - (box.offsetWidth / 2.0)) + 'px, ' + (startCoords.y) + 'px)')
+            
+            
+            let progress = (startPosition.X - startCoords.x) / (startPosition.X - endCoords.x);            
+
+            let invertedParabolaVal = 4 * Math.pow(progress, 2) - (4/1 * progress) + 1;
+
+            if(foundEvent.transformType == null)
+                invertedParabolaVal = 1.0;
+            
+            let newWidth = boxTransform.width  * invertedParabolaVal;
+            let newHeight = boxTransform.height * invertedParabolaVal;
+            box.style.width = newWidth;
+            box.style.height = newHeight;            
+            box.style.setProperty('transform', 'translate(' + (startCoords.x - (newWidth / 2.0)) + 'px, ' + (startCoords.y) + 'px)')
+            
         })
         .onComplete(OnFinishTween)
         .start(); // Start the tween immediately.

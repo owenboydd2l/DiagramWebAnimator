@@ -112,6 +112,8 @@ function AddCellToRow(row, elementList)
     row.appendChild(newCell);
 }
 
+
+
 function ClearEditorSettings()
 {
     streamlineStage = STREAMLINESTAGE_START;
@@ -160,7 +162,6 @@ function UpdatePathPreview()
     
     for(let j=0; j < previewData.length; ++j)
     {
-        console.log(previewData[j].start.X * diagramArea.offsetWidth);
         canvasContext.beginPath(); 
         canvasContext.moveTo( previewData[j].start.X * diagramArea.offsetWidth, previewData[j].start.Y * diagramArea.offsetHeight);
         canvasContext.lineTo( previewData[j].end.X * diagramArea.offsetWidth, previewData[j].end.Y * diagramArea.offsetHeight);
