@@ -13,7 +13,9 @@ let globalEventCache = [];
 
 let selectedID = null;
 
-let assetList = [ new Asset(1, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTukEhbRDPETDiNMl5ZO8Lm3nQRSzPLnvdsPK30nTmMig&s') ];
+let assetList = [ new Asset(1, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTukEhbRDPETDiNMl5ZO8Lm3nQRSzPLnvdsPK30nTmMig&s'),
+    new Asset(2, 'images/136443.png'),
+    new Asset(3, 'images/1950399.webp') ];
 
 
 
@@ -213,7 +215,12 @@ function ObjectToPosition(image)
 
 function startTween()
 {
-    const box = document.getElementById('box') // Get the element we want to animate.
+    let box = GetCacheBox();
+
+    var foundEvent = globalEventCache.find( (ev) => ev.id == selectedID );
+
+    box.setAttribute('src', assetList.find( 
+        (a) => a.id == foundEvent.target).fileName);
 
     let boxTransform = TransformFromElement(box);
 
@@ -259,15 +266,39 @@ function OnFinishTween()
     }
 }
 
+let box = null;
 
+function GetCacheBox()
+{
+    if(box == null)
+    {
+        console.log('creating box');
+        /*
+        box = document.createElement('box') // Get the element we want to animate.
+        box.setAttribute('src', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTukEhbRDPETDiNMl5ZO8Lm3nQRSzPLnvdsPK30nTmMig&s');
+        box.classList.add('box');
+        
+        
+        let diagramArea = $('#diagram_area')[0];
+        diagramArea.insertBefore(box, diagramArea.firstChild);
+        */
+       box = document.getElementById('box');
+       box.style.display = 'inline-block';
+    }
+
+    return box;
+}
 
 function PlayAllEvents()
 {
-    const box = document.getElementById('box') // Get the element we want to animate.
+    let box = GetCacheBox();
 
     let boxTransform = TransformFromElement(box);
 
     let foundEvent = globalEventCache[runningEventIndex];
+
+    box.setAttribute('src', assetList.find( 
+        (a) => a.id == foundEvent.target).fileName);
 
     startIndicator = CreateNewIndicator(startIndicator, true);
     endIndicator = CreateNewIndicator(endIndicator, false);

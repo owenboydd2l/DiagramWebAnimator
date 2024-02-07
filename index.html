@@ -3,7 +3,7 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/20.0.0/tween.umd.js"></script>
 		
 		<style>
-			#box {
+			.box {
 				width: 100px;
 				height: 100px;
 				position:absolute;
@@ -23,15 +23,14 @@
 				position: fixed;
 				right:0;
 				top:0;
-				background-color: black;
+				background-color: silver;
 				width:200px;
-				height:400px;				
+				height:400px;
 			}
 
 			.floatingControls td
 			{
-				border: 1px solid white;
-				color:white;
+				border: 1px solid black;				
 			}
 
 			.previewImage
@@ -43,6 +42,13 @@
 			{
 				font-size:x-small;
 			}
+
+			.smollAssetChanger
+			{
+				font-size:x-small;
+				width:5px;
+			}
+
 		</style>
 
 		<script src="scripts/EntityID.js"></script>
@@ -68,7 +74,7 @@
 			<div id='pageScrollTop'></div>
 		</div>
 		<div id='diagram_area' style="width: 75%; margin-left:50px;margin-top: 100px; position:relative;">
-			<img id="box" src='images/1950399.webp'></img>
+			<img id="box" class="box" style="display:none;" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTukEhbRDPETDiNMl5ZO8Lm3nQRSzPLnvdsPK30nTmMig&s" />
 			<img id='diagram_image' src='images/Blank diagram.png' onclick='ActivateImage(this)' style='width: 100%' />
 		</div>
 		<div class="floatingControls">

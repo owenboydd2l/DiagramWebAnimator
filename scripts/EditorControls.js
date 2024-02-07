@@ -1,3 +1,7 @@
+const STREAMLINESTAGE_START = 0;
+const STREAMLINESTAGE_END = 1;
+
+let streamlineStage = STREAMLINESTAGE_START;
 let isStreamlineMode = false;
 
 function ChangeStreamlineMode(in_isNewStreamlineMode)
@@ -131,15 +135,28 @@ function UpdateEventList()
             newTableRow.style.backgroundColor = 'red';
         }
         
-        var chk = document.createElement("input");
-        chk.setAttribute("type", "button");
-        chk.setAttribute("value", "select");
-        chk.addEventListener("click", function () { SelectEventRow(element); });
+        {
+            let selectButton = document.createElement("input");
+            selectButton.setAttribute("type", "button");
+            selectButton.setAttribute("value", "sel");
+            selectButton.style.fontSize = 'x-small';
+            selectButton.addEventListener("click", function () { SelectEventRow(element); });
 
-        AddCellToRow(newTableRow, [ chk ]);
+            AddCellToRow(newTableRow, [ selectButton ]);
+        }
+
+        
 
         AddTextCellToRow(newTableRow, element.orderID);
-        AddTextCellToRow(newTableRow, element.target);
+
+        {
+            let previewIcon = document.createElement('img');
+            previewIcon.src = assetList.find( (a) => a.id == element.target).fileName;
+            previewIcon.classList.add("previewImage");
+            previewIcon.addEventListener('click', function() {  ChangeFlowEventTarget(element.id); });
+            AddCellToRow(newTableRow, [ previewIcon ] );
+        }
+        
 
         if(element.startOffset != null)
             AddTextCellToRow(newTableRow, PrintNiceTransform(element.startOffset.X, element.startOffset.Y), "locationData");
@@ -156,9 +173,33 @@ function UpdateEventList()
     });
 }
 
+function ChangeFlowEventTarget(id)
+{
+    
+    let foundIndex = -1;
+
+    let foundEvent = globalEventCache.find((ev) => ev.id == id);
+
+    for(let i =0; i < assetList.length; ++i)
+    {
+        if(assetList[i].id == foundEvent.target)
+        {
+            foundIndex = i;
+        }
+    }    
+
+    if(foundIndex + 1 >= assetList.length)
+        foundEvent.target = assetList[0].id;
+    else
+        foundEvent.target = assetList[foundIndex + 1].id;
+
+    UpdateEventList();
+    
+}
+
 function PrintNiceTransform(x, y)
 {
-    return 'X: ' + RoundFloat(x) + ', Y: ' + RoundFloat(y); 
+    return 'X: ' + RoundFloat(x) + '\nY: ' + RoundFloat(y); 
 }
 
 function RoundFloat(val)
@@ -166,10 +207,7 @@ function RoundFloat(val)
     return Math.round(val * 100) / 100;
 }
 
-const STREAMLINESTAGE_START = 0;
-const STREAMLINESTAGE_END = 1;
 
-let streamlineStage = STREAMLINESTAGE_START;
 
 function CreateStreamlineEvent()
 {
