@@ -262,7 +262,7 @@ function OnFinishTween()
     else
     {
         console.log("Trigger Next Step");
-        PlayAllEvents();
+        SetupAllEventTween();
     }
 }
 
@@ -290,6 +290,12 @@ function GetCacheBox()
 }
 
 function PlayAllEvents()
+{
+    ChangeStreamlineMode(false);
+    SetupAllEventTween();
+}
+
+function SetupAllEventTween()
 {
     let box = GetCacheBox();
 
