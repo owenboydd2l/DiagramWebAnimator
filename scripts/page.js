@@ -1,3 +1,20 @@
+let runningEventIndex = 0;
+const STARTMODE = 1;
+const ENDMODE = 2;
+const NONE = 0;
+
+let activateMode = NONE;
+
+let startIndicator = null;
+let endIndicator = null;
+let cacheMousePosition = {};
+
+let globalEventCache = [];
+
+let selectedID = null;
+
+let assetList = [ new Asset(1, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTukEhbRDPETDiNMl5ZO8Lm3nQRSzPLnvdsPK30nTmMig&s') ];
+
 function IsOverlap( objectTransform, point)
 {
     return (point.X > objectTransform.X && point.X < objectTransform.X + objectTransform.width
@@ -5,72 +22,76 @@ function IsOverlap( objectTransform, point)
         point.Y > objectTransform.Y && point.Y < objectTransform.Y + objectTransform.height);					
 }
 
+function PerformLocationCheck(event)
+{
+    document.getElementById('currentposition').innerHTML = event.clientX + ', ' + event.clientY;
+        
+    $('#pageScrollTop').text( document.body.scrollTop );
+    
+    let diagram_area = document.getElementById('diagram_area');					
+    
+    let diagramTransform = TransformFromElement(diagram_area);	
+    
+    let mousePosition = { 'X' : event.clientX, 
+        'Y' : event.clientY + document.body.scrollTop};
+    
+    document.getElementById('imagePosition').innerHTML = JSON.stringify(diagramTransform);
+    
+    if( IsOverlap(diagramTransform, mousePosition ) )
+    {
+        
+        $('#isOverArea').text('YES');
+
+        let clickPosition = ViewToImagePosition(mousePosition.X, mousePosition.Y);        
+        
+        cacheMousePosition = PixelToPercent(diagram_area, clickPosition.X, clickPosition.Y);
+    
+        if(activateMode == NONE)
+            return;
+        
+        let targetElement = null;
+
+        let targetIndicator = null;
+
+        let isStart = false;
+        
+        if(activateMode == STARTMODE)
+        {
+            isStart = true;
+            targetElement = document.getElementById('startData');							
+            targetIndicator =startIndicator;
+                
+        }
+        else if (activateMode == ENDMODE)
+        {
+            targetElement = document.getElementById('endData')							
+            targetIndicator = endIndicator;
+        }
+
+        let relativeClickPosition = { 'X' : clickPosition.X - (targetIndicator.offsetWidth / 2.0), 'Y': clickPosition.Y - (targetIndicator.offsetHeight / 2.0) };
+        
+        let percentPosition = PixelToPercent(diagram_area, relativeClickPosition.X, relativeClickPosition.Y);
+
+        targetElement.innerText = JSON.stringify( percentPosition);
+
+        SetImagePosition( targetIndicator, percentPosition.X, percentPosition.Y );
+        
+        
+        
+    }
+    else
+    {
+        $('#isOverArea').text('NO');
+    }
+
+}
+
 function SetupTimer()
 {
     
     document.addEventListener('mousemove', (event) => {
-        document.getElementById('currentposition').innerHTML = event.clientX + ', ' + event.clientY;
         
-        $('#pageScrollTop').text( document.body.scrollTop );
-        
-        let diagram_area = document.getElementById('diagram_area');					
-        
-        let diagramTransform = TransformFromElement(diagram_area);	
-        
-        let mousePosition = { 'X' : event.clientX, 
-            'Y' : event.clientY + document.body.scrollTop};
-        
-        document.getElementById('imagePosition').innerHTML = JSON.stringify(diagramTransform);
-        
-        if( IsOverlap(diagramTransform, mousePosition ) )
-        {
-            $('#isOverArea').text('YES');
-        
-            if(activateMode == NONE)
-                return;
-            
-            let targetElement = null;
-    
-            let targetIndicator = null;
-
-            let isStart = false;
-            
-            if(activateMode == STARTMODE)
-            {
-                isStart = true;
-                targetElement = document.getElementById('startData');							
-                targetIndicator =startIndicator;
-                    
-            }
-            else if (activateMode == ENDMODE)
-            {
-                targetElement = document.getElementById('endData')							
-                targetIndicator = endIndicator;
-            }
-            
-            
-            let clickPosition = ViewToImagePosition(mousePosition.X, mousePosition.Y);
-            
-            
-            let relativeClickPosition = { 'X' : clickPosition.X - (targetIndicator.offsetWidth / 2.0), 'Y': clickPosition.Y - (targetIndicator.offsetHeight / 2.0) };
-            
-            let diagramArea = document.getElementById('diagram_area');
-            
-            let percentPosition = PixelToPercent(diagramArea, relativeClickPosition.X, relativeClickPosition.Y);
-            
-            targetElement.innerText = JSON.stringify( percentPosition);
-            
-            SetImagePosition( targetIndicator, percentPosition.X, percentPosition.Y );
-
-            cacheMousePosition = percentPosition;
-                
-        }
-        else
-        {
-            $('#isOverArea').text('NO');
-        }
-        
-    
+        PerformLocationCheck(event);   
         
     });
     
@@ -79,7 +100,7 @@ function SetupTimer()
 
 }
 
-let cacheMousePosition = {};
+
 
 function TransformFromElement(targetElement)
 {
@@ -94,14 +115,7 @@ function TransformFromElement(targetElement)
     return data;
 }
 
-const STARTMODE = 1;
-const ENDMODE = 2;
-const NONE = 0;
 
-let activateMode = NONE;
-
-let startIndicator = null;
-let endIndicator = null;
 
 function SetStart()
 {
@@ -129,6 +143,7 @@ function CreateNewIndicator(indicatorElement, isStart = false)
 {
     if(indicatorElement === undefined || indicatorElement == null)
     {
+        console.log('creating new indicator');
         indicatorElement = document.createElement("img");
         let diagramArea = document.getElementById('diagram_area');
         diagramArea.insertBefore(indicatorElement, diagramArea.firstChild);
@@ -144,8 +159,8 @@ function CreateNewIndicator(indicatorElement, isStart = false)
     return indicatorElement;
 }			
 
-function ActivateImage(image)
-{		
+function PerformSingleEventStep()
+{
     let foundEvent = globalEventCache.find( (ev) => ev.id == selectedID);
 
     if(foundEvent !== undefined)
@@ -163,7 +178,16 @@ function ActivateImage(image)
     }    
 
     activateMode = NONE;    
+}
 
+
+
+function ActivateImage(image)
+{		
+    if(isStreamlineMode)
+        CreateStreamlineEvent();
+    else
+        PerformSingleEventStep();
     
 }
 
@@ -214,11 +238,7 @@ function startTween()
     requestAnimationFrame(animate)
 }
 
-let globalEventCache = [];
 
-let selectedID = null;
-
-let assetList = [ new Asset(1, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTukEhbRDPETDiNMl5ZO8Lm3nQRSzPLnvdsPK30nTmMig&s') ];
 
 function OnFinishTween()
 {
@@ -226,12 +246,18 @@ function OnFinishTween()
     runningEventIndex++;
 
     if(runningEventIndex >= globalEventCache.length)
-        runningEventIndex = 0;
+    {
+        console.log("Finished all tweens");
+        ClearEditorSettings();
+    }
     else
+    {
+        console.log("Trigger Next Step");
         PlayAllEvents();
+    }
 }
 
-let runningEventIndex = 0;
+
 
 function PlayAllEvents()
 {
@@ -241,10 +267,11 @@ function PlayAllEvents()
 
     let foundEvent = globalEventCache[runningEventIndex];
 
+    startIndicator = CreateNewIndicator(startIndicator, true);
+    endIndicator = CreateNewIndicator(endIndicator, false);
+
     SetImagePosition(startIndicator, foundEvent.startOffset.X, foundEvent.startOffset.Y);
     SetImagePosition(endIndicator, foundEvent.endPosition.X, foundEvent.endPosition.Y);
-
-    
 
     let startPosition = ObjectToPosition(startIndicator);
     let endPosition = ObjectToPosition(endIndicator);
@@ -252,8 +279,8 @@ function PlayAllEvents()
     const startCoords = {x: startPosition.X - (boxTransform.width / 2.0), y: startPosition.Y};
     const endCoords = {x: endPosition.X - (boxTransform.width / 2.0), y: endPosition.Y};
     
-    startIndicator.style.zIndex = -1;
-    endIndicator.style.zIndex = -1;
+    //startIndicator.style.zIndex = -1;
+    //endIndicator.style.zIndex = -1;
 
     const tween = new TWEEN.Tween(startCoords, false) // Create a new tween that modifies 'coords'.
         .to(endCoords, 2000) 

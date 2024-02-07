@@ -1,3 +1,10 @@
+let isStreamlineMode = false;
+
+function ChangeStreamlineMode(isNewStreamlineMode)
+{
+    isStreamlineMode = isNewStreamlineMode;
+}
+
 function AddAsset()
 {
     var newFilePath = $('#txtNewAssetPath')[0].value;
@@ -29,6 +36,7 @@ function uuidv4() {
 
 function SelectEventRow(event)
 {
+    ClearEditorSettings();
     selectedID = event.id;   
     
     UpdateEventList();
@@ -50,10 +58,14 @@ function SelectEventRow(event)
     }
 }
 
-function AddTextCellToRow(row, content)
+function AddTextCellToRow(row, content, className = '')
 {
     var newCell = document.createElement("td");
     newCell.innerText = content;
+    
+    if(className != '' && className !== undefined)
+        newCell.classList.add(className);
+
     row.appendChild(newCell);
 }
 
@@ -67,9 +79,25 @@ function AddCellToRow(row, elementList)
     row.appendChild(newCell);
 }
 
-function CreateNewEvent()
+function ClearEditorSettings()
 {
-    let newEvent = new FlowEvent( id = uuidv4(), orderID = globalEventCache.length, target = 1, null, null, duration = 2000, null);
+    streamlineStage = STREAMLINESTAGE_START;
+    isStreamlineMode = false;
+    activateMode = NONE;
+    runningEventIndex = 0;
+    selectedID = 0;
+}
+
+function CreateNewEvent(in_startOffset = null, in_endPosition = null)
+{
+    
+    let newEvent = new FlowEvent( id = uuidv4(), 
+        orderID = globalEventCache.length, 
+        target = 1, 
+        endPosition = in_endPosition, 
+        startOffset =  in_startOffset, 
+        duration = 2000, 
+        transformType = null);
 
     globalEventCache.push(newEvent)
 
@@ -100,12 +128,12 @@ function UpdateEventList()
         AddTextCellToRow(newTableRow, element.target);
 
         if(element.startOffset != null)
-            AddTextCellToRow(newTableRow, PrintNiceTransform(element.startOffset.X, element.startOffset.Y));
+            AddTextCellToRow(newTableRow, PrintNiceTransform(element.startOffset.X, element.startOffset.Y), "locationData");
         else
             AddTextCellToRow(newTableRow, "");
 
         if(element.endPosition != null)
-            AddTextCellToRow(newTableRow, PrintNiceTransform(element.endPosition.X,element.endPosition.Y));
+            AddTextCellToRow(newTableRow, PrintNiceTransform(element.endPosition.X,element.endPosition.Y), "locationData");
         else
             AddTextCellToRow(newTableRow,"");
 
@@ -116,10 +144,41 @@ function UpdateEventList()
 
 function PrintNiceTransform(x, y)
 {
-    return 'X: ' + RoundFloat(x) + ', Y:' + RoundFloat(y); 
+    return 'X: ' + RoundFloat(x) + ', Y: ' + RoundFloat(y); 
 }
 
 function RoundFloat(val)
 {
     return Math.round(val * 100) / 100;
+}
+
+const STREAMLINESTAGE_START = 0;
+const STREAMLINESTAGE_END = 1;
+
+let streamlineStage = STREAMLINESTAGE_START;
+
+function CreateStreamlineEvent()
+{
+    if(streamlineStage == STREAMLINESTAGE_START)
+    {
+        CreateNewEvent(cacheMousePosition, null );
+        selectedID = globalEventCache[globalEventCache.length - 1].id;
+        streamlineStage = STREAMLINESTAGE_END;
+    }
+    else if (streamlineStage == STREAMLINESTAGE_END)
+    {
+        var foundEvent = globalEventCache.find( (ev) => ev.id == selectedID);
+
+        if(foundEvent !== undefined)
+        {
+            foundEvent.endPosition = cacheMousePosition;
+        }
+        else
+        {
+            console.error('ID not found in event cache ' + selectedID);
+        }
+        streamlineStage = STREAMLINESTAGE_START;        
+    }
+    
+    UpdateEventList();
 }

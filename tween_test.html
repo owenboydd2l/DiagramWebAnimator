@@ -15,6 +15,7 @@
 				height: 50px;
 				position:absolute;
 				pointer-events:none;
+				opacity: 0.5;
 			}
 
 			.floatingControls
@@ -24,7 +25,7 @@
 				top:0;
 				background-color: black;
 				width:200px;
-				height:300px;				
+				height:400px;				
 			}
 
 			.floatingControls td
@@ -36,6 +37,11 @@
 			.previewImage
 			{
 				width:25px;
+			}
+
+			.locationData
+			{
+				font-size:x-small;
 			}
 		</style>
 
@@ -78,10 +84,12 @@
 
 				</div>
 
-				<input type='button' onclick='PlayAllEvents()' value='Play All' /><br />
+				<input type='button' onclick='PlayAllEvents()' value='Play All' />
 				<input type='button' onclick='startTween()' value='Play Event' /><br />
 				<input type='button' onclick='SetStart()' value='Set Start' />
 				<input type='button' onclick='SetEnd()' value='Set End' />
+				<br >
+				<input type='button' onclick='ChangeStreamlineMode(!isStreamlineMode)' value='Streamline Mode' />
 		</div>
 		
 		<br />
