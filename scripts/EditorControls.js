@@ -172,12 +172,15 @@ function CreateStreamlineEvent()
         if(foundEvent !== undefined)
         {
             foundEvent.endPosition = cacheMousePosition;
+
+            CreateNewEvent(cacheMousePosition, null );
+            selectedID = globalEventCache[globalEventCache.length - 1].id;
         }
         else
         {
             console.error('ID not found in event cache ' + selectedID);
         }
-        streamlineStage = STREAMLINESTAGE_START;        
+        
     }
     
     UpdateEventList();

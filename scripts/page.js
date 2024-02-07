@@ -149,9 +149,9 @@ function CreateNewIndicator(indicatorElement, isStart = false)
         diagramArea.insertBefore(indicatorElement, diagramArea.firstChild);
         
         if(isStart)
-            indicatorElement.setAttribute('src', '800px-Circle_-_green_simple.png');
+            indicatorElement.setAttribute('src', 'images/800px-Circle_-_green_simple.png');
         else
-            indicatorElement.setAttribute('src', '800px-Circle_-_black_simple.svg.png');
+            indicatorElement.setAttribute('src', 'images/800px-Circle_-_black_simple.svg.png');
 
         indicatorElement.classList.add('indicator');
     }
