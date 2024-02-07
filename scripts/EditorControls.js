@@ -222,13 +222,14 @@ function UpdateEventList()
                 let transformIcon = document.createElement('img');
                 transformIcon.style.width = 25 + "px";                
 
-                if(element.transformType == TRANSFORM_NONE)
-                    transformIcon.setAttribute("src", "images/knife-scalable-vector-graphics-computer-icons-no-symbol-forbidden-save-icon-format.jpg");
-                else if(element.transformType == TRANSFORM_SHRINK)
-                    transformIcon.setAttribute("src", "images/243_downarrow.jpg");
-                    else if(element.transformType == TRANSFORM_GROW)
-                    transformIcon.setAttribute("src", "images/44603.png");
+                let foundTransform = transformList.find( (tt ) => tt.id == element.transformType);
 
+                if(foundTransform)
+                {
+                    transformIcon.setAttribute("src", foundTransform.icon );
+                    transformIcon.setAttribute("title", foundTransform.tooltip);
+                }
+                
                 transformIcon.addEventListener("click", function() { ChangeTransformType(element);  } );
                 AddCellToRow(newTableRow, [ transformIcon ]);
             }

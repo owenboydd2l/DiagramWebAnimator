@@ -1,7 +1,3 @@
-const TRANSFORM_NONE = null;
-const TRANSFORM_SHRINK = 0;
-const TRANSFORM_GROW = 1;
-
 class FlowEvent extends OrderEntity
 {
     constructor(id, orderID, target, endPosition, startOffset, duration, transformType)

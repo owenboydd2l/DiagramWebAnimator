@@ -373,17 +373,14 @@ function SetupAllEventTween()
             let newHeight = box.getAttribute('data-start-height');
             let newWidth = box.getAttribute('data-start-width');
 
+            let foundTransform = transformList.find( (tt) => tt.id == foundEvent.transformType);
 
-            if (foundEvent.transformType == TRANSFORM_SHRINK)
-            {
-                newHeight *= lerp(1,0.01, progress);
-                newWidth *= lerp(1,0.01, progress);
-            }
-            else if (foundEvent.transformType == TRANSFORM_GROW)
-            {
-                newHeight *= lerp(0.01,1, progress);
-                newWidth *= lerp(0.01,1, progress);
-            }
+            
+            if(foundTransform)
+            {               
+                newHeight *= foundTransform.formula(progress);
+                newWidth *= foundTransform.formula(progress);
+            }            
             
             box.style.width = newWidth;
             box.style.height = newHeight;            
