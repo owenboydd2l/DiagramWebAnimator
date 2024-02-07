@@ -215,6 +215,9 @@ function ObjectToPosition(image)
 
 function startTween()
 {
+    
+    ChangeStreamlineMode(false);
+
     let box = GetCacheBox();
 
     var foundEvent = globalEventCache.find( (ev) => ev.id == selectedID );
@@ -251,7 +254,6 @@ function startTween()
 
 function OnFinishTween()
 {
-    console.log("Finished tween");
     runningEventIndex++;
 
     if(runningEventIndex >= globalEventCache.length)

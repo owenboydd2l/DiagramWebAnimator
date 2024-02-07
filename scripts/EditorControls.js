@@ -10,13 +10,16 @@ function ChangeStreamlineMode(in_isNewStreamlineMode)
 
     if(!isStreamlineMode)
     {
-        let newList = [];
+        if(globalEventCache[globalEventCache.length - 1].endPosition == null)
+        {
+            let newList = [];
 
-        for(let i =0; i < globalEventCache.length - 1; ++i)
-            newList.push(globalEventCache[i]);
+            for(let i =0; i < globalEventCache.length - 1; ++i)
+                newList.push(globalEventCache[i]);
 
-        globalEventCache = newList;
-        UpdateEventList();
+            globalEventCache = newList;
+            UpdateEventList();
+        }
     }
 }
 
