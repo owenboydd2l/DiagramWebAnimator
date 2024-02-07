@@ -8,12 +8,19 @@ function ChangeStreamlineMode(in_isNewStreamlineMode)
 {
     isStreamlineMode = in_isNewStreamlineMode;
 
+    console.log('??');
+
     if(!isStreamlineMode)
     {
         let newList = [];
 
+        let beforeSize = globalEventCache.length;
+
         for(let i =0; i < globalEventCache.length - 1; ++i)
             newList.push(globalEventCache[i]);
+
+        let afterSize = globalEventCache.length;
+        console.log(beforeSize + ' ' + afterSize);
 
         globalEventCache = newList;
         UpdateEventList();

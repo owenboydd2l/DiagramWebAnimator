@@ -312,8 +312,8 @@ function PlayAllEvents()
     const startCoords = {x: startPosition.X - (boxTransform.width / 2.0), y: startPosition.Y};
     const endCoords = {x: endPosition.X - (boxTransform.width / 2.0), y: endPosition.Y};
     
-    //startIndicator.style.zIndex = -1;
-    //endIndicator.style.zIndex = -1;
+    startIndicator.style.zIndex = -1;
+    endIndicator.style.zIndex = -1;
 
     const tween = new TWEEN.Tween(startCoords, false) // Create a new tween that modifies 'coords'.
         .to(endCoords, 2000) 
