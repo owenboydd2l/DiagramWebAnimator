@@ -170,6 +170,8 @@ function CreateNewIndicator(indicatorElement, isStart = false)
 
         indicatorElement.classList.add('indicator');
     }
+
+    indicatorElement.style.zIndex = 0;
     
     return indicatorElement;
 }			
@@ -239,6 +241,9 @@ function startTween()
 
     var foundEvent = globalEventCache.find( (ev) => ev.id == selectedID );
 
+    if(foundEvent == null || foundEvent === undefined)
+        return;
+
     box.setAttribute('src', assetList.find( 
         (a) => a.id == foundEvent.target).fileName);
 
@@ -247,16 +252,16 @@ function startTween()
     let startPosition = ObjectToPosition(startIndicator);
     let endPosition = ObjectToPosition(endIndicator);
 
-    const startCoords = {x: startPosition.X - (boxTransform.width / 2.0), y: startPosition.Y};
-    const endCoords = {x: endPosition.X - (boxTransform.width / 2.0), y: endPosition.Y};
+    const startCoords = {x: startPosition.X, y: startPosition.Y};
+    const endCoords = {x: endPosition.X, y: endPosition.Y};
 
     const tween = new TWEEN.Tween(startCoords, false) // Create a new tween that modifies 'coords'.
         .to(endCoords, 2000) 
         .easing(TWEEN.Easing.Quadratic.InOut) // Use an easing function to make the animation smooth.
         .onUpdate(() => {
-            box.style.setProperty('transform', 'translate(' + startCoords.x + 'px, ' + startCoords.y + 'px)')
+            box.style.setProperty('transform', 'translate(' + (startCoords.x - (box.offsetWidth / 2.0)) + 'px, ' + startCoords.y + (box.offsetHeight / 2.0) + 'px)')
         })
-        .onComplete()
+        .onComplete( () => { GetCacheBox().style.display = 'none'; } )
         .start(); // Start the tween immediately.
 
     // Setup the animation loop.
@@ -276,6 +281,7 @@ function OnFinishTween()
     if(runningEventIndex >= globalEventCache.length)
     {
         console.log("Finished all tweens");
+        GetCacheBox().style.display = 'none';
         ClearEditorSettings();
     }
     else
@@ -301,9 +307,10 @@ function GetCacheBox()
         let diagramArea = $('#diagram_area')[0];
         diagramArea.insertBefore(box, diagramArea.firstChild);
         */
-       box = document.getElementById('box');
-       box.style.display = 'inline-block';
+       box = document.getElementById('box');       
     }
+
+    box.style.display = 'inline-block';
 
     return box;
 }
@@ -328,14 +335,16 @@ function SetupAllEventTween()
     startIndicator = CreateNewIndicator(startIndicator, true);
     endIndicator = CreateNewIndicator(endIndicator, false);
 
-    SetImagePosition(startIndicator, foundEvent.startOffset.X, foundEvent.startOffset.Y);
-    SetImagePosition(endIndicator, foundEvent.endPosition.X, foundEvent.endPosition.Y);
+    let indicatorSize = PixelToPercent($('#diagram_area')[0], startIndicator.offsetWidth, startIndicator.offsetHeight );
+
+    SetImagePosition(startIndicator, foundEvent.startOffset.X  - (indicatorSize.X / 2.0), foundEvent.startOffset.Y - (indicatorSize.Y / 2.0));
+    SetImagePosition(endIndicator, foundEvent.endPosition.X  - (indicatorSize.X / 2.0), foundEvent.endPosition.Y - (indicatorSize.Y / 2.0));
 
     let startPosition = ObjectToPosition(startIndicator);
     let endPosition = ObjectToPosition(endIndicator);
 
-    const startCoords = {x: startPosition.X - (boxTransform.width / 2.0), y: startPosition.Y};
-    const endCoords = {x: endPosition.X - (boxTransform.width / 2.0), y: endPosition.Y};
+    const startCoords = {x: startPosition.X, y: startPosition.Y};
+    const endCoords = {x: endPosition.X, y: endPosition.Y};
     
     startIndicator.style.zIndex = -1;
     endIndicator.style.zIndex = -1;
@@ -344,7 +353,7 @@ function SetupAllEventTween()
         .to(endCoords, 2000) 
         .easing(TWEEN.Easing.Quadratic.InOut) // Use an easing function to make the animation smooth.
         .onUpdate(() => {
-            box.style.setProperty('transform', 'translate(' + startCoords.x + 'px, ' + startCoords.y + 'px)')
+            box.style.setProperty('transform', 'translate(' + (startCoords.x - (box.offsetWidth / 2.0)) + 'px, ' + (startCoords.y) + 'px)')
         })
         .onComplete(OnFinishTween)
         .start(); // Start the tween immediately.

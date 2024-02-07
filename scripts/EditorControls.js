@@ -71,18 +71,23 @@ function SelectEventRow(event)
 
     var foundEvent = globalEventCache.find( (ev) => ev.id == selectedID);
 
+    let diagram_area = document.getElementById('diagram_area');
+
     if(foundEvent.startOffset != null)
     {
         startIndicator = CreateNewIndicator(startIndicator, true);
-
-        SetImagePosition(startIndicator, foundEvent.startOffset.X, foundEvent.startOffset.Y);
+        
+        let indicatorSize = PixelToPercent(diagram_area, startIndicator.offsetWidth, startIndicator.offsetHeight );
+        SetImagePosition(startIndicator, foundEvent.startOffset.X - (indicatorSize.X / 2.0), foundEvent.startOffset.Y - (indicatorSize.Y / 2.0));
     }
 
     if(foundEvent.endPosition != null)
     {
         endIndicator = CreateNewIndicator(endIndicator, false);
 
-        SetImagePosition(endIndicator, foundEvent.endPosition.X, foundEvent.endPosition.Y);
+        let indicatorSize = PixelToPercent(diagram_area, endIndicator.offsetWidth, endIndicator.offsetHeight );
+
+        SetImagePosition(endIndicator, foundEvent.endPosition.X - (indicatorSize.X / 2.0), foundEvent.endPosition.Y - (indicatorSize.Y / 2.0));
     }
 }
 
@@ -145,6 +150,9 @@ function UpdatePathPreview()
 
     for(let i=0; i < globalEventCache.length; ++i)
     {
+        if(globalEventCache[i].startOffset == null || globalEventCache[i].endPosition == null)
+            continue;
+
         previewData.push( { start : globalEventCache[i].startOffset, end : globalEventCache[i].endPosition });
     }
 
