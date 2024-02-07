@@ -15,6 +15,8 @@ let selectedID = null;
 
 let assetList = [ new Asset(1, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTukEhbRDPETDiNMl5ZO8Lm3nQRSzPLnvdsPK30nTmMig&s') ];
 
+
+
 function IsOverlap( objectTransform, point)
 {
     return (point.X > objectTransform.X && point.X < objectTransform.X + objectTransform.width

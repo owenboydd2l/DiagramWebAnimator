@@ -1,8 +1,19 @@
 let isStreamlineMode = false;
 
-function ChangeStreamlineMode(isNewStreamlineMode)
+function ChangeStreamlineMode(in_isNewStreamlineMode)
 {
-    isStreamlineMode = isNewStreamlineMode;
+    isStreamlineMode = in_isNewStreamlineMode;
+
+    if(!isStreamlineMode)
+    {
+        let newList = [];
+
+        for(let i =0; i < globalEventCache.length - 1; ++i)
+            newList.push(globalEventCache[i]);
+
+        globalEventCache = newList;
+        UpdateEventList();
+    }
 }
 
 function AddAsset()
@@ -110,6 +121,9 @@ function UpdateEventList()
 
     globalEventCache.forEach(element => {
         
+        if(element == null || element === undefined)
+            return;
+
         var newTableRow = document.createElement("tr");
 
         if(element.id == selectedID)
