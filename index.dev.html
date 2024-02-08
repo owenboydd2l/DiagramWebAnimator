@@ -15,11 +15,12 @@
 		<script src="scripts/ShapeTransform.js"></script>
 		<script src="scripts/ProgressDisplay.js"></script>
 		
-
 		<script src="data/test01.js"></script>
 		<script src="scripts/DATA.js"></script>
 
 		<script src="scripts/EditorControls.js"></script>
+
+		<script src="scripts/UserControls.js"></script>
 		
 		<script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
 
@@ -55,7 +56,7 @@
 				</div>
 				<hr />
 				<input type='button' onclick='StartTween(RUNMODE_MULTIPLE)' value='Play All' />
-				<input type='button' onclick='StartTween(RUNMODE_SINGLE)' value='Play Event' />
+				<input type='button' onclick='PlaySingleFromEditor()' value='Play Event' />
 				<hr />
 				<input type='button' onclick='SetStart()' value='Set Start' />
 				<input type='button' onclick='SetEnd()' value='Set End' />

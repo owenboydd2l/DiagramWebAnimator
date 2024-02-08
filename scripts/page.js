@@ -141,9 +141,7 @@ function CreateDiagramControls()
     let controlArea = document.createElement('div');
     controlArea.classList.add('DiagramControlBar');
     
-    {
-
-        
+    {//main animation drop down        
         let ddlFlowAnimation = document.createElement('select');
         
         let emptyOption = document.createElement('option');
@@ -169,7 +167,7 @@ function CreateDiagramControls()
         controlArea.appendChild(ddlFlowAnimation);
     }
 
-    {
+    {//Event drop down        
         let ddlEventSteps = document.createElement('select');
         ddlEventSteps.id = 'ddl_event_steps';
 
@@ -179,38 +177,65 @@ function CreateDiagramControls()
         UpdateEventDropDown(ddlEventSteps);
     }
 
-    {
+    {//Play all
         let ddlPlayAll = document.createElement('input');
         ddlPlayAll.setAttribute('type', 'button');
-        ddlPlayAll.setAttribute('value', 'Play All Events');        
+        ddlPlayAll.setAttribute('value', 'Play All Events');
         ddlPlayAll.addEventListener('click', () => { StartTween(RUNMODE_MULTIPLE); } )
         controlArea.appendChild(ddlPlayAll);
     }
-    controlArea.appendChild(document.createElement('br'));
 
-    {
-        let ddlPlayAll = document.createElement('input');
-        ddlPlayAll.setAttribute('type', 'button');
-        ddlPlayAll.setAttribute('value', 'PREV');        
-        controlArea.appendChild(ddlPlayAll);
+    {//Loop
+        let ddLoop = document.createElement('input');
+        ddLoop.id = 'ddl_loop';
+        ddLoop.setAttribute('type', 'checkbox');
+        controlArea.appendChild(document.createTextNode('Loop:'));
+        controlArea.appendChild(ddLoop);
     }
 
-    {
+    {//Show Path
+        let ddShowPath = document.createElement('input');
+        ddShowPath.id = 'ddl_show_path';
+        ddShowPath.setAttribute('type', 'checkbox');
+        ddShowPath.addEventListener('click', ChangePathPreviewMode);
+        controlArea.appendChild(document.createTextNode('Show Path:'));
+        controlArea.appendChild(ddShowPath);
+    }
+
+    controlArea.appendChild(document.createElement('br'));
+
+    {//prev
+        let ddlPrev = document.createElement('input');
+        ddlPrev.setAttribute('type', 'button');
+        ddlPrev.setAttribute('value', 'PREV');        
+        ddlPrev.addEventListener('click', () => { ShiftEvent(-1); } )
+        controlArea.appendChild(ddlPrev);
+    }
+
+    {//play single
         let ddlPlayOne = document.createElement('input');
         ddlPlayOne.setAttribute('type', 'button');
         ddlPlayOne.setAttribute('value', 'Play Event');
         ddlPlayOne.addEventListener('click', () => { StartTween(RUNMODE_SINGLE); } )
         controlArea.appendChild(ddlPlayOne);
     }
+    {//play single
+        let ddlPause = document.createElement('input');
+        ddlPause.setAttribute('type', 'button');
+        ddlPause.setAttribute('value', '(Un)Pause');
+        ddlPause.addEventListener('click', () => { PauseActiveTween(); } )
+        controlArea.appendChild(ddlPause);
+    }
+
+    {//next
+        let ddlNext = document.createElement('input');
+        ddlNext.setAttribute('type', 'button');
+        ddlNext.setAttribute('value', 'NEXT');        
+        ddlNext.addEventListener('click', () => { ShiftEvent(1); } )
+        controlArea.appendChild(ddlNext);
+    }
 
     
-    
-    {
-        let ddlPlayAll = document.createElement('input');
-        ddlPlayAll.setAttribute('type', 'button');
-        ddlPlayAll.setAttribute('value', 'NEXT');        
-        controlArea.appendChild(ddlPlayAll);
-    }
 
     diagramArea.insertBefore(controlArea, diagramImage);
 }
@@ -225,12 +250,19 @@ function UpdateEventDropDown(ddlEventSteps = null)
 
     let emptyOption = document.createElement('option');
     emptyOption.text = '----';
-    ddlEventSteps.appendChild(emptyOption);
 
     let foundAnimation = loadedData.find( (an) => an.id == selectedAnimationID);
 
     if(!foundAnimation)
+    {
+        ddlEventSteps.appendChild(emptyOption);
         return;
+    }
+
+    if(foundAnimation.stages[0].flowEvents.length == 0)
+    {
+        ddlEventSteps.appendChild(emptyOption);
+    }
 
     foundAnimation.stages[0].flowEvents.forEach( (event) => {
 
@@ -328,6 +360,11 @@ function StartTween(newRunMode = RUNMODE_SINGLE)
 {
     runMODE = newRunMode;
 
+    if(runMODE == RUNMODE_SINGLE && selectedID == null)
+    {
+        selectedID = globalEventCache[0].id;
+    }
+
     let box = GetCacheBox();
     
     box.setAttribute('data-start-width', box.offsetWidth);
@@ -350,9 +387,40 @@ function ActivateImage(image)
 
 function OnFinishTween()
 {
-    runningEventIndex++;
+    let isCleanupTime = true;
 
-    if(runningEventIndex >= globalEventCache.length || runMODE == RUNMODE_SINGLE)
+    if(runMODE == RUNMODE_MULTIPLE)
+    {        
+        runningEventIndex++;
+    }
+
+    if($('#ddl_loop')[0].checked)
+    {
+        console.log('loop mode')
+        isCleanupTime = false;
+
+        if(runMODE == RUNMODE_MULTIPLE)
+        {
+            if(runningEventIndex >= globalEventCache.length)
+            {
+                runningEventIndex = 0;
+            }
+            
+        }
+        
+    }   
+    else
+    {
+        if(runMODE == RUNMODE_MULTIPLE)
+        {
+            if(runningEventIndex < globalEventCache.length)
+            {
+                isCleanupTime = false;
+            }
+        }
+    }
+
+    if(isCleanupTime)
     {
         console.log("Finished all tweens");
         let box = GetCacheBox()

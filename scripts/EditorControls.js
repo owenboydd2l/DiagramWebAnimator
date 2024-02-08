@@ -13,6 +13,11 @@ function ChangePathPreviewMode()
     UpdatePathPreview();
 }
 
+function PlaySingleFromEditor()
+{    
+    StartTween(RUNMODE_SINGLE);
+}
+
 function ChangeStreamlineMode(in_isNewStreamlineMode)
 {
     isStreamlineMode = in_isNewStreamlineMode;
@@ -116,8 +121,7 @@ function ClearEditorSettings()
     streamlineStage = STREAMLINESTAGE_START;
     isStreamlineMode = false;
     activateMode = NONE;
-    runningEventIndex = 0;
-    selectedID = 0;
+    runningEventIndex = 0;    
 }
 
 function CreateNewEvent(in_startOffset = null, in_endPosition = null)
