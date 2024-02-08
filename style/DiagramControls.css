@@ -3,4 +3,17 @@
     background-color: silver;
     border:1px solid black;
     height:50px;
+    text-align: center;
+}
+
+.DiagramControlBar select,
+.DiagramControlBar input
+{
+    margin-right:25px;
+}
+
+.playButtonBar
+{
+    width: 100%;
+    text-align:center;    
 }

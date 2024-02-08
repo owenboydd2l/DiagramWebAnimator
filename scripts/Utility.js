@@ -60,3 +60,13 @@ function SetImagePosition(image, x, y)
     image.style.top = (y * 100) + '%';
     
 }
+
+function PrintNiceTransform(x, y)
+{
+    return 'X: ' + RoundFloat(x) + '\nY: ' + RoundFloat(y); 
+}
+
+function RoundFloat(val)
+{
+    return Math.round(val * 100) / 100;
+}

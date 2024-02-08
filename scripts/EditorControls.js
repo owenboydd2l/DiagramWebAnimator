@@ -4,15 +4,6 @@ const STREAMLINESTAGE_END = 1;
 let streamlineStage = STREAMLINESTAGE_START;
 let isStreamlineMode = false;
 
-let pathPreviewMode = false; 
-
-function ChangePathPreviewMode()
-{
-    pathPreviewMode = !pathPreviewMode;
-
-    UpdatePathPreview();
-}
-
 function PlaySingleFromEditor()
 {    
     StartTween(RUNMODE_SINGLE);
@@ -53,13 +44,18 @@ function AddAsset()
 
 function UpdateAssetList()
 {
-    $('#assetTable').empty();
+    let assetTable = $('#assetTable');
+
+    if(assetTable.length == 0)
+        return; 
+
+    assetTable.empty();
 
     assetList.forEach(element => {
         var newImage = document.createElement('img');
         newImage.setAttribute('src', element.fileName);
         newImage.classList.add('previewImage');
-        $('#assetTable')[0].appendChild(newImage);
+        assetTable[0].appendChild(newImage);
     });
 }
 
@@ -178,7 +174,8 @@ function UpdatePathPreview()
 
 function UpdateEventList()
 {
-    $('#controlTable').empty();
+    let controlTable = $('#controlTable');
+    controlTable.empty();
 
     globalEventCache.forEach(element => {
         
@@ -239,7 +236,8 @@ function UpdateEventList()
                 AddCellToRow(newTableRow, [ transformIcon ]);
             }
 
-        $('#controlTable')[0].appendChild(newTableRow);
+        if(controlTable.length > 0)
+            controlTable[0].appendChild(newTableRow);
 
     });
 
@@ -292,15 +290,6 @@ function ChangeFlowEventTarget(id)
     
 }
 
-function PrintNiceTransform(x, y)
-{
-    return 'X: ' + RoundFloat(x) + '\nY: ' + RoundFloat(y); 
-}
-
-function RoundFloat(val)
-{
-    return Math.round(val * 100) / 100;
-}
 
 function CreateStreamlineEvent()
 {
