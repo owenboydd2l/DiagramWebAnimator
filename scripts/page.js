@@ -13,10 +13,7 @@ let globalEventCache = [];
 
 let selectedID = null;
 
-let assetList = [ new Asset(1, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTukEhbRDPETDiNMl5ZO8Lm3nQRSzPLnvdsPK30nTmMig&s'),
-    new Asset(2, 'images/136443.png'),
-    new Asset(3, 'images/1950399.webp') ];
-
+let progressBar = null;
 
 function ResizeDiagramCanvas()
 {
@@ -100,20 +97,64 @@ function PerformLocationCheck(event)
 
 }
 
-function SetupTimer()
+function SetupDiagramAnimator()
 {
     
     document.addEventListener('mousemove', (event) => {
         
-        PerformLocationCheck(event);   
+        PerformLocationCheck(event);
         
     });
     
+    
+    LoadSampleData();
 
     UpdateAssetList();
 
+    CreateDiagramControls();
+
     ResizeDiagramCanvas();
 
+}
+
+function LoadSampleData()
+{
+    for(let i=0; i != sampleData.length; ++i)
+    {
+        let data = sampleData[i];
+
+        loadedData.push( JSON.parse(data) );
+    }
+}
+
+function CreateDiagramControls()
+{
+    let diagramArea = $('#diagram_area')[0];
+
+    let diagramImage = $('#diagram_image')[0];
+
+    let controlArea = document.createElement('div');
+    controlArea.classList.add('DiagramControlBar');
+    
+    {
+        let ddlFlowAnimation = document.createElement('select');
+        
+        let emptyOption = document.createElement('option');
+        emptyOption.text = '----';
+        ddlFlowAnimation.appendChild(emptyOption);
+
+        loadedData.forEach( (data) => {
+
+            let newOption = document.createElement('option');
+            newOption.text = data.name;
+            ddlFlowAnimation.appendChild(newOption);
+        }
+        );
+        
+        controlArea.appendChild(ddlFlowAnimation);
+    }
+
+    diagramArea.insertBefore(controlArea, diagramImage);
 }
 
 
@@ -291,7 +332,7 @@ function FinishSingleEvent()
     progressBar.Hide();
 }
 
-let progressBar = null;
+
 
 function OnFinishTween()
 {

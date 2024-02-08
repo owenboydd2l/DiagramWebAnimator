@@ -2,75 +2,7 @@
 	<head>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/20.0.0/tween.umd.js"></script>
 		
-		<style>
-
-			.previewPath
-			{
-				position:absolute;
-				pointer-events: none;
-				width:20px;
-				height:5px;
-				background-color: black;
-			}
-
-			.box {
-				width: 100px;
-				height: 100px;
-				position:absolute;
-				filter: drop-shadow(0 0 5px red);
-				pointer-events:none;
-			}
-			
-			.indicator {
-				width: 50px;
-				height: 50px;
-				position:absolute;
-				pointer-events:none;
-				opacity: 0.5;
-			}
-
-			.floatingControls
-			{
-				position: fixed;
-				right:0;
-				top:0;
-				background-color: silver;
-				width:200px;
-				height:450px;				
-			}
-
-			.floatingControls td
-			{
-				border: 1px solid black;				
-			}
-
-			.previewImage
-			{
-				width:25px;
-			}
-
-			.locationData
-			{
-				font-size:x-small;
-			}
-
-			.smollAssetChanger
-			{
-				font-size:x-small;
-				width:5px;
-			}
-
-			.diagramCanvas
-			{
-				pointer-events: none; 
-				position:absolute;
-				left:0;
-				top:0;
-				
-			}
-
-		</style>
-
+		<script src="scripts/Utility.js"></script>
 		<script src="scripts/EntityID.js"></script>
 		<script src="scripts/OrderEntity.js"></script>
 
@@ -82,14 +14,21 @@
 		<script src="scripts/ProgressDisplay.js"></script>
 		<script src="scripts/Point.js"></script>
 
+		<script src="data/test01.js"></script>
+		<script src="scripts/DATA.js"></script>
+
 		<script src="scripts/EditorControls.js"></script>
-		
 		
 		<script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
 
 		<script type="text/javascript" src="scripts/page.js"></script>
+
+		<link rel="stylesheet" href="style/DiagramControls.css">
+		<link rel="stylesheet" href="style/DiagramAnimation.css">
+		<link rel="stylesheet" href="style/Editor.css">
+
 	</head>
-	<body style='background-color:grey' onload='SetupTimer()' onresize="ResizeDiagramCanvas()">
+	<body style='background-color:grey' onload='SetupDiagramAnimator()' onresize="ResizeDiagramCanvas()">
 		<div style="position:fixed; top:0;">
 			<div id='currentposition'></div>
 			<div id='imagePosition'></div>
@@ -127,6 +66,9 @@
 		<br />
 		Start: <span id='startData'></span><br />
 		End: <span id='endData'></span>
+		<hr />
 		
+		<textarea id="event_json" rows="50" cols ="100"></textarea>
+
 	</body>
 </html>
