@@ -234,6 +234,13 @@ function ObjectToPosition(image)
 
 function startTween()
 {
+    if(progressBar == null)
+    {
+        progressBar = new ProgressDisplay( $('#diagram_area')[0] );
+    }
+
+    progressBar.UpdateProgress(0);
+    progressBar.Redraw();
     
     ChangeStreamlineMode(false);
 
@@ -259,9 +266,15 @@ function startTween()
         .to(endCoords, 2000) 
         .easing(TWEEN.Easing.Quadratic.InOut) // Use an easing function to make the animation smooth.
         .onUpdate(() => {
+            
+            let progress = (startPosition.X - startCoords.x) / (startPosition.X - endCoords.x);
+            
+            progressBar.UpdateProgress(progress);
+            progressBar.Redraw();
+
             box.style.setProperty('transform', 'translate(' + (startCoords.x - (box.offsetWidth / 2.0)) + 'px, ' + startCoords.y + (box.offsetHeight / 2.0) + 'px)')
         })
-        .onComplete( () => { GetCacheBox().style.display = 'none'; } )
+        .onComplete( FinishSingleEvent )
         .start(); // Start the tween immediately.
 
     // Setup the animation loop.
@@ -272,7 +285,13 @@ function startTween()
     requestAnimationFrame(animate)
 }
 
+function FinishSingleEvent()
+{
+    GetCacheBox().style.display = 'none';
+    progressBar.Hide();
+}
 
+let progressBar = null;
 
 function OnFinishTween()
 {
@@ -285,6 +304,7 @@ function OnFinishTween()
         box.style.display = 'none';
         box.style.width = box.getAttribute('data-start-width');
         box.style.height = box.getAttribute('data-start-height');
+        progressBar.Hide();
         ClearEditorSettings();
     }
     else
@@ -334,6 +354,15 @@ function PlayAllEvents()
 
 function SetupAllEventTween()
 {
+
+    if(progressBar == null)
+    {
+        progressBar = new ProgressDisplay( $('#diagram_area')[0] );
+    }
+
+    progressBar.UpdateProgress(0);
+    progressBar.Redraw();
+
     let box = GetCacheBox();
 
     let boxTransform = TransformFromElement(box);
@@ -366,7 +395,10 @@ function SetupAllEventTween()
         .onUpdate(() => {
             
             
-            let progress = (startPosition.X - startCoords.x) / (startPosition.X - endCoords.x);            
+            let progress = (startPosition.X - startCoords.x) / (startPosition.X - endCoords.x);
+
+            progressBar.UpdateProgress(progress);
+            progressBar.Redraw();
 
             //let invertedParabolaVal = 4 * Math.pow(progress, 2) - (4/1 * progress) + 1;//secret knowledge O_o
             

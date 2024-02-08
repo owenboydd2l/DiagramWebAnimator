@@ -134,9 +134,13 @@ function CreateNewEvent(in_startOffset = null, in_endPosition = null)
         duration = 2000, 
         transformType = null);
 
-    globalEventCache.push(newEvent)
+    globalEventCache.push(newEvent);
+
+    selectedID = newEvent.id;
 
     UpdateEventList();
+
+    return newEvent;
 }
 
 function UpdatePathPreview()
@@ -286,7 +290,7 @@ function CreateStreamlineEvent()
     if(streamlineStage == STREAMLINESTAGE_START)
     {
         CreateNewEvent(cacheMousePosition, null );
-        selectedID = globalEventCache[globalEventCache.length - 1].id;
+
         streamlineStage = STREAMLINESTAGE_END;
     }
     else if (streamlineStage == STREAMLINESTAGE_END)
@@ -298,7 +302,7 @@ function CreateStreamlineEvent()
             foundEvent.endPosition = cacheMousePosition;
 
             CreateNewEvent(cacheMousePosition, null );
-            selectedID = globalEventCache[globalEventCache.length - 1].id;
+            
         }
         else
         {
