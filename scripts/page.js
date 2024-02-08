@@ -17,6 +17,8 @@ let progressBar = null;
 
 let selectedAnimationID = null;
 
+let activeTween = null;
+
 function ResizeDiagramCanvas()
 {
     let diagramCanvas = $('#diagram_canvas')[0];
@@ -176,19 +178,36 @@ function CreateDiagramControls()
         UpdateEventDropDown(ddlEventSteps);
     }
 
-    
-
-    {
-        let ddlPlayOne = document.createElement('input');
-        ddlPlayOne.setAttribute('type', 'button');
-        ddlPlayOne.setAttribute('value', 'Play Event');        
-        controlArea.appendChild(ddlPlayOne);
-    }
-
     {
         let ddlPlayAll = document.createElement('input');
         ddlPlayAll.setAttribute('type', 'button');
         ddlPlayAll.setAttribute('value', 'Play All Events');        
+        ddlPlayAll.addEventListener('click', () => { StartTween(RUNMODE_MULTIPLE); } )
+        controlArea.appendChild(ddlPlayAll);
+    }
+    controlArea.appendChild(document.createElement('br'));
+
+    {
+        let ddlPlayAll = document.createElement('input');
+        ddlPlayAll.setAttribute('type', 'button');
+        ddlPlayAll.setAttribute('value', 'PREV');        
+        controlArea.appendChild(ddlPlayAll);
+    }
+
+    {
+        let ddlPlayOne = document.createElement('input');
+        ddlPlayOne.setAttribute('type', 'button');
+        ddlPlayOne.setAttribute('value', 'Play Event');
+        ddlPlayOne.addEventListener('click', () => { StartTween(RUNMODE_SINGLE); } )
+        controlArea.appendChild(ddlPlayOne);
+    }
+
+    
+    
+    {
+        let ddlPlayAll = document.createElement('input');
+        ddlPlayAll.setAttribute('type', 'button');
+        ddlPlayAll.setAttribute('value', 'NEXT');        
         controlArea.appendChild(ddlPlayAll);
     }
 
@@ -216,10 +235,21 @@ function UpdateEventDropDown(ddlEventSteps = null)
 
         let newOption = document.createElement('option');
         newOption.text = event.orderID;
+        newOption.value = event.id;
         ddlEventSteps.appendChild(newOption);
     }
     );
+
+    ddlEventSteps.addEventListener('change', () => { 
+        selectedID = $('#ddl_event_steps')[0].value;         
+    } );
     
+    
+    globalEventCache = foundAnimation.stages[0].flowEvents;
+
+    assetList = foundAnimation.assets;
+
+    UpdateEventList();
     
 }
 
@@ -308,6 +338,19 @@ function PerformSingleEventStep()
     activateMode = NONE;    
 }
 
+function StartTween(newRunMode = RUNMODE_SINGLE)
+{
+    runMODE = newRunMode;
+
+    let box = GetCacheBox();
+    
+    box.setAttribute('data-start-width', box.offsetWidth);
+    box.setAttribute('data-start-height', box.offsetHeight);
+
+    ChangeStreamlineMode(false);
+
+    SetupAllEventTween();
+}
 
 
 function ActivateImage(image)
@@ -337,72 +380,11 @@ function ObjectToPosition(image)
         y = image.offsetTop - (image.offsetHeight / 2.0));
 }
 
-function startTween()
-{
-    if(progressBar == null)
-    {
-        progressBar = new ProgressDisplay( $('#diagram_area')[0] );
-    }
-
-    progressBar.UpdateProgress(0);
-    progressBar.Redraw();
-    
-    ChangeStreamlineMode(false);
-
-    let box = GetCacheBox();
-
-    var foundEvent = globalEventCache.find( (ev) => ev.id == selectedID );
-
-    if(foundEvent == null || foundEvent === undefined)
-        return;
-
-    box.setAttribute('src', assetList.find( 
-        (a) => a.id == foundEvent.target).fileName);
-
-    let boxTransform = TransformFromElement(box);
-
-    let startPosition = ObjectToPosition(startIndicator);
-    let endPosition = ObjectToPosition(endIndicator);
-
-    const startCoords = {x: startPosition.x, y: startPosition.y};
-    const endCoords = {x: endPosition.x, y: endPosition.y};
-
-    const tween = new TWEEN.Tween(startCoords, false) // Create a new tween that modifies 'coords'.
-        .to(endCoords, 2000) 
-        .easing(TWEEN.Easing.Quadratic.InOut) // Use an easing function to make the animation smooth.
-        .onUpdate(() => {
-            
-            let progress = PositionToProgress(startPosition, startCoords, endCoords);
-            
-            progressBar.UpdateProgress(progress);
-            progressBar.Redraw();
-
-            box.style.setProperty('transform', 'translate(' + (startCoords.x - (box.offsetWidth / 2.0)) + 'px, ' + startCoords.y + (box.offsetHeight / 2.0) + 'px)')
-        })
-        .onComplete( FinishSingleEvent )
-        .start(); // Start the tween immediately.
-
-    // Setup the animation loop.
-    function animate(time) {
-        tween.update(time)
-        requestAnimationFrame(animate)
-    }
-    requestAnimationFrame(animate)
-}
-
-function FinishSingleEvent()
-{
-    GetCacheBox().style.display = 'none';
-    progressBar.Hide();
-}
-
-
-
 function OnFinishTween()
 {
     runningEventIndex++;
 
-    if(runningEventIndex >= globalEventCache.length)
+    if(runningEventIndex >= globalEventCache.length || runMODE == RUNMODE_SINGLE)
     {
         console.log("Finished all tweens");
         let box = GetCacheBox()
@@ -420,6 +402,12 @@ function OnFinishTween()
 }
 
 let box = null;
+
+
+const RUNMODE_SINGLE = 0;
+const RUNMODE_MULTIPLE = 1;
+
+let runMODE = RUNMODE_SINGLE;
 
 function GetCacheBox()
 {
@@ -446,17 +434,6 @@ function GetCacheBox()
     return box;
 }
 
-function PlayAllEvents()
-{
-    let box = GetCacheBox();
-    
-    box.setAttribute('data-start-width', box.offsetWidth);
-    box.setAttribute('data-start-height', box.offsetHeight);
-
-    ChangeStreamlineMode(false);
-    SetupAllEventTween();
-}
-
 function SetupAllEventTween()
 {
 
@@ -472,8 +449,18 @@ function SetupAllEventTween()
 
     let boxTransform = TransformFromElement(box);
 
-    let foundEvent = globalEventCache[runningEventIndex];
+    let isSingleMode = (runMODE == RUNMODE_SINGLE);
+    let foundEvent = null;
+    
+    if(isSingleMode)
+        foundEvent = globalEventCache.find( (ev) => ev.id == selectedID);
+    else
+        foundEvent = globalEventCache[runningEventIndex];
 
+    if(!foundEvent)
+    {
+        console.error( runMODE + ' EVENT NOT FOUND ' + (isSingleMode ? selectedID : runningEventIndex));
+    }
     box.setAttribute('src', assetList.find( 
         (a) => a.id == foundEvent.target).fileName);
 
@@ -491,10 +478,13 @@ function SetupAllEventTween()
     const startCoords = {x: startPosition.x, y: startPosition.y};
     const endCoords = {x: endPosition.x, y: endPosition.y};
     
-    startIndicator.style.zIndex = -1;
-    endIndicator.style.zIndex = -1;
+    if(isSingleMode)
+    {
+        startIndicator.style.zIndex = -1;
+        endIndicator.style.zIndex = -1;
+    }
 
-    const tween = new TWEEN.Tween(startCoords, false) // Create a new tween that modifies 'coords'.
+    activeTween = new TWEEN.Tween(startCoords, false) // Create a new tween that modifies 'coords'.
         .to(endCoords, 3000) 
         .easing(TWEEN.Easing.Quadratic.InOut) // Use an easing function to make the animation smooth.
         .onUpdate(() => {
@@ -529,15 +519,13 @@ function SetupAllEventTween()
 
     // Setup the animation loop.
     function animate(time) {
-        tween.update(time)
+        activeTween.update(time)
         requestAnimationFrame(animate)
     }
     requestAnimationFrame(animate)
 }
 
-function lerp( a, b, alpha ) {
-    return a + alpha * ( b - a );
-}
+
 
 function PositionToProgress(start, current, end)
 {

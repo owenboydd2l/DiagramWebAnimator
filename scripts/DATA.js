@@ -7,7 +7,7 @@ const transformList =
 ];
 
 
-const assetList = 
+let assetList = 
 [ 
     new Asset(1, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTukEhbRDPETDiNMl5ZO8Lm3nQRSzPLnvdsPK30nTmMig&s'),
     new Asset(2, 'images/136443.png'),

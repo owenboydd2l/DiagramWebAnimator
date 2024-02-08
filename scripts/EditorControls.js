@@ -6,7 +6,6 @@ let isStreamlineMode = false;
 
 let pathPreviewMode = false; 
 
-
 function ChangePathPreviewMode()
 {
     pathPreviewMode = !pathPreviewMode;
@@ -17,6 +16,9 @@ function ChangePathPreviewMode()
 function ChangeStreamlineMode(in_isNewStreamlineMode)
 {
     isStreamlineMode = in_isNewStreamlineMode;
+
+    if(globalEventCache.length == 0)
+        return;
 
     if(!isStreamlineMode)
     {
@@ -60,7 +62,7 @@ function UpdateAssetList()
 function SelectEventRow(event)
 {
     ClearEditorSettings();
-    selectedID = event.id;   
+    selectedID = event.id;
     
     UpdateEventList();
 
@@ -122,7 +124,7 @@ function CreateNewEvent(in_startOffset = null, in_endPosition = null)
 {
     
     let newEvent = new FlowEvent( id = uuidv4(), 
-        orderID = globalEventCache.length, 
+        orderID = globalEventCache.length == 0 ? 1 : globalEventCache.reduce((max, event) => max.orderID > event.orderID ? max : event).orderID + 1, 
         target = 1, 
         endPosition = in_endPosition, 
         startOffset =  in_startOffset, 
