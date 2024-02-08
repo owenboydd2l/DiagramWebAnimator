@@ -2,6 +2,8 @@
 	<head>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/20.0.0/tween.umd.js"></script>
 		
+		<script src="scripts/Point.js"></script>
+
 		<script src="scripts/Utility.js"></script>
 		<script src="scripts/EntityID.js"></script>
 		<script src="scripts/OrderEntity.js"></script>
@@ -12,7 +14,7 @@
 		<script src="scripts/Asset.js"></script>
 		<script src="scripts/ShapeTransform.js"></script>
 		<script src="scripts/ProgressDisplay.js"></script>
-		<script src="scripts/Point.js"></script>
+		
 
 		<script src="data/test01.js"></script>
 		<script src="scripts/DATA.js"></script>
@@ -35,7 +37,7 @@
 			<div id='isOverArea'></div>
 			<div id='pageScrollTop'></div>
 		</div>
-		<div id='diagram_area' style="width: 75%; margin-left:50px;margin-top: 100px; position:relative;">
+		<div id='diagram_area'>
 			<img id="box" class="box" style="display:none;" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTukEhbRDPETDiNMl5ZO8Lm3nQRSzPLnvdsPK30nTmMig&s" />			
 			<canvas id="diagram_canvas" class="diagramCanvas"></canvas>
 			<img id='diagram_image' src='images/Blank diagram.png' onclick='ActivateImage(this)' style='width: 100%' />			

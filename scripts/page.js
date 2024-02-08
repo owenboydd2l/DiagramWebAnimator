@@ -19,6 +19,14 @@ let selectedAnimationID = null;
 
 let activeTween = null;
 
+let box = null;
+
+
+const RUNMODE_SINGLE = 0;
+const RUNMODE_MULTIPLE = 1;
+
+let runMODE = RUNMODE_SINGLE;
+
 function ResizeDiagramCanvas()
 {
     let diagramCanvas = $('#diagram_canvas')[0];
@@ -29,13 +37,6 @@ function ResizeDiagramCanvas()
     UpdatePathPreview();
 }
 
-
-function IsOverlap( objectTransform, point)
-{
-    return (point.x > objectTransform.x && point.x < objectTransform.x + objectTransform.width
-        &&
-        point.y > objectTransform.y && point.y < objectTransform.y + objectTransform.height);					
-}
 
 function PerformLocationCheck(event)
 {
@@ -253,21 +254,6 @@ function UpdateEventDropDown(ddlEventSteps = null)
     
 }
 
-function TransformFromElement(targetElement)
-{
-    let data =
-        { 
-            'x': targetElement.offsetLeft, 
-            'y': targetElement.offsetTop,
-            'width' : targetElement.offsetWidth,
-            'height' : targetElement.offsetHeight						
-        };
-        
-    return data;
-}
-
-
-
 function SetStart()
 {
     activateMode = STARTMODE;
@@ -362,24 +348,6 @@ function ActivateImage(image)
     
 }
 
-function PixelToPercent(image, x, y)
-{
-    return new Point(x = x / image.offsetWidth, y = Math.abs(y) / image.offsetHeight);
-}
-
-function SetImagePosition(image, x, y)
-{
-    image.style.left = (x * 100) + '%';
-    image.style.top = (y * 100) + '%';
-    
-}
-
-function ObjectToPosition(image)
-{
-    return new Point( x = image.offsetLeft + (image.offsetWidth / 2.0),
-        y = image.offsetTop - (image.offsetHeight / 2.0));
-}
-
 function OnFinishTween()
 {
     runningEventIndex++;
@@ -401,13 +369,7 @@ function OnFinishTween()
     }
 }
 
-let box = null;
 
-
-const RUNMODE_SINGLE = 0;
-const RUNMODE_MULTIPLE = 1;
-
-let runMODE = RUNMODE_SINGLE;
 
 function GetCacheBox()
 {
@@ -460,7 +422,9 @@ function SetupAllEventTween()
     if(!foundEvent)
     {
         console.error( runMODE + ' EVENT NOT FOUND ' + (isSingleMode ? selectedID : runningEventIndex));
+        return;
     }
+
     box.setAttribute('src', assetList.find( 
         (a) => a.id == foundEvent.target).fileName);
 
@@ -525,16 +489,3 @@ function SetupAllEventTween()
     requestAnimationFrame(animate)
 }
 
-
-
-function PositionToProgress(start, current, end)
-{
-    if( start.x != end.x)
-    {
-        return (start.x - current.x) / (start.x - end.x);
-    }
-    else
-    {
-        return (start.y - current.y) / (start.y - end.y);
-    }
-}
