@@ -31,9 +31,9 @@ function ResizeDiagramCanvas()
 
 function IsOverlap( objectTransform, point)
 {
-    return (point.X > objectTransform.X && point.X < objectTransform.X + objectTransform.width
+    return (point.x > objectTransform.x && point.x < objectTransform.x + objectTransform.width
         &&
-        point.Y > objectTransform.Y && point.Y < objectTransform.Y + objectTransform.height);					
+        point.y > objectTransform.y && point.y < objectTransform.y + objectTransform.height);					
 }
 
 function PerformLocationCheck(event)
@@ -46,8 +46,8 @@ function PerformLocationCheck(event)
     
     let diagramTransform = TransformFromElement(diagram_area);
     
-    let mousePosition = { 'X' : event.clientX, 
-        'Y' : event.clientY + document.body.scrollTop};
+    let mousePosition = new Point(x = event.clientX, 
+        y = event.clientY + document.body.scrollTop);
     
     document.getElementById('imagePosition').innerHTML = JSON.stringify(diagramTransform);
     
@@ -56,9 +56,9 @@ function PerformLocationCheck(event)
         
         $('#isOverArea').text('YES');
 
-        let clickPosition = ViewToImagePosition(mousePosition.X, mousePosition.Y);        
+        let clickPosition = ViewToImagePosition(mousePosition.x, mousePosition.y);
         
-        cacheMousePosition = PixelToPercent(diagram_area, clickPosition.X, clickPosition.Y);
+        cacheMousePosition = PixelToPercent(diagram_area, clickPosition.x, clickPosition.y);
     
         if(activateMode == NONE)
             return;
@@ -82,13 +82,13 @@ function PerformLocationCheck(event)
             targetIndicator = endIndicator;
         }
 
-        let relativeClickPosition = { 'X' : clickPosition.X - (targetIndicator.offsetWidth / 2.0), 'Y': clickPosition.Y - (targetIndicator.offsetHeight / 2.0) };
+        let relativeClickPosition = new Point(x = clickPosition.x - (targetIndicator.offsetWidth / 2.0), y = clickPosition.y - (targetIndicator.offsetHeight / 2.0));
         
-        let percentPosition = PixelToPercent(diagram_area, relativeClickPosition.X, relativeClickPosition.Y);
+        let percentPosition = PixelToPercent(diagram_area, relativeClickPosition.x, relativeClickPosition.y);
 
         targetElement.innerText = JSON.stringify( percentPosition);
 
-        SetImagePosition( targetIndicator, percentPosition.X, percentPosition.Y );
+        SetImagePosition( targetIndicator, percentPosition.x, percentPosition.y );
         
         
         
@@ -122,8 +122,8 @@ function TransformFromElement(targetElement)
 {
     let data =
         { 
-            'X': targetElement.offsetLeft, 
-            'Y': targetElement.offsetTop,
+            'x': targetElement.offsetLeft, 
+            'y': targetElement.offsetTop,
             'width' : targetElement.offsetWidth,
             'height' : targetElement.offsetHeight						
         };
@@ -152,7 +152,7 @@ function ViewToImagePosition(clientX, clientY)
     let offsetTop = diagram_image.offsetTop;
     let offsetLeft = diagram_image.offsetLeft;
     
-    return { 'X' : (clientX - offsetLeft), 'Y' : (clientY - offsetTop) };
+    return new Point( x = (clientX - offsetLeft), y = (clientY - offsetTop));
 }
 
 function CreateNewIndicator(indicatorElement, isStart = false)
@@ -216,7 +216,7 @@ function ActivateImage(image)
 
 function PixelToPercent(image, x, y)
 {
-    return { 'X' :  x / image.offsetWidth, 'Y' : Math.abs(y) / image.offsetHeight };
+    return new Point(x = x / image.offsetWidth, y = Math.abs(y) / image.offsetHeight);
 }
 
 function SetImagePosition(image, x, y)
@@ -228,8 +228,8 @@ function SetImagePosition(image, x, y)
 
 function ObjectToPosition(image)
 {
-    return { 'X' : image.offsetLeft + (image.offsetWidth / 2.0),
-        'Y' : image.offsetTop - (image.offsetHeight / 2.0) };
+    return new Point( x = image.offsetLeft + (image.offsetWidth / 2.0),
+        y = image.offsetTop - (image.offsetHeight / 2.0));
 }
 
 function startTween()
@@ -259,15 +259,15 @@ function startTween()
     let startPosition = ObjectToPosition(startIndicator);
     let endPosition = ObjectToPosition(endIndicator);
 
-    const startCoords = {x: startPosition.X, y: startPosition.Y};
-    const endCoords = {x: endPosition.X, y: endPosition.Y};
+    const startCoords = {x: startPosition.x, y: startPosition.y};
+    const endCoords = {x: endPosition.x, y: endPosition.y};
 
     const tween = new TWEEN.Tween(startCoords, false) // Create a new tween that modifies 'coords'.
         .to(endCoords, 2000) 
         .easing(TWEEN.Easing.Quadratic.InOut) // Use an easing function to make the animation smooth.
         .onUpdate(() => {
             
-            let progress = (startPosition.X - startCoords.x) / (startPosition.X - endCoords.x);
+            let progress = PositionToProgress(startPosition, startCoords, endCoords);
             
             progressBar.UpdateProgress(progress);
             progressBar.Redraw();
@@ -377,14 +377,14 @@ function SetupAllEventTween()
 
     let indicatorSize = PixelToPercent($('#diagram_area')[0], startIndicator.offsetWidth, startIndicator.offsetHeight );
 
-    SetImagePosition(startIndicator, foundEvent.startOffset.X  - (indicatorSize.X / 2.0), foundEvent.startOffset.Y - (indicatorSize.Y / 2.0));
-    SetImagePosition(endIndicator, foundEvent.endPosition.X  - (indicatorSize.X / 2.0), foundEvent.endPosition.Y - (indicatorSize.Y / 2.0));
+    SetImagePosition(startIndicator, foundEvent.startOffset.x  - (indicatorSize.x / 2.0), foundEvent.startOffset.y - (indicatorSize.y / 2.0));
+    SetImagePosition(endIndicator, foundEvent.endPosition.x  - (indicatorSize.x / 2.0), foundEvent.endPosition.y - (indicatorSize.y / 2.0));
 
     let startPosition = ObjectToPosition(startIndicator);
     let endPosition = ObjectToPosition(endIndicator);
 
-    const startCoords = {x: startPosition.X, y: startPosition.Y};
-    const endCoords = {x: endPosition.X, y: endPosition.Y};
+    const startCoords = {x: startPosition.x, y: startPosition.y};
+    const endCoords = {x: endPosition.x, y: endPosition.y};
     
     startIndicator.style.zIndex = -1;
     endIndicator.style.zIndex = -1;
@@ -395,7 +395,7 @@ function SetupAllEventTween()
         .onUpdate(() => {
             
             
-            let progress = (startPosition.X - startCoords.x) / (startPosition.X - endCoords.x);
+            let progress = PositionToProgress(startPosition, startCoords, endCoords);
 
             progressBar.UpdateProgress(progress);
             progressBar.Redraw();
@@ -432,4 +432,16 @@ function SetupAllEventTween()
 
 function lerp( a, b, alpha ) {
     return a + alpha * ( b - a );
-   }
+}
+
+function PositionToProgress(start, current, end)
+{
+    if( start.x != end.x)
+    {
+        return (start.x - current.x) / (start.x - end.x);
+    }
+    else
+    {
+        return (start.y - current.y) / (start.y - end.y);
+    }
+}

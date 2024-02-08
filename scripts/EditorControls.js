@@ -78,7 +78,7 @@ function SelectEventRow(event)
         startIndicator = CreateNewIndicator(startIndicator, true);
         
         let indicatorSize = PixelToPercent(diagram_area, startIndicator.offsetWidth, startIndicator.offsetHeight );
-        SetImagePosition(startIndicator, foundEvent.startOffset.X - (indicatorSize.X / 2.0), foundEvent.startOffset.Y - (indicatorSize.Y / 2.0));
+        SetImagePosition(startIndicator, foundEvent.startOffset.x - (indicatorSize.x / 2.0), foundEvent.startOffset.y - (indicatorSize.y / 2.0));
     }
 
     if(foundEvent.endPosition != null)
@@ -87,7 +87,7 @@ function SelectEventRow(event)
 
         let indicatorSize = PixelToPercent(diagram_area, endIndicator.offsetWidth, endIndicator.offsetHeight );
 
-        SetImagePosition(endIndicator, foundEvent.endPosition.X - (indicatorSize.X / 2.0), foundEvent.endPosition.Y - (indicatorSize.Y / 2.0));
+        SetImagePosition(endIndicator, foundEvent.endPosition.x - (indicatorSize.x / 2.0), foundEvent.endPosition.y - (indicatorSize.y / 2.0));
     }
 }
 
@@ -167,8 +167,8 @@ function UpdatePathPreview()
     for(let j=0; j < previewData.length; ++j)
     {
         canvasContext.beginPath(); 
-        canvasContext.moveTo( previewData[j].start.X * diagramArea.offsetWidth, previewData[j].start.Y * diagramArea.offsetHeight);
-        canvasContext.lineTo( previewData[j].end.X * diagramArea.offsetWidth, previewData[j].end.Y * diagramArea.offsetHeight);
+        canvasContext.moveTo( previewData[j].start.x * diagramArea.offsetWidth, previewData[j].start.y * diagramArea.offsetHeight);
+        canvasContext.lineTo( previewData[j].end.x * diagramArea.offsetWidth, previewData[j].end.y * diagramArea.offsetHeight);
         canvasContext.strokeStyle = "red";
         canvasContext.stroke();
     }    
@@ -213,12 +213,12 @@ function UpdateEventList()
         
 
         if(element.startOffset != null)
-            AddTextCellToRow(newTableRow, PrintNiceTransform(element.startOffset.X, element.startOffset.Y), "locationData");
+            AddTextCellToRow(newTableRow, PrintNiceTransform(element.startOffset.x, element.startOffset.y), "locationData");
         else
             AddTextCellToRow(newTableRow, "");
 
         if(element.endPosition != null)
-            AddTextCellToRow(newTableRow, PrintNiceTransform(element.endPosition.X,element.endPosition.Y), "locationData");
+            AddTextCellToRow(newTableRow, PrintNiceTransform(element.endPosition.x,element.endPosition.y), "locationData");
         else
             AddTextCellToRow(newTableRow,"");
 

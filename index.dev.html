@@ -36,7 +36,7 @@
 				top:0;
 				background-color: silver;
 				width:200px;
-				height:400px;
+				height:450px;				
 			}
 
 			.floatingControls td
@@ -80,6 +80,7 @@
 		<script src="scripts/Asset.js"></script>
 		<script src="scripts/ShapeTransform.js"></script>
 		<script src="scripts/ProgressDisplay.js"></script>
+		<script src="scripts/Point.js"></script>
 
 		<script src="scripts/EditorControls.js"></script>
 		
@@ -107,19 +108,19 @@
 					</table>
 				</div>
 				<input type="button" value="New Event" onclick="CreateNewEvent()" />
-				<br />
+				<hr />
 				<input type="textbox" id="txtNewAssetPath" /> <input type="button" value="New Asset" onclick="AddAsset()" />
 				<div id="assetTable">
-
 				</div>
-
+				<hr />
 				<input type='button' onclick='PlayAllEvents()' value='Play All' />
-				<input type='button' onclick='startTween()' value='Play Event' /><br />
+				<input type='button' onclick='startTween()' value='Play Event' />
+				<hr />
 				<input type='button' onclick='SetStart()' value='Set Start' />
 				<input type='button' onclick='SetEnd()' value='Set End' />
-				
-				<br >
+				<hr />
 				<input type='button' onclick='ChangeStreamlineMode(!isStreamlineMode)' value='Streamline Mode' />
+				<hr />
 				<input type='button' onclick='ChangePathPreviewMode()' value='Path Preview' />
 		</div>
 		
