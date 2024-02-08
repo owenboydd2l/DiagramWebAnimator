@@ -15,6 +15,8 @@ let selectedID = null;
 
 let progressBar = null;
 
+let selectedAnimationID = null;
+
 function ResizeDiagramCanvas()
 {
     let diagramCanvas = $('#diagram_canvas')[0];
@@ -137,6 +139,8 @@ function CreateDiagramControls()
     controlArea.classList.add('DiagramControlBar');
     
     {
+
+        
         let ddlFlowAnimation = document.createElement('select');
         
         let emptyOption = document.createElement('option');
@@ -147,17 +151,77 @@ function CreateDiagramControls()
 
             let newOption = document.createElement('option');
             newOption.text = data.name;
+            newOption.value = data.id;
             ddlFlowAnimation.appendChild(newOption);
         }
         );
+
+        ddlFlowAnimation.addEventListener('change', () => 
+            {
+                selectedAnimationID = ddlFlowAnimation.value;
+                UpdateEventDropDown(); 
+            });
         
+        controlArea.appendChild(document.createTextNode("Animation: ") );
         controlArea.appendChild(ddlFlowAnimation);
+    }
+
+    {
+        let ddlEventSteps = document.createElement('select');
+        ddlEventSteps.id = 'ddl_event_steps';
+
+        controlArea.appendChild(document.createTextNode("Event: ") );
+        controlArea.appendChild(ddlEventSteps);
+        
+        UpdateEventDropDown(ddlEventSteps);
+    }
+
+    
+
+    {
+        let ddlPlayOne = document.createElement('input');
+        ddlPlayOne.setAttribute('type', 'button');
+        ddlPlayOne.setAttribute('value', 'Play Event');        
+        controlArea.appendChild(ddlPlayOne);
+    }
+
+    {
+        let ddlPlayAll = document.createElement('input');
+        ddlPlayAll.setAttribute('type', 'button');
+        ddlPlayAll.setAttribute('value', 'Play All Events');        
+        controlArea.appendChild(ddlPlayAll);
     }
 
     diagramArea.insertBefore(controlArea, diagramImage);
 }
 
+function UpdateEventDropDown(ddlEventSteps = null)
+{
 
+    if(ddlEventSteps == null)
+        ddlEventSteps = $('#ddl_event_steps')[0];
+
+    $(ddlEventSteps).empty();
+
+    let emptyOption = document.createElement('option');
+    emptyOption.text = '----';
+    ddlEventSteps.appendChild(emptyOption);
+
+    let foundAnimation = loadedData.find( (an) => an.id == selectedAnimationID);
+
+    if(!foundAnimation)
+        return;
+
+    foundAnimation.stages[0].flowEvents.forEach( (event) => {
+
+        let newOption = document.createElement('option');
+        newOption.text = event.orderID;
+        ddlEventSteps.appendChild(newOption);
+    }
+    );
+    
+    
+}
 
 function TransformFromElement(targetElement)
 {
