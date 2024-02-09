@@ -15,8 +15,8 @@
 		<script src="scripts/ShapeTransform.js"></script>
 		<script src="scripts/ProgressDisplay.js"></script>
 		
-		<script src="data/test01.js"></script>
-		<script src="data/DATA.js"></script>
+		
+		<script src="data/Migration.DATA.js"></script>
 
 		<script src="scripts/EditorControls.js"></script>
 
@@ -43,47 +43,13 @@
 		</script>
 
 	</head>
-	<body style='background-color:grey'>
-		<div style="position:fixed; top:0;">
-			<div id='currentposition'></div>
-			<div id='imagePosition'></div>
-			<div id='isOverArea'></div>
-			<div id='pageScrollTop'></div>
-		</div>
+	<body style="margin-left:50px;margin-top:50px;">
+
 		<div id='diagram_area'>
 			<img id="box" class="box" style="display:none;" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTukEhbRDPETDiNMl5ZO8Lm3nQRSzPLnvdsPK30nTmMig&s" />			
 			<canvas id="diagram_canvas" class="diagramCanvas"></canvas>
-			<img id='diagram_image' src='images/Blank diagram.png' onclick='ActivateImage(this)' style='width: 100%' />			
-		</div>
-		<div class="floatingControls">
-				
-				<div style="height:150px;overflow:auto;">
-					<table id="controlTable">
-					</table>
-				</div>
-				<input type="button" value="New Event" onclick="CreateNewEvent()" />
-				<hr />
-				<input type="textbox" id="txtNewAssetPath" /> <input type="button" value="New Asset" onclick="AddAsset()" />
-				<div id="assetTable">
-				</div>
-				<hr />
-				<input type='button' onclick='StartTween(RUNMODE_MULTIPLE)' value='Play All' />
-				<input type='button' onclick='PlaySingleFromEditor()' value='Play Event' />
-				<hr />
-				<input type='button' onclick='SetStart()' value='Set Start' />
-				<input type='button' onclick='SetEnd()' value='Set End' />
-				<hr />
-				<input type='button' onclick='ChangeStreamlineMode(!isStreamlineMode)' value='Streamline Mode' />
-				<hr />
-				<input type='button' onclick='ChangePathPreviewMode()' value='Path Preview' />
-		</div>
-		
-		<br />
-		Start: <span id='startData'></span><br />
-		End: <span id='endData'></span>
-		<hr />
-		
-		<textarea id="event_json" rows="50" cols ="100"></textarea>
+			<img id='diagram_image' src='images/MAJ-11 - Legacy Migration Flow.png' onclick='ActivateImage(this)' style='width: 100%' />			
+		</div>	
 
 	</body>
 </html>
