@@ -13,8 +13,6 @@ let globalEventCache = [];
 
 let selectedID = null;
 
-let progressBar = null;
-
 let selectedAnimationID = null;
 
 let tweenList = [];
@@ -277,7 +275,7 @@ function OnFinishTween(targetArea)
         box.style.display = 'none';
         box.style.width = box.getAttribute('data-start-width');
         box.style.height = box.getAttribute('data-start-height');
-        progressBar.Hide();
+        
         ClearEditorSettings();
 
         let animationRequestID = targetArea.getAttribute("data-animation-id");
@@ -303,10 +301,7 @@ function GetCacheBox(targetArea)
 function SetupAllEventTween(targetArea)
 {
 
-    if(progressBar == null)
-    {
-        progressBar = new ProgressDisplay( $(targetArea)[0] );
-    }
+    let progressBar = new ProgressDisplay( $(targetArea)[0] );
 
     progressBar.UpdateProgress(0);
     progressBar.Redraw();

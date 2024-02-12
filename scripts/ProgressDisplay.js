@@ -6,9 +6,24 @@ class ProgressDisplay
     {
         this.progress = 0;       
 
-        this.loadingControl = this.CreateProgressBar();
+        let existingProgressBar = null;
+        
+        for(let i=0; i != target.children.length && existingProgressBar == null; ++i)
+            if(target.children[i].id == 'diagram-animator-progress')
+                existingProgressBar = target.children[i];
 
-        target.appendChild(this.loadingControl);
+        if(existingProgressBar == null)
+        {
+            console.log('new progress bar created');
+            this.loadingControl = this.CreateProgressBar();
+
+            if(this.loadingControl.parentElement != target)
+                target.appendChild(this.loadingControl);
+        }
+        else
+        {
+            this.loadingControl = existingProgressBar;
+        }
     }
 
     UpdateProgress(newProgress)
@@ -41,6 +56,7 @@ class ProgressDisplay
     CreateProgressBar()
     {
         let newProgressArea = document.createElement('div');
+        newProgressArea.id = 'diagram-animator-progress';
         let progressBar = document.createElement('div');
 
         newProgressArea.style.position = 'absolute';
