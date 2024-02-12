@@ -48,63 +48,67 @@ function PerformLocationCheck(event)
         
     $('#pageScrollTop').text( document.body.scrollTop );
     
-    let diagram_area = $('#diagram_area');
-    
-    let diagramTransform = TransformFromElement(diagram_area);
-    
-    let mousePosition = new Point(x = event.clientX, 
-        y = event.clientY + document.body.scrollTop);
-    
-    if($('#imagePosition').length > 0)
-        $('#imagePosition')[0].innerHTML = JSON.stringify(diagramTransform);
-    
-    if( IsOverlap(diagramTransform, mousePosition ) )
+    let diagramAreaList = $('#diagram_area');
+
+    diagramAreaList.each( function()
     {
+        let diagramArea = this;
         
-        $('#isOverArea').text('YES');
+        let diagramTransform = TransformFromElement(diagramArea);        
 
-        let clickPosition = ViewToImagePosition(mousePosition.x, mousePosition.y);
+        let mousePosition = new Point(x = event.clientX, 
+            y = event.clientY + document.body.scrollTop);
         
-        cacheMousePosition = PixelToPercent(diagram_area, clickPosition.x, clickPosition.y);
-    
-        if(activateMode == NONE)
-            return;
+        if($('#imagePosition').length > 0)
+            $('#imagePosition')[0].innerHTML = JSON.stringify(diagramTransform);
         
-        let targetElement = null;
-
-        let targetIndicator = null;
-
-        let isStart = false;
-        
-        if(activateMode == STARTMODE)
+        if( IsOverlap(diagramTransform, mousePosition ) )
         {
-            isStart = true;
-            targetElement = document.getElementById('startData');							
-            targetIndicator =startIndicator;
-                
+            
+            $('#isOverArea').text('YES');
+
+            let clickPosition = ViewToImagePosition(diagramArea, mousePosition.x, mousePosition.y);
+            
+            cacheMousePosition = PixelToPercent(diagramArea, clickPosition.x, clickPosition.y);
+        
+            if(activateMode == NONE)
+                return;
+            
+            let targetElement = null;
+
+            let targetIndicator = null;
+
+            let isStart = false;
+            
+            if(activateMode == STARTMODE)
+            {
+                isStart = true;
+                targetElement = document.getElementById('startData');							
+                targetIndicator =startIndicator;
+                    
+            }
+            else if (activateMode == ENDMODE)
+            {
+                targetElement = document.getElementById('endData')							
+                targetIndicator = endIndicator;
+            }
+
+            let relativeClickPosition = new Point(x = clickPosition.x - (targetIndicator.offsetWidth / 2.0), y = clickPosition.y - (targetIndicator.offsetHeight / 2.0));
+            
+            let percentPosition = PixelToPercent(diagram_area, relativeClickPosition.x, relativeClickPosition.y);
+
+            targetElement.innerText = JSON.stringify( percentPosition);
+
+            SetImagePosition( targetIndicator, percentPosition.x, percentPosition.y );
+            
+            
+            
         }
-        else if (activateMode == ENDMODE)
+        else
         {
-            targetElement = document.getElementById('endData')							
-            targetIndicator = endIndicator;
+            $('#isOverArea').text('NO');
         }
-
-        let relativeClickPosition = new Point(x = clickPosition.x - (targetIndicator.offsetWidth / 2.0), y = clickPosition.y - (targetIndicator.offsetHeight / 2.0));
-        
-        let percentPosition = PixelToPercent(diagram_area, relativeClickPosition.x, relativeClickPosition.y);
-
-        targetElement.innerText = JSON.stringify( percentPosition);
-
-        SetImagePosition( targetIndicator, percentPosition.x, percentPosition.y );
-        
-        
-        
-    }
-    else
-    {
-        $('#isOverArea').text('NO');
-    }
-
+    });
 }
 
 function SetupDiagramAnimator()
@@ -151,12 +155,10 @@ function SetEnd()
     endIndicator = CreateNewIndicator(endIndicator, false);
 }
 
-function ViewToImagePosition(clientX, clientY)
+function ViewToImagePosition(targetArea, clientX, clientY)
 {
-    let diagramArea = document.getElementById('diagram_area');
-    
-    let offsetTop = diagramArea.offsetTop;
-    let offsetLeft = diagramArea.offsetLeft;
+    let offsetTop = targetArea.offsetTop;
+    let offsetLeft = targetArea.offsetLeft;
     
     return new Point( x = (clientX - offsetLeft), y = (clientY - offsetTop));
 }
