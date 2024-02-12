@@ -1,14 +1,15 @@
 
-let isPaused = false;
-let pathPreviewMode = false; 
-
 function PauseActiveTween(targetArea)
 {
     let tweenID = targetArea.getAttribute('data-tween-id');
 
     let activeTween = tweenList.find( (t) => t.id == tweenID).tween;
 
+    let isPaused = GetIsPaused(targetArea);
+    
     isPaused = !isPaused;
+    
+    SetIsPaused(targetArea, isPaused);
 
     if(isPaused)
     {
@@ -48,9 +49,11 @@ function ShiftEvent(targetArea, direction)
 
 
 
-function ChangePathPreviewMode()
+function ChangePathPreviewMode(targetArea)
 {
-    pathPreviewMode = !pathPreviewMode;
+    let previewPathMode = GetIsPathPreviewMode(targetArea);
+
+    SetIsPathPreviewMode(targetArea, !previewPathMode );
 
     UpdatePathPreview();
 }
@@ -58,8 +61,6 @@ function ChangePathPreviewMode()
 function CreateDiagramControls()
 {
     let diagramAreaJ = $('#diagram_area');
-
-    console.log(diagramAreaJ.length);
 
     diagramAreaJ.each(function()
     {
@@ -72,7 +73,7 @@ function CreateDiagramControls()
     
     {//main animation drop down
         let ddlFlowAnimation = document.createElement('select');
-        
+        ddlFlowAnimation.id = 'ddl_flow_animation';
         let emptyOption = document.createElement('option');
         emptyOption.text = '----';
         ddlFlowAnimation.appendChild(emptyOption);
@@ -88,7 +89,6 @@ function CreateDiagramControls()
 
         ddlFlowAnimation.addEventListener('change', () => 
             {
-                selectedAnimationID = ddlFlowAnimation.value;
                 UpdateEventDropDown(diagramArea);
             });
         
@@ -122,7 +122,7 @@ function CreateDiagramControls()
         let ddShowPath = document.createElement('input');
         ddShowPath.id = 'ddl_show_path';
         ddShowPath.setAttribute('type', 'checkbox');
-        ddShowPath.addEventListener('click', ChangePathPreviewMode);
+        ddShowPath.addEventListener('click', () => { ChangePathPreviewMode(diagramArea) } );
         controlArea.appendChild(document.createTextNode('Show Path:'));
         controlArea.appendChild(ddShowPath);
     }
@@ -166,6 +166,8 @@ function UpdateEventDropDown(targetArea)
     
     let ddlEventSteps = $(targetArea).find('#ddl_event_steps')[0];
 
+    let ddlFlowAnimation = $(targetArea).find('#ddl_flow_animation')[0];
+
     if(!ddlEventSteps)
         return;
 
@@ -174,7 +176,7 @@ function UpdateEventDropDown(targetArea)
     let emptyOption = document.createElement('option');
     emptyOption.text = '----';
 
-    let foundAnimation = loadedData.find( (an) => an.id == selectedAnimationID);
+    let foundAnimation = loadedData.find( (an) => an.id == ddlFlowAnimation.value);
 
     if(!foundAnimation)
     {
