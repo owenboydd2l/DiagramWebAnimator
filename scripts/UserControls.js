@@ -17,7 +17,7 @@ function PauseActiveTween()
 }
 
 function ShiftEvent(direction)
-{//fis this function so it uses the orderid instead of the index of the collection
+{//fix this function so it uses the orderid instead of the index of the collection
     let foundIndex = -1;
 
     for(let i=0; i < globalEventCache.length && foundIndex == -1; ++i)
@@ -53,12 +53,18 @@ function ChangePathPreviewMode()
 
 function CreateDiagramControls()
 {
-    let diagramArea = $('#diagram_area')[0];
+    let diagramAreaJ = $('#diagram_area');
 
-    let diagramImage = $('#diagram_image')[0];
+    console.log(diagramAreaJ.length);
 
-    let controlArea = document.createElement('div');
-    controlArea.classList.add('DiagramControlBar');
+    diagramAreaJ.each(function()
+    {
+        let diagramArea = this;
+
+        let diagramImage = $(diagramArea).find('#diagram_image')[0];
+
+        let controlArea = document.createElement('div');
+        controlArea.classList.add('DiagramControlBar');
     
     {//main animation drop down        
         let ddlFlowAnimation = document.createElement('select');
@@ -97,11 +103,7 @@ function CreateDiagramControls()
     }
 
     {//Play all
-        let ddlPlayAll = document.createElement('input');
-        ddlPlayAll.setAttribute('type', 'button');
-        ddlPlayAll.setAttribute('value', 'Play All Events');
-        ddlPlayAll.addEventListener('click', () => { StartTween(RUNMODE_MULTIPLE); } )
-        controlArea.appendChild(ddlPlayAll);
+        controlArea.appendChild( CreateInputControl('Play All Events', () => { StartTween(RUNMODE_MULTIPLE); } ));
     }
 
     {//Loop
@@ -125,39 +127,34 @@ function CreateDiagramControls()
     playButtons.classList.add('playButtonBar');
 
     {//prev
-        let ddlPrev = document.createElement('input');
-        ddlPrev.setAttribute('type', 'button');
-        ddlPrev.setAttribute('value', 'PREV');        
-        ddlPrev.addEventListener('click', () => { ShiftEvent(-1); } )
-        playButtons.appendChild(ddlPrev);
+        playButtons.appendChild( CreateInputControl('PREV', () => { ShiftEvent(-1); } ));
     }
 
     {//play single
-        let ddlPlayOne = document.createElement('input');
-        ddlPlayOne.setAttribute('type', 'button');
-        ddlPlayOne.setAttribute('value', 'Play Event');
-        ddlPlayOne.addEventListener('click', () => { StartTween(RUNMODE_SINGLE); } )
-        playButtons.appendChild(ddlPlayOne);
+        playButtons.appendChild( CreateInputControl('Play Event', () => { StartTween(RUNMODE_SINGLE); } ));
     }
+
     {//play single
-        let ddlPause = document.createElement('input');
-        ddlPause.setAttribute('type', 'button');
-        ddlPause.setAttribute('value', '(Un)Pause');
-        ddlPause.addEventListener('click', () => { PauseActiveTween(); } )
-        playButtons.appendChild(ddlPause);
+        playButtons.appendChild( CreateInputControl('(Un)Pause', () => { PauseActiveTween(); } ));        
     }
 
     {//next
-        let ddlNext = document.createElement('input');
-        ddlNext.setAttribute('type', 'button');
-        ddlNext.setAttribute('value', 'NEXT');        
-        ddlNext.addEventListener('click', () => { ShiftEvent(1); } )
-        playButtons.appendChild(ddlNext);
+        playButtons.appendChild( CreateInputControl('NEXT', () => { ShiftEvent(1); } ));        
     }
 
     controlArea.appendChild(playButtons);
-
+    
     diagramArea.insertBefore(controlArea, diagramImage);
+    });
+}
+
+function CreateInputControl(text, onclick)
+{
+    let ddlNew = document.createElement('input');
+    ddlNew.setAttribute('type', 'button');
+    ddlNew.setAttribute('value', text);
+    ddlNew.addEventListener('click', onclick );
+    return ddlNew;
 }
 
 function UpdateEventDropDown(ddlEventSteps = null)

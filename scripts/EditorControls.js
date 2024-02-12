@@ -5,7 +5,7 @@ let streamlineStage = STREAMLINESTAGE_START;
 let isStreamlineMode = false;
 
 function PlaySingleFromEditor()
-{    
+{
     StartTween(RUNMODE_SINGLE);
 }
 
@@ -69,7 +69,7 @@ function SelectEventRow(event)
 
     var foundEvent = globalEventCache.find( (ev) => ev.id == selectedID);
 
-    let diagram_area = document.getElementById('diagram_area');
+    let diagram_area = $('#diagram_area')[0];
 
     if(foundEvent.startOffset != null)
     {
@@ -142,33 +142,46 @@ function CreateNewEvent(in_startOffset = null, in_endPosition = null)
 
 function UpdatePathPreview()
 {
-    let diagramCanvas = $('#diagram_canvas')[0];
-    let canvasContext = diagramCanvas.getContext('2d');
-    canvasContext.clearRect(0, 0, diagramCanvas.offsetWidth, diagramCanvas.offsetHeight);
+    let diagramAreaJ = $('#diagram_area');
 
-    if(!pathPreviewMode)
-        return;
-
-    let previewData = [];
-
-    for(let i=0; i < globalEventCache.length; ++i)
+    diagramAreaJ.each( function()
     {
-        if(globalEventCache[i].startOffset == null || globalEventCache[i].endPosition == null)
-            continue;
+        let diagramArea = this;
+            
+        let diagramCanvasJ = $(diagramArea).find('#diagram_canvas');
 
-        previewData.push( { start : globalEventCache[i].startOffset, end : globalEventCache[i].endPosition });
-    }
+        diagramCanvasJ.each( function()
+        {
+            let diagramCanvas = this;
+        
+            let canvasContext = diagramCanvas.getContext('2d');
+            canvasContext.clearRect(0, 0, diagramCanvas.offsetWidth, diagramCanvas.offsetHeight);
 
-    let diagramArea = $('#diagram_area')[0];
-    
-    for(let j=0; j < previewData.length; ++j)
-    {
-        canvasContext.beginPath(); 
-        canvasContext.moveTo( previewData[j].start.x * diagramArea.offsetWidth, previewData[j].start.y * diagramArea.offsetHeight);
-        canvasContext.lineTo( previewData[j].end.x * diagramArea.offsetWidth, previewData[j].end.y * diagramArea.offsetHeight);
-        canvasContext.strokeStyle = "red";
-        canvasContext.stroke();
-    }    
+            if(!pathPreviewMode)
+                return;
+
+            let previewData = [];
+
+            for(let i=0; i < globalEventCache.length; ++i)
+            {
+                if(globalEventCache[i].startOffset == null || globalEventCache[i].endPosition == null)
+                    continue;
+
+                previewData.push( { start : globalEventCache[i].startOffset, end : globalEventCache[i].endPosition });
+            }
+
+            let diagramArea = diagramAreaJ[0];
+        
+            for(let j=0; j < previewData.length; ++j)
+            {
+                canvasContext.beginPath(); 
+                canvasContext.moveTo( previewData[j].start.x * diagramArea.offsetWidth, previewData[j].start.y * diagramArea.offsetHeight);
+                canvasContext.lineTo( previewData[j].end.x * diagramArea.offsetWidth, previewData[j].end.y * diagramArea.offsetHeight);
+                canvasContext.strokeStyle = "red";
+                canvasContext.stroke();
+            }    
+        });
+    });
     
 }
 

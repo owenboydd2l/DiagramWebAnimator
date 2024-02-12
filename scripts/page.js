@@ -21,7 +21,6 @@ let activeTween = null;
 
 let box = null;
 
-
 const RUNMODE_SINGLE = 0;
 const RUNMODE_MULTIPLE = 1;
 
@@ -29,12 +28,16 @@ let runMODE = RUNMODE_SINGLE;
 
 function ResizeDiagramCanvas()
 {
-    let diagramCanvas = $('#diagram_canvas')[0];
+    let diagramCanvasList = $('#diagram_canvas');
 
-    diagramCanvas.setAttribute('width', diagramCanvas.parentElement.offsetWidth + "px");
-    diagramCanvas.setAttribute('height', diagramCanvas.parentElement.offsetHeight + "px");
+    for(let i=0; i != diagramCanvasList.length; ++i)
+    {
+        let diagramCanvas = diagramCanvasList[i];
+        diagramCanvas.setAttribute('width', diagramCanvas.parentElement.offsetWidth + "px");
+        diagramCanvas.setAttribute('height', diagramCanvas.parentElement.offsetHeight + "px");
 
-    UpdatePathPreview();
+        UpdatePathPreview();
+    }
 }
 
 
@@ -45,7 +48,7 @@ function PerformLocationCheck(event)
         
     $('#pageScrollTop').text( document.body.scrollTop );
     
-    let diagram_area = document.getElementById('diagram_area');
+    let diagram_area = $('#diagram_area');
     
     let diagramTransform = TransformFromElement(diagram_area);
     
@@ -150,10 +153,10 @@ function SetEnd()
 
 function ViewToImagePosition(clientX, clientY)
 {
-    let diagram_image = document.getElementById('diagram_area');
+    let diagramArea = document.getElementById('diagram_area');
     
-    let offsetTop = diagram_image.offsetTop;
-    let offsetLeft = diagram_image.offsetLeft;
+    let offsetTop = diagramArea.offsetTop;
+    let offsetLeft = diagramArea.offsetLeft;
     
     return new Point( x = (clientX - offsetLeft), y = (clientY - offsetTop));
 }
@@ -287,8 +290,6 @@ function OnFinishTween()
     }
 }
 
-
-
 function GetCacheBox()
 {
     if(box == null)
@@ -326,8 +327,6 @@ function SetupAllEventTween()
     progressBar.Redraw();
 
     let box = GetCacheBox();
-
-    let boxTransform = TransformFromElement(box);
 
     let isSingleMode = (runMODE == RUNMODE_SINGLE);
     let foundEvent = null;
