@@ -17,7 +17,7 @@ let progressBar = null;
 
 let selectedAnimationID = null;
 
-let activeTween = null;
+let tweenList = [];
 
 const RUNMODE_SINGLE = 0;
 const RUNMODE_MULTIPLE = 1;
@@ -350,7 +350,7 @@ function SetupAllEventTween(targetArea)
         endIndicator.style.zIndex = -1;
     }
 
-    activeTween = new TWEEN.Tween(startCoords, false) // Create a new tween that modifies 'coords'.
+    let newTween = new TWEEN.Tween(startCoords, false) // Create a new tween that modifies 'coords'.
         .to(endCoords, 3000) 
         .easing(TWEEN.Easing.Quadratic.InOut) // Use an easing function to make the animation smooth.
         .onUpdate(() => {
@@ -385,9 +385,14 @@ function SetupAllEventTween(targetArea)
 
     // Setup the animation loop.
     function animate(time) {
-        activeTween.update(time)
+        newTween.update(time)
         requestAnimationFrame(animate)
     }
+
+    let newTweenRecord = { id : uuidv4(), tween : newTween };
+    tweenList.push( newTweenRecord );
+
+    targetArea.setAttribute('data-tween-id', newTweenRecord.id);
 
     targetArea.setAttribute("data-animation-id", requestAnimationFrame(animate));
 }

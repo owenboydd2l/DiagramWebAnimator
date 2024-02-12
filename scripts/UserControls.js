@@ -4,6 +4,10 @@ let pathPreviewMode = false;
 
 function PauseActiveTween(targetArea)
 {
+    let tweenID = targetArea.getAttribute('data-tween-id');
+
+    let activeTween = tweenList.find( (t) => t.id == tweenID).tween;
+
     isPaused = !isPaused;
 
     if(isPaused)
