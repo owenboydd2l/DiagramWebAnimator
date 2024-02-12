@@ -6,10 +6,10 @@ let isStreamlineMode = false;
 
 function PlaySingleFromEditor()
 {
-    StartTween(RUNMODE_SINGLE);
+    StartTween(document.getElementById('diagram_area'), RUNMODE_SINGLE);
 }
 
-function ChangeStreamlineMode(in_isNewStreamlineMode)
+function ChangeStreamlineMode(targetArea, in_isNewStreamlineMode)
 {
     isStreamlineMode = in_isNewStreamlineMode;
 
@@ -73,7 +73,7 @@ function SelectEventRow(event)
 
     if(foundEvent.startOffset != null)
     {
-        startIndicator = CreateNewIndicator(startIndicator, true);
+        startIndicator = CreateNewIndicator(diagram_area, startIndicator, true);
         
         let indicatorSize = PixelToPercent(diagram_area, startIndicator.offsetWidth, startIndicator.offsetHeight );
         SetImagePosition(startIndicator, foundEvent.startOffset.x - (indicatorSize.x / 2.0), foundEvent.startOffset.y - (indicatorSize.y / 2.0));
@@ -81,7 +81,7 @@ function SelectEventRow(event)
 
     if(foundEvent.endPosition != null)
     {
-        endIndicator = CreateNewIndicator(endIndicator, false);
+        endIndicator = CreateNewIndicator(diagram_area, endIndicator, false);
 
         let indicatorSize = PixelToPercent(diagram_area, endIndicator.offsetWidth, endIndicator.offsetHeight );
 

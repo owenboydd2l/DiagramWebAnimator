@@ -67,15 +67,15 @@
 				<div id="assetTable">
 				</div>
 				<hr />
-				<input type='button' onclick='StartTween(RUNMODE_MULTIPLE)' value='Play All' />
+				<input type='button' onclick='StartTween(document.getElementById("diagram_area"), RUNMODE_MULTIPLE)' value='Play All' />
 				<input type='button' onclick='PlaySingleFromEditor()' value='Play Event' />
 				<hr />
 				<input type='button' onclick='SetStart()' value='Set Start' />
 				<input type='button' onclick='SetEnd()' value='Set End' />
 				<hr />
-				<input type='button' onclick='ChangeStreamlineMode(!isStreamlineMode)' value='Streamline Mode' />
+				<input type='button' onclick='ChangeStreamlineMode(document.getElementById("diagram_area"), !isStreamlineMode)' value='Streamline Mode' />
 				<hr />
-				<input type='button' onclick='ChangePathPreviewMode()' value='Path Preview' />
+				<input type='button' onclick='ChangePathPreviewMode(document.getElementById("diagram_area"))' value='Path Preview' />
 		</div>
 		
 		<br />

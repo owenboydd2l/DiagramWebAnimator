@@ -19,8 +19,6 @@ let selectedAnimationID = null;
 
 let activeTween = null;
 
-let box = null;
-
 const RUNMODE_SINGLE = 0;
 const RUNMODE_MULTIPLE = 1;
 
@@ -77,12 +75,9 @@ function PerformLocationCheck(event)
             let targetElement = null;
 
             let targetIndicator = null;
-
-            let isStart = false;
-            
+           
             if(activateMode == STARTMODE)
             {
-                isStart = true;
                 targetElement = document.getElementById('startData');							
                 targetIndicator =startIndicator;
                     
@@ -146,13 +141,13 @@ function LoadSampleData()
 function SetStart()
 {
     activateMode = STARTMODE;
-    startIndicator = CreateNewIndicator(startIndicator, true);
+    startIndicator = CreateNewIndicator( document.getElementById('diagram_area'), startIndicator, true);
 }
 
 function SetEnd()
 {
     activateMode = ENDMODE;
-    endIndicator = CreateNewIndicator(endIndicator, false);
+    endIndicator = CreateNewIndicator(document.getElementById('diagram_area'), endIndicator, false);
 }
 
 function ViewToImagePosition(targetArea, clientX, clientY)
@@ -163,13 +158,13 @@ function ViewToImagePosition(targetArea, clientX, clientY)
     return new Point( x = (clientX - offsetLeft), y = (clientY - offsetTop));
 }
 
-function CreateNewIndicator(indicatorElement, isStart = false)
+function CreateNewIndicator(targetArea, indicatorElement, isStart = false)
 {
     if(indicatorElement === undefined || indicatorElement == null)
     {
         console.log('creating new indicator');
         indicatorElement = document.createElement("img");
-        AddElementToDiagram(indicatorElement);
+        AddElementToDiagram(targetArea, indicatorElement);
         
         if(isStart)
             indicatorElement.setAttribute('src', 'images/800px-Circle_-_green_simple.png');
@@ -184,9 +179,8 @@ function CreateNewIndicator(indicatorElement, isStart = false)
     return indicatorElement;
 }			
 
-function AddElementToDiagram(element)
+function AddElementToDiagram(diagramArea, element)
 {
-    let diagramArea = $('#diagram_area')[0];
     diagramArea.insertBefore(element, diagramArea.firstChild);
 }
 
@@ -211,7 +205,7 @@ function PerformSingleEventStep()
     activateMode = NONE;    
 }
 
-function StartTween(newRunMode = RUNMODE_SINGLE)
+function StartTween(targetArea, newRunMode = RUNMODE_SINGLE)
 {
     runMODE = newRunMode;
 
@@ -219,15 +213,16 @@ function StartTween(newRunMode = RUNMODE_SINGLE)
     {
         selectedID = globalEventCache[0].id;
     }
+    
 
-    let box = GetCacheBox();
+    let box = GetCacheBox(targetArea);
     
     box.setAttribute('data-start-width', box.offsetWidth);
     box.setAttribute('data-start-height', box.offsetHeight);
 
-    ChangeStreamlineMode(false);
+    ChangeStreamlineMode(targetArea, false);
 
-    SetupAllEventTween();
+    SetupAllEventTween(targetArea);
 }
 
 
@@ -240,7 +235,7 @@ function ActivateImage(image)
     
 }
 
-function OnFinishTween()
+function OnFinishTween(targetArea)
 {
     let isCleanupTime = true;
 
@@ -249,7 +244,7 @@ function OnFinishTween()
         runningEventIndex++;
     }
 
-    if($('#ddl_loop')[0].checked)
+    if($(targetArea).find('#ddl_loop')[0].checked)
     {
         console.log('loop mode')
         isCleanupTime = false;
@@ -278,57 +273,45 @@ function OnFinishTween()
     if(isCleanupTime)
     {
         console.log("Finished all tweens");
-        let box = GetCacheBox()
+        let box = GetCacheBox(targetArea)
         box.style.display = 'none';
         box.style.width = box.getAttribute('data-start-width');
         box.style.height = box.getAttribute('data-start-height');
         progressBar.Hide();
         ClearEditorSettings();
+
+        let animationRequestID = targetArea.getAttribute("data-animation-id");
+        cancelAnimationFrame(animationRequestID);
     }
     else
     {
         console.log("Trigger Next Step");
-        SetupAllEventTween();
+        SetupAllEventTween(targetArea);
     }
 }
 
-function GetCacheBox()
+function GetCacheBox(targetArea)
 {
-    if(box == null)
-    {
-        console.log('creating box');
-        /*
-        box = document.createElement('box') // Get the element we want to animate.
-        box.setAttribute('src', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTukEhbRDPETDiNMl5ZO8Lm3nQRSzPLnvdsPK30nTmMig&s');
-        box.classList.add('box');
-        
-        
-        let diagramArea = $('#diagram_area')[0];
-        diagramArea.insertBefore(box, diagramArea.firstChild);
-        */
-        box = document.getElementById('box');
+    let box = $(targetArea).find('#box')[0];
 
-        
-       
-    }
-
-    box.style.display = 'inline-block';   
+    //TODO: Make box and don't rely on it being made on the page
+    box.style.display = 'inline-block';
 
     return box;
 }
 
-function SetupAllEventTween()
+function SetupAllEventTween(targetArea)
 {
 
     if(progressBar == null)
     {
-        progressBar = new ProgressDisplay( $('#diagram_area')[0] );
+        progressBar = new ProgressDisplay( $(targetArea)[0] );
     }
 
     progressBar.UpdateProgress(0);
     progressBar.Redraw();
 
-    let box = GetCacheBox();
+    let box = GetCacheBox(targetArea);
 
     let isSingleMode = (runMODE == RUNMODE_SINGLE);
     let foundEvent = null;
@@ -347,8 +330,8 @@ function SetupAllEventTween()
     box.setAttribute('src', assetList.find( 
         (a) => a.id == foundEvent.target).fileName);
 
-    startIndicator = CreateNewIndicator(startIndicator, true);
-    endIndicator = CreateNewIndicator(endIndicator, false);
+    startIndicator = CreateNewIndicator(targetArea, startIndicator, true);
+    endIndicator = CreateNewIndicator(targetArea, endIndicator, false);
 
     let indicatorSize = PixelToPercent($('#diagram_area')[0], startIndicator.offsetWidth, startIndicator.offsetHeight );
 
@@ -397,7 +380,7 @@ function SetupAllEventTween()
             box.style.setProperty('transform', 'translate(' + (startCoords.x - (newWidth / 2.0)) + 'px, ' + (startCoords.y) + 'px)')
             
         })
-        .onComplete(OnFinishTween)
+        .onComplete( () => { OnFinishTween(targetArea); })
         .start(); // Start the tween immediately.
 
     // Setup the animation loop.
@@ -405,6 +388,7 @@ function SetupAllEventTween()
         activeTween.update(time)
         requestAnimationFrame(animate)
     }
-    requestAnimationFrame(animate)
+
+    targetArea.setAttribute("data-animation-id", requestAnimationFrame(animate));
 }
 
