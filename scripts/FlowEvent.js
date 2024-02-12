@@ -20,4 +20,11 @@ class FlowEvent extends OrderEntity
         else if (this.transformType == TRANSFORM_GROW)
             this.transformType = TRANSFORM_NONE;
     }
+
+    static fromJSON(json)
+    {
+        const flowEvent = JSON.parse(json);
+
+        return Object.create(FlowEvent.prototype, Object.getOwnPropertyDescriptors(flowEvent));
+    }
 }

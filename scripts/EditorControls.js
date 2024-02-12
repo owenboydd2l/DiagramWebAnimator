@@ -209,7 +209,7 @@ function UpdateEventList()
             newTableRow.style.backgroundColor = 'red';
         }
         
-        {
+        {//select button
             let selectButton = document.createElement("input");
             selectButton.setAttribute("type", "button");
             selectButton.setAttribute("value", "sel");
@@ -221,7 +221,7 @@ function UpdateEventList()
 
         AddTextCellToRow(newTableRow, element.orderID);
 
-        {
+        {//icon preview
             let previewIcon = document.createElement('img');
             previewIcon.src = assetList.find( (a) => a.id == element.target).fileName;
             previewIcon.classList.add("previewImage");
@@ -240,21 +240,21 @@ function UpdateEventList()
         else
             AddTextCellToRow(newTableRow,"");
 
+        {
+            let transformIcon = document.createElement('img');
+            transformIcon.style.width = 25 + "px";                
+
+            let foundTransform = transformList.find( (tt ) => tt.id == element.transformType);
+
+            if(foundTransform)
             {
-                let transformIcon = document.createElement('img');
-                transformIcon.style.width = 25 + "px";                
-
-                let foundTransform = transformList.find( (tt ) => tt.id == element.transformType);
-
-                if(foundTransform)
-                {
-                    transformIcon.setAttribute("src", foundTransform.icon );
-                    transformIcon.setAttribute("title", foundTransform.tooltip);
-                }
-                
-                transformIcon.addEventListener("click", function() { ChangeTransformType(element);  } );
-                AddCellToRow(newTableRow, [ transformIcon ]);
+                transformIcon.setAttribute("src", foundTransform.icon );
+                transformIcon.setAttribute("title", foundTransform.tooltip);
             }
+            
+            transformIcon.addEventListener("click", function() { EditorChangeTransformType(element);  } );
+            AddCellToRow(newTableRow, [ transformIcon ]);
+        }
 
         if(controlTable.length > 0)
             controlTable[0].appendChild(newTableRow);
@@ -280,9 +280,9 @@ function UpdateEventList()
     $('#event_json').text( JSON.stringify(newAnimation, null, 2) );
 }
 
-function ChangeTransformType(event)
+function EditorChangeTransformType(flowEvent)
 {
-    event.ChangeTransformType();
+    flowEvent.ChangeTransformType();
     UpdateEventList();
 }
 

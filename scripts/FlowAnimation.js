@@ -6,5 +6,5 @@ class FlowAnimation extends EntityID
         this.name = name;
         this.stages = stages;
         this.assets = assets;
-    }
+    }    
 }

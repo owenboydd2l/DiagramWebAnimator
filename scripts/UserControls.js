@@ -106,8 +106,7 @@ function CreateDiagramControls()
     
         //main animation drop down
         controlArea.appendChild(document.createTextNode("Animation: ") );
-        controlArea.appendChild(CreateAnimationDropDown(diagramArea));
-    
+        controlArea.appendChild(CreateAnimationDropDown(diagramArea));    
 
         //Event drop down
         controlArea.appendChild(document.createTextNode("Event: ") );
@@ -211,10 +210,24 @@ function UpdateEventDropDown(targetArea)
         selectedID = $('#ddl_event_steps')[0].value;         
     } );
     
-    
-    globalEventCache = foundAnimation.stages[0].flowEvents;
+    globalEventCache = [];
 
-    assetList = foundAnimation.assets;
+
+    for(let i =0; i != foundAnimation.stages[0].flowEvents.length; ++i)
+    {        
+        let rawEvent = foundAnimation.stages[0].flowEvents[i];
+        globalEventCache.push( Object.create(FlowEvent.prototype, Object.getOwnPropertyDescriptors(rawEvent)) ); 
+    }
+   
+    assetList = [];
+
+    for(let i =0; i != foundAnimation.assets.length; ++i)
+    {
+        let asset = foundAnimation.assets[i];
+        assetList.push( Object.create(Asset.prototype, Object.getOwnPropertyDescriptors(asset)) );
+    }
+    
+    //assetList = foundAnimation.assets;
 
     UpdateEventList();
     
