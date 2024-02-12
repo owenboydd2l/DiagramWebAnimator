@@ -2,8 +2,12 @@
 let isPaused = false;
 let pathPreviewMode = false; 
 
-function PauseActiveTween()
+function PauseActiveTween(targetArea)
 {
+    let tweenID = targetArea.getAttribute('data-tween-id');
+
+    let activeTween = tweenList.find( (t) => t.id == tweenID).tween;
+
     isPaused = !isPaused;
 
     if(isPaused)
@@ -16,7 +20,7 @@ function PauseActiveTween()
     }
 }
 
-function ShiftEvent(direction)
+function ShiftEvent(targetArea, direction)
 {//fix this function so it uses the orderid instead of the index of the collection
     let foundIndex = -1;
 
@@ -39,7 +43,7 @@ function ShiftEvent(direction)
         newIndex = 0;
 
     selectedID = globalEventCache[newIndex].id;
-    $('#ddl_event_steps')[0].value = selectedID;
+    $(targetArea).find('#ddl_event_steps')[0].value = selectedID;
 }
 
 
@@ -66,7 +70,7 @@ function CreateDiagramControls()
         let controlArea = document.createElement('div');
         controlArea.classList.add('DiagramControlBar');
     
-    {//main animation drop down        
+    {//main animation drop down
         let ddlFlowAnimation = document.createElement('select');
         
         let emptyOption = document.createElement('option');
@@ -85,7 +89,7 @@ function CreateDiagramControls()
         ddlFlowAnimation.addEventListener('change', () => 
             {
                 selectedAnimationID = ddlFlowAnimation.value;
-                UpdateEventDropDown(); 
+                UpdateEventDropDown(diagramArea);
             });
         
         controlArea.appendChild(document.createTextNode("Animation: ") );
@@ -99,11 +103,11 @@ function CreateDiagramControls()
         controlArea.appendChild(document.createTextNode("Event: ") );
         controlArea.appendChild(ddlEventSteps);
         
-        UpdateEventDropDown(ddlEventSteps);
+        UpdateEventDropDown(diagramArea);
     }
 
     {//Play all
-        controlArea.appendChild( CreateInputControl('Play All Events', () => { StartTween(RUNMODE_MULTIPLE); } ));
+        controlArea.appendChild( CreateInputControl('Play All Events', () => { StartTween(diagramArea, RUNMODE_MULTIPLE); } ));
     }
 
     {//Loop
@@ -127,19 +131,19 @@ function CreateDiagramControls()
     playButtons.classList.add('playButtonBar');
 
     {//prev
-        playButtons.appendChild( CreateInputControl('PREV', () => { ShiftEvent(-1); } ));
+        playButtons.appendChild( CreateInputControl('PREV', () => { ShiftEvent(diagramArea, -1); } ));
     }
 
     {//play single
-        playButtons.appendChild( CreateInputControl('Play Event', () => { StartTween(RUNMODE_SINGLE); } ));
+        playButtons.appendChild( CreateInputControl('Play Event', () => { StartTween (diagramArea, RUNMODE_SINGLE); } ));
     }
 
     {//play single
-        playButtons.appendChild( CreateInputControl('(Un)Pause', () => { PauseActiveTween(); } ));        
+        playButtons.appendChild( CreateInputControl('(Un)Pause', () => { PauseActiveTween(diagramArea); } ));        
     }
 
     {//next
-        playButtons.appendChild( CreateInputControl('NEXT', () => { ShiftEvent(1); } ));        
+        playButtons.appendChild( CreateInputControl('NEXT', () => { ShiftEvent(diagramArea, 1); } ));        
     }
 
     controlArea.appendChild(playButtons);
@@ -157,11 +161,13 @@ function CreateInputControl(text, onclick)
     return ddlNew;
 }
 
-function UpdateEventDropDown(ddlEventSteps = null)
+function UpdateEventDropDown(targetArea)
 {
+    
+    let ddlEventSteps = $(targetArea).find('#ddl_event_steps')[0];
 
-    if(ddlEventSteps == null)
-        ddlEventSteps = $('#ddl_event_steps')[0];
+    if(!ddlEventSteps)
+        return;
 
     $(ddlEventSteps).empty();
 
