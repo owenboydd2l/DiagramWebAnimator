@@ -4,6 +4,14 @@ const STREAMLINESTAGE_END = 1;
 let streamlineStage = STREAMLINESTAGE_START;
 let isStreamlineMode = false;
 
+const PLACEMENTMODE_STARTMODE = 1;
+const PLACEMENTMODE_ENDMODE = 2;
+const PLACEMENTMODE_NONE = 0;
+
+let activateMode = PLACEMENTMODE_NONE;
+
+let cacheMousePosition = {};
+
 function PlaySingleFromEditor()
 {
     StartTween(document.getElementById('diagram_area'), RUNMODE_SINGLE);
@@ -116,8 +124,7 @@ function ClearEditorSettings()
 {
     streamlineStage = STREAMLINESTAGE_START;
     isStreamlineMode = false;
-    activateMode = NONE;
-    runningEventIndex = 0;    
+    activateMode = PLACEMENTMODE_NONE;    
 }
 
 function CreateNewEvent(in_startOffset = null, in_endPosition = null)
@@ -157,7 +164,9 @@ function UpdatePathPreview()
             let canvasContext = diagramCanvas.getContext('2d');
             canvasContext.clearRect(0, 0, diagramCanvas.offsetWidth, diagramCanvas.offsetHeight);
 
-            if(!pathPreviewMode)
+            let diagramArea = diagramAreaJ[0];
+
+            if(!GetIsPathPreviewMode(diagramArea))
                 return;
 
             let previewData = [];
@@ -168,9 +177,7 @@ function UpdatePathPreview()
                     continue;
 
                 previewData.push( { start : globalEventCache[i].startOffset, end : globalEventCache[i].endPosition });
-            }
-
-            let diagramArea = diagramAreaJ[0];
+            }            
         
             for(let j=0; j < previewData.length; ++j)
             {

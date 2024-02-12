@@ -58,6 +58,39 @@ function ChangePathPreviewMode(targetArea)
     UpdatePathPreview();
 }
 
+function CreateAnimationDropDown(targetArea)
+{
+    let ddlFlowAnimation = document.createElement('select');
+    
+    ddlFlowAnimation.id = 'ddl_flow_animation';
+    
+    let emptyOption = document.createElement('option');
+    emptyOption.text = '----';
+    ddlFlowAnimation.appendChild(emptyOption);
+
+    loadedData.forEach( (data) => {
+            let newOption = document.createElement('option');
+            newOption.text = data.name;
+            newOption.value = data.id;
+            ddlFlowAnimation.appendChild(newOption);
+        }
+    );
+
+    ddlFlowAnimation.addEventListener('change', () => 
+            {
+                UpdateEventDropDown(targetArea);
+            });
+    
+    return ddlFlowAnimation;
+}
+
+function CrateEventDropDown()
+{
+    let ddlEventSteps = document.createElement('select');
+    ddlEventSteps.id = 'ddl_event_steps';
+    return ddlEventSteps;
+}
+
 function CreateDiagramControls()
 {
     let diagramAreaJ = $('#diagram_area');
@@ -71,85 +104,61 @@ function CreateDiagramControls()
         let controlArea = document.createElement('div');
         controlArea.classList.add('DiagramControlBar');
     
-    {//main animation drop down
-        let ddlFlowAnimation = document.createElement('select');
-        ddlFlowAnimation.id = 'ddl_flow_animation';
-        let emptyOption = document.createElement('option');
-        emptyOption.text = '----';
-        ddlFlowAnimation.appendChild(emptyOption);
-
-        loadedData.forEach( (data) => {
-
-            let newOption = document.createElement('option');
-            newOption.text = data.name;
-            newOption.value = data.id;
-            ddlFlowAnimation.appendChild(newOption);
-        }
-        );
-
-        ddlFlowAnimation.addEventListener('change', () => 
-            {
-                UpdateEventDropDown(diagramArea);
-            });
-        
+        //main animation drop down
         controlArea.appendChild(document.createTextNode("Animation: ") );
-        controlArea.appendChild(ddlFlowAnimation);
-    }
+        controlArea.appendChild(CreateAnimationDropDown(diagramArea));
+    
 
-    {//Event drop down        
-        let ddlEventSteps = document.createElement('select');
-        ddlEventSteps.id = 'ddl_event_steps';
-
+        //Event drop down
         controlArea.appendChild(document.createTextNode("Event: ") );
-        controlArea.appendChild(ddlEventSteps);
+        controlArea.appendChild(CrateEventDropDown());
         
-        UpdateEventDropDown(diagramArea);
-    }
+        UpdateEventDropDown(diagramArea);    
 
-    {//Play all
+        //Play all
         controlArea.appendChild( CreateInputControl('Play All Events', () => { StartTween(diagramArea, RUNMODE_MULTIPLE); } ));
-    }
+    
+        {//Loop
+            let ddLoop = document.createElement('input');
+            ddLoop.id = 'ddl_loop';
+            ddLoop.setAttribute('type', 'checkbox');
+            controlArea.appendChild(document.createTextNode('Loop:'));
+            controlArea.appendChild(ddLoop);
+        }
 
-    {//Loop
-        let ddLoop = document.createElement('input');
-        ddLoop.id = 'ddl_loop';
-        ddLoop.setAttribute('type', 'checkbox');
-        controlArea.appendChild(document.createTextNode('Loop:'));
-        controlArea.appendChild(ddLoop);
-    }
+        {//Show Path
+            let ddShowPath = document.createElement('input');
+            ddShowPath.id = 'ddl_show_path';
+            ddShowPath.setAttribute('type', 'checkbox');
+            ddShowPath.addEventListener('click', () => { ChangePathPreviewMode(diagramArea) } );
+            controlArea.appendChild(document.createTextNode('Show Path:'));
+            controlArea.appendChild(ddShowPath);
+        }
+        
+        controlArea.appendChild(CreatePlayButtons(diagramArea));
+    
+        diagramArea.insertBefore(controlArea, diagramImage);
+    });
+}
 
-    {//Show Path
-        let ddShowPath = document.createElement('input');
-        ddShowPath.id = 'ddl_show_path';
-        ddShowPath.setAttribute('type', 'checkbox');
-        ddShowPath.addEventListener('click', () => { ChangePathPreviewMode(diagramArea) } );
-        controlArea.appendChild(document.createTextNode('Show Path:'));
-        controlArea.appendChild(ddShowPath);
-    }
-
+function CreatePlayButtons(targetArea)
+{
     let playButtons = document.createElement('div');
     playButtons.classList.add('playButtonBar');
 
-    {//prev
-        playButtons.appendChild( CreateInputControl('PREV', () => { ShiftEvent(diagramArea, -1); } ));
-    }
+    //prev
+    playButtons.appendChild( CreateInputControl('PREV', () => { ShiftEvent(targetArea, -1); } ));
 
-    {//play single
-        playButtons.appendChild( CreateInputControl('Play Event', () => { StartTween (diagramArea, RUNMODE_SINGLE); } ));
-    }
+    //play single
+    playButtons.appendChild( CreateInputControl('Play Event', () => { StartTween (targetArea, RUNMODE_SINGLE); } ));
 
-    {//play single
-        playButtons.appendChild( CreateInputControl('(Un)Pause', () => { PauseActiveTween(diagramArea); } ));        
-    }
+    //play single
+    playButtons.appendChild( CreateInputControl('(Un)Pause', () => { PauseActiveTween(targetArea); } ));
 
-    {//next
-        playButtons.appendChild( CreateInputControl('NEXT', () => { ShiftEvent(diagramArea, 1); } ));        
-    }
+    //next
+    playButtons.appendChild( CreateInputControl('NEXT', () => { ShiftEvent(targetArea, 1); } ));    
 
-    controlArea.appendChild(playButtons);
-    
-    diagramArea.insertBefore(controlArea, diagramImage);
-    });
+    return playButtons;
 }
 
 function CreateInputControl(text, onclick)

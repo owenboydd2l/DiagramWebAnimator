@@ -1,19 +1,9 @@
-let runningEventIndex = 0;
-const STARTMODE = 1;
-const ENDMODE = 2;
-const NONE = 0;
-
-let activateMode = NONE;
-
 let startIndicator = null;
 let endIndicator = null;
-let cacheMousePosition = {};
 
 let globalEventCache = [];
 
 let selectedID = null;
-
-let selectedAnimationID = null;
 
 let tweenList = [];
 
@@ -67,22 +57,22 @@ function PerformLocationCheck(event)
             
             cacheMousePosition = PixelToPercent(diagramArea, clickPosition.x, clickPosition.y);
         
-            if(activateMode == NONE)
+            if(activateMode == PLACEMENTMODE_NONE)
                 return;
             
             let targetElement = null;
 
             let targetIndicator = null;
            
-            if(activateMode == STARTMODE)
+            if(activateMode == PLACEMENTMODE_STARTMODE)
             {
-                targetElement = document.getElementById('startData');							
+                targetElement = document.getElementById('startData');
                 targetIndicator =startIndicator;
                     
             }
-            else if (activateMode == ENDMODE)
+            else if (activateMode == PLACEMENTMODE_ENDMODE)
             {
-                targetElement = document.getElementById('endData')							
+                targetElement = document.getElementById('endData');
                 targetIndicator = endIndicator;
             }
 
@@ -218,6 +208,8 @@ function StartTween(targetArea, newRunMode = RUNMODE_SINGLE)
     box.setAttribute('data-start-width', box.offsetWidth);
     box.setAttribute('data-start-height', box.offsetHeight);
 
+    SetRunningEventIndex(targetArea, 0);
+
     ChangeStreamlineMode(targetArea, false);
 
     SetupAllEventTween(targetArea);
@@ -237,9 +229,12 @@ function OnFinishTween(targetArea)
 {
     let isCleanupTime = true;
 
+    let runningEventIndex = GetRunningEventIndex(targetArea);
+
     if(runMODE == RUNMODE_MULTIPLE)
     {        
         runningEventIndex++;
+        SetRunningEventIndex(targetArea, runningEventIndex);
     }
 
     if($(targetArea).find('#ddl_loop')[0].checked)
@@ -252,6 +247,7 @@ function OnFinishTween(targetArea)
             if(runningEventIndex >= globalEventCache.length)
             {
                 runningEventIndex = 0;
+                SetRunningEventIndex(targetArea, runningEventIndex);
             }
             
         }
@@ -314,11 +310,11 @@ function SetupAllEventTween(targetArea)
     if(isSingleMode)
         foundEvent = globalEventCache.find( (ev) => ev.id == selectedID);
     else
-        foundEvent = globalEventCache[runningEventIndex];
+        foundEvent = globalEventCache[GetRunningEventIndex(targetArea)];
 
     if(!foundEvent)
     {
-        console.error( runMODE + ' EVENT NOT FOUND ' + (isSingleMode ? selectedID : runningEventIndex));
+        console.error( runMODE + ' EVENT NOT FOUND ' + (isSingleMode ? selectedID : GetRunningEventIndex(targetArea)));
         return;
     }
 
@@ -390,5 +386,45 @@ function SetupAllEventTween(targetArea)
     targetArea.setAttribute('data-tween-id', newTweenRecord.id);
 
     targetArea.setAttribute("data-animation-id", requestAnimationFrame(animate));
+}
+
+function SetRunningEventIndex(target, index)
+{
+    target.setAttribute('data-running-event-index', index);
+}
+
+function GetRunningEventIndex(target)
+{
+    return GetAttrDefault(target, 'data-running-event-index', 0);
+}
+
+function GetAttrDefault(target, name, defaultValue = null)
+{
+    let attr_value = target.getAttribute(name);
+
+    if(attr_value == null)
+        return defaultValue;
+    else
+        return attr_value;
+}
+
+function GetIsPathPreviewMode(target)
+{
+    return GetAttrDefault(target, 'data-path-preview', false) === 'true';
+}
+
+function SetIsPathPreviewMode(target, newPathPreviewMode)
+{
+    target.setAttribute('data-path-preview', newPathPreviewMode);
+}
+
+function GetIsPaused(target)
+{
+    return GetAttrDefault(target, 'data-animation-paused', false) === 'true';
+}
+
+function SetIsPaused(target, newPaused)
+{
+    target.setAttribute('data-animation-paused', newPaused);
 }
 
