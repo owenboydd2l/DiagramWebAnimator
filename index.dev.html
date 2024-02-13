@@ -14,6 +14,7 @@
 		<script src="scripts/Asset.js"></script>
 		<script src="scripts/ShapeTransform.js"></script>
 		<script src="scripts/ProgressDisplay.js"></script>
+		<script src="scripts/DiagramImage.js"></script>
 		
 		<script src="data/test01.js"></script>
 		<script src="data/DATA.js"></script>
@@ -29,6 +30,13 @@
 		<link rel="stylesheet" href="style/DiagramControls.css">
 		<link rel="stylesheet" href="style/DiagramAnimation.css">
 		<link rel="stylesheet" href="style/Editor.css">
+
+		<style>
+			body{
+				font-family:arial;
+			}
+			
+		</style>
 
 		<script>
 			window.addEventListener('load', () =>
@@ -50,10 +58,12 @@
 			<div id='isOverArea'></div>
 			<div id='pageScrollTop'></div>
 		</div>
-		<div id='diagram_area'>
-			<img id="box" class="box" style="display:none;" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTukEhbRDPETDiNMl5ZO8Lm3nQRSzPLnvdsPK30nTmMig&s" />			
-			<canvas id="diagram_canvas" class="diagramCanvas"></canvas>
-			<img id='diagram_image' src='images/Blank diagram.png' onclick='ActivateImage(this)' style='width: 100%' />			
+		<div style="margin-top:150px;padding-left:50px">
+			<div id='diagram_area'>
+				<img id="box" class="box" style="display:none;" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTukEhbRDPETDiNMl5ZO8Lm3nQRSzPLnvdsPK30nTmMig&s" />			
+				<canvas id="diagram_canvas" class="diagramCanvas"></canvas>
+				<img id='diagram_image' src='images/Blank diagram.png' onclick='ActivateImage(this)' style='width: 100%' />			
+			</div>
 		</div>
 		<div class="floatingControls">
 				
@@ -73,7 +83,7 @@
 				<input type='button' onclick='SetStart()' value='Set Start' />
 				<input type='button' onclick='SetEnd()' value='Set End' />
 				<hr />
-				<input type='button' onclick='ChangeStreamlineMode(document.getElementById("diagram_area"), !isStreamlineMode)' value='Streamline Mode' />
+				<input type='button' onclick='ChangeStreamlineMode(targetArea = document.getElementById("diagram_area"))' value='Streamline Mode' />
 				<hr />
 				<input type='button' onclick='ChangePathPreviewMode(document.getElementById("diagram_area"))' value='Path Preview' />
 		</div>

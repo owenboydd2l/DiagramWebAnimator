@@ -1,16 +1,10 @@
 let startIndicator = null;
 let endIndicator = null;
 
-let globalEventCache = [];
-
-let selectedID = null;
-
 let tweenList = [];
 
 const RUNMODE_SINGLE = 0;
 const RUNMODE_MULTIPLE = 1;
-
-let runMODE = RUNMODE_SINGLE;
 
 function ResizeDiagramCanvas()
 {
@@ -116,26 +110,38 @@ function SetupDiagramAnimator()
 
 function LoadSampleData()
 {
+    let newData = [];
+
     for(let i=0; i != sampleData.length; ++i)
     {
-        let data = sampleData[i];
+        let rawData = JSON.parse(sampleData[i]);
 
-        loadedData.push( JSON.parse(data) );
+        for(let j=0; j != rawData.length; ++j)
+        {
+            let animationList = [];
+
+            for(let k=0; k != rawData[j].flowAnimations.length;++k)
+            {                
+                let flowAnim = Object.create(FlowAnimation.prototype, Object.getOwnPropertyDescriptors(rawData[j].flowAnimations[k]))
+
+                let convertedEvents = [];
+
+                for(let l=0;l != flowAnim.stages[0].flowEvents.length;++l)
+                    convertedEvents.push( Object.create(FlowEvent.prototype, Object.getOwnPropertyDescriptors(flowAnim.stages[0].flowEvents[l])) );
+
+                flowAnim.stages[0].flowEvents = convertedEvents;
+
+                animationList.push(flowAnim);
+            }
+
+            let newImage = new DiagramImage( imageName = rawData[j].imageName, flowAnimations = animationList);
+
+            newData.push(newImage);
+        }
+
     }
-}
 
-
-
-function SetStart()
-{
-    activateMode = STARTMODE;
-    startIndicator = CreateNewIndicator( document.getElementById('diagram_area'), startIndicator, true);
-}
-
-function SetEnd()
-{
-    activateMode = ENDMODE;
-    endIndicator = CreateNewIndicator(document.getElementById('diagram_area'), endIndicator, false);
+    animationCache = newData;
 }
 
 function ViewToImagePosition(targetArea, clientX, clientY)
@@ -172,17 +178,22 @@ function AddElementToDiagram(diagramArea, element)
     diagramArea.insertBefore(element, diagramArea.firstChild);
 }
 
-function PerformSingleEventStep()
+function PerformSingleEventStep(targetImage)
 {
-    let foundEvent = globalEventCache.find( (ev) => ev.id == selectedID);
+    
+    let eventList = GetEventListFromSelection(targetImage.parentElement);
+
+    let eventID = SelectedEventFromArea(targetImage.parentElement);
+
+    let foundEvent = eventList.find( (ev) => ev.id == eventID);
 
     if(foundEvent !== undefined)
     {
-        if(activateMode == STARTMODE)
+        if(activateMode == PLACEMENTMODE_STARTMODE)
         {
             foundEvent.startOffset = cacheMousePosition;            
         }
-        else if (activateMode == ENDMODE)
+        else if (activateMode == PLACEMENTMODE_ENDMODE)
         {
             foundEvent.endPosition = cacheMousePosition;
         }
@@ -190,18 +201,13 @@ function PerformSingleEventStep()
         UpdateEventList();
     }    
 
-    activateMode = NONE;    
+    activateMode = PLACEMENTMODE_NONE;    
 }
 
-function StartTween(targetArea, newRunMode = RUNMODE_SINGLE)
+function StartTween(targetArea, runMode = RUNMODE_SINGLE)
 {
-    runMODE = newRunMode;
-
-    if(runMODE == RUNMODE_SINGLE && selectedID == null)
-    {
-        selectedID = globalEventCache[0].id;
-    }
     
+    SetRunMode(targetArea, runMode);
 
     let box = GetCacheBox(targetArea);
     
@@ -219,9 +225,9 @@ function StartTween(targetArea, newRunMode = RUNMODE_SINGLE)
 function ActivateImage(image)
 {		
     if(isStreamlineMode)
-        CreateStreamlineEvent();
+        CreateStreamlineEvent(image);
     else
-        PerformSingleEventStep();
+        PerformSingleEventStep(image);
     
 }
 
@@ -231,7 +237,11 @@ function OnFinishTween(targetArea)
 
     let runningEventIndex = GetRunningEventIndex(targetArea);
 
-    if(runMODE == RUNMODE_MULTIPLE)
+    let runMode = GetRunMode(targetArea);
+
+    let eventList = GetEventListFromSelection(targetArea);
+    
+    if(runMode == RUNMODE_MULTIPLE)
     {        
         runningEventIndex++;
         SetRunningEventIndex(targetArea, runningEventIndex);
@@ -242,9 +252,9 @@ function OnFinishTween(targetArea)
         console.log('loop mode')
         isCleanupTime = false;
 
-        if(runMODE == RUNMODE_MULTIPLE)
+        if(runMode == RUNMODE_MULTIPLE)
         {
-            if(runningEventIndex >= globalEventCache.length)
+            if(runningEventIndex >= eventList.length)
             {
                 runningEventIndex = 0;
                 SetRunningEventIndex(targetArea, runningEventIndex);
@@ -255,9 +265,9 @@ function OnFinishTween(targetArea)
     }   
     else
     {
-        if(runMODE == RUNMODE_MULTIPLE)
+        if(runMode == RUNMODE_MULTIPLE)
         {
-            if(runningEventIndex < globalEventCache.length)
+            if(runningEventIndex < eventList.length)
             {
                 isCleanupTime = false;
             }
@@ -304,21 +314,28 @@ function SetupAllEventTween(targetArea)
 
     let box = GetCacheBox(targetArea);
 
-    let isSingleMode = (runMODE == RUNMODE_SINGLE);
+    let runMode = GetRunMode(targetArea);
+
+    let isSingleMode = (runMode == RUNMODE_SINGLE);
     let foundEvent = null;
+
+    //todo fix?
+    let eventList = GetEventListFromSelection(targetArea);
     
     if(isSingleMode)
-        foundEvent = globalEventCache.find( (ev) => ev.id == selectedID);
+        foundEvent = eventList.find( (ev) => ev.id == SelectedEventFromArea(targetArea));
     else
-        foundEvent = globalEventCache[GetRunningEventIndex(targetArea)];
+        foundEvent = eventList[GetRunningEventIndex(targetArea)];
 
     if(!foundEvent)
     {
-        console.error( runMODE + ' EVENT NOT FOUND ' + (isSingleMode ? selectedID : GetRunningEventIndex(targetArea)));
+        console.error( runMode + ' EVENT NOT FOUND ' + (isSingleMode ? GetRunningEventIndex(targetArea) : GetRunningEventIndex(targetArea)));
         return;
     }
 
-    box.setAttribute('src', assetList.find( 
+    let selectedAssetlist = GetAssetListFromSelection(targetArea);
+
+    box.setAttribute('src', selectedAssetlist.find( 
         (a) => a.id == foundEvent.target).fileName);
 
     startIndicator = CreateNewIndicator(targetArea, startIndicator, true);
@@ -428,3 +445,20 @@ function SetIsPaused(target, newPaused)
     target.setAttribute('data-animation-paused', newPaused);
 }
 
+
+function GetRunMode(target)
+{
+    return GetAttrDefault(target, 'data-run-mode', RUNMODE_SINGLE);
+}
+
+function SetRunMode(target, newRunMode)
+{
+    target.setAttribute('data-run-mode', newRunMode);
+}
+
+function ImageFromDiagramArea(area)
+{
+    let imageName = $(area).find('#diagram_image').attr('src');
+    
+    return imageName.split('/').slice(1)[0];
+}

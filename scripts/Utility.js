@@ -70,3 +70,4 @@ function RoundFloat(val)
 {
     return Math.round(val * 100) / 100;
 }
+

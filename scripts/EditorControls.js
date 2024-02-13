@@ -12,40 +12,113 @@ let activateMode = PLACEMENTMODE_NONE;
 
 let cacheMousePosition = {};
 
+const default_assetList = 
+[ 
+    new Asset(1, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTukEhbRDPETDiNMl5ZO8Lm3nQRSzPLnvdsPK30nTmMig&s'),
+    new Asset(2, 'images/136443.png'),
+    new Asset(3, 'images/1950399.webp') 
+];
+
 function PlaySingleFromEditor()
 {
     StartTween(document.getElementById('diagram_area'), RUNMODE_SINGLE);
 }
 
-function ChangeStreamlineMode(targetArea, in_isNewStreamlineMode)
+function CreateNewAnimation(targetArea)
 {
-    isStreamlineMode = in_isNewStreamlineMode;
+    console.log('making new animation');
 
-    if(globalEventCache.length == 0)
+
+    let flowAnimation = new FlowAnimation(
+        id = uuidv4(),
+        name = uuidv4().substring(0,8),
+        stages = [ 
+            new AnimationStage( 
+                id = uuidv4(),
+                orderID = 0,
+                flowEvents = []
+                )],
+        assets = default_assetList
+    );
+
+    let diagramData = DataFromArea(targetArea);
+
+    
+    diagramData.flowAnimations.push(flowAnimation);
+
+    let animationOption = document.createElement("option");
+    animationOption.text = flowAnimation.name;
+    animationOption.value = flowAnimation.id;
+    
+    let ddlFlowAnimation = $(targetArea).find("#ddl_flow_animation");
+    ddlFlowAnimation[0].appendChild(animationOption);
+    ddlFlowAnimation.val(flowAnimation.id);
+    
+    UpdateEventList();
+
+}
+
+function ChangeStreamlineMode(targetArea, in_isNewStreamlineMode = null)
+{
+    
+    if(in_isNewStreamlineMode == null)
+        isStreamlineMode = !isStreamlineMode;
+    else
+        isStreamlineMode = in_isNewStreamlineMode;
+
+    let animationID = SelectedAnimationtFromArea(targetArea);
+
+    if(animationID == '----')
+    {
+        console.log('creating new animation');
+        CreateNewAnimation(targetArea);
+    }
+
+    let eventList = GetEventListFromSelection(targetArea);
+
+    if(eventList.length == 0)
         return;
 
     if(!isStreamlineMode)
     {
-        if(globalEventCache[globalEventCache.length - 1].endPosition == null)
+        if(eventList[eventList.length - 1].endPosition == null)
         {
             let newList = [];
 
-            for(let i =0; i < globalEventCache.length - 1; ++i)
-                newList.push(globalEventCache[i]);
+            for(let i =0; i < eventList.length - 1; ++i)
+                newList.push(eventList[i]);
 
-            globalEventCache = newList;
+            SetEventListFromSelection(targetArea, newList);
             UpdateEventList();
         }
     }
+}
+
+function SetStart()
+{
+    activateMode = PLACEMENTMODE_STARTMODE;
+    startIndicator = CreateNewIndicator( document.getElementById('diagram_area'), startIndicator, true);
+}
+
+function SetEnd()
+{
+    activateMode = PLACEMENTMODE_ENDMODE;
+    endIndicator = CreateNewIndicator(document.getElementById('diagram_area'), endIndicator, false);
 }
 
 function AddAsset()
 {
     var newFilePath = $('#txtNewAssetPath')[0].value;
 
-    var newAsset = new Asset(id = assetList.length, fileName = newFilePath );
+    let diagramArea = $('#diagram_area');
 
-    assetList.push(newAsset);
+    let selectedAssetList = GetAssetListFromSelection( diagramArea );
+
+    var newAsset = new Asset(id = uuidv4(), fileName = newFilePath );
+
+    selectedAssetList.push(newAsset);
+
+    SetAssetListFromSelection(diagramArea, selectedAssetList);
 
     UpdateAssetList();
 }
@@ -55,11 +128,13 @@ function UpdateAssetList()
     let assetTable = $('#assetTable');
 
     if(assetTable.length == 0)
-        return; 
+        return;    
 
     assetTable.empty();
 
-    assetList.forEach(element => {
+    let selectedAssetList = GetAssetListFromSelection( $('#diagram_area') );
+
+    selectedAssetList.forEach(element => {
         var newImage = document.createElement('img');
         newImage.setAttribute('src', element.fileName);
         newImage.classList.add('previewImage');
@@ -71,13 +146,16 @@ function UpdateAssetList()
 function SelectEventRow(event)
 {
     ClearEditorSettings();
-    selectedID = event.id;
-    
-    UpdateEventList();
-
-    var foundEvent = globalEventCache.find( (ev) => ev.id == selectedID);
-
+   
     let diagram_area = $('#diagram_area')[0];
+
+    $(diagram_area).find('#ddl_event_steps').val( event.id);
+
+    let eventList = GetEventListFromSelection(diagram_area);
+
+    UpdateEventList();
+    
+    var foundEvent = eventList.find( (ev) => ev.id == event.id);    
 
     if(foundEvent.startOffset != null)
     {
@@ -118,8 +196,6 @@ function AddCellToRow(row, elementList)
     row.appendChild(newCell);
 }
 
-
-
 function ClearEditorSettings()
 {
     streamlineStage = STREAMLINESTAGE_START;
@@ -129,20 +205,37 @@ function ClearEditorSettings()
 
 function CreateNewEvent(in_startOffset = null, in_endPosition = null)
 {
+    let diagramArea = $("#diagram_area");
+
+    let imageName = ImageFromDiagramArea(diagramArea)
+
+    let eventList = GetEventListFromSelection(diagramArea);
     
     let newEvent = new FlowEvent( id = uuidv4(), 
-        orderID = globalEventCache.length == 0 ? 1 : globalEventCache.reduce((max, event) => max.orderID > event.orderID ? max : event).orderID + 1, 
+        orderID = eventList.length == 0 ? 1 : eventList.reduce((max, event) => max.orderID > event.orderID ? max : event).orderID + 1, 
         target = 1, 
         endPosition = in_endPosition, 
         startOffset =  in_startOffset, 
         duration = 2000, 
         transformType = null);
 
-    globalEventCache.push(newEvent);
+    let animationID = SelectedAnimationtFromArea(diagramArea);
 
-    selectedID = newEvent.id;
+    animationCache.find( t => t.imageName == imageName ).flowAnimations.find( a => a.id == animationID).stages[0].flowEvents.push(newEvent);    
 
     UpdateEventList();
+
+    let ddlEventSteps = diagramArea.find("#ddl_event_steps")[0];
+
+    let newOption = document.createElement('option');
+    newOption.text = newEvent.orderID;
+    newOption.value = newEvent.id;
+
+    ddlEventSteps.appendChild(newOption);
+
+    ddlEventSteps.value = newEvent.id;
+
+    
 
     return newEvent;
 }
@@ -167,16 +260,20 @@ function UpdatePathPreview()
             let diagramArea = diagramAreaJ[0];
 
             if(!GetIsPathPreviewMode(diagramArea))
+            {
                 return;
+            }
 
             let previewData = [];
 
-            for(let i=0; i < globalEventCache.length; ++i)
+            let eventList = GetEventListFromSelection(diagramArea);
+
+            for(let i=0; i < eventList.length; ++i)
             {
-                if(globalEventCache[i].startOffset == null || globalEventCache[i].endPosition == null)
+                if(eventList[i].startOffset == null || eventList[i].endPosition == null)
                     continue;
 
-                previewData.push( { start : globalEventCache[i].startOffset, end : globalEventCache[i].endPosition });
+                previewData.push( { start : eventList[i].startOffset, end : eventList[i].endPosition });
             }            
         
             for(let j=0; j < previewData.length; ++j)
@@ -197,14 +294,22 @@ function UpdateEventList()
     let controlTable = $('#controlTable');
     controlTable.empty();
 
-    globalEventCache.forEach(element => {
+    let diagramArea = $('#diagram_area');
+
+    let eventList = GetEventListFromSelection(diagramArea);
+
+    let selectedEventID = SelectedEventFromArea(diagramArea);
+
+    let selectedAssets = GetAssetListFromSelection(diagramArea);
+
+    eventList.forEach(element => {
         
         if(element == null || element === undefined)
             return;
 
         var newTableRow = document.createElement("tr");
 
-        if(element.id == selectedID)
+        if(element.id === selectedEventID)
         {
             newTableRow.style.backgroundColor = 'red';
         }
@@ -223,7 +328,7 @@ function UpdateEventList()
 
         {//icon preview
             let previewIcon = document.createElement('img');
-            previewIcon.src = assetList.find( (a) => a.id == element.target).fileName;
+            previewIcon.src = selectedAssets.find( (a) => a.id == element.target).fileName;
             previewIcon.classList.add("previewImage");
             previewIcon.addEventListener('click', function() {  ChangeFlowEventTarget(element.id); });
             AddCellToRow(newTableRow, [ previewIcon ] );
@@ -263,21 +368,14 @@ function UpdateEventList()
 
     UpdatePathPreview();
 
-    let stageList = [];
+    ExportEventsToJson();
+}
 
-    stageList.push( new AnimationStage(
-        id = uuidv4(),
-        orderID = 1,
-        flowEvents = globalEventCache
-    ));
-
-    let newAnimation = new FlowAnimation( id = uuidv4(),
-        name = 'TEST',
-        stages = stageList,
-        assets = assetList);
+function ExportEventsToJson()
+{
+    let diagramData = DataFromArea( $('#diagram_area') );
     
-
-    $('#event_json').text( JSON.stringify(newAnimation, null, 2) );
+    $('#event_json').text( JSON.stringify(diagramData, null, 2) );
 }
 
 function EditorChangeTransformType(flowEvent)
@@ -288,23 +386,28 @@ function EditorChangeTransformType(flowEvent)
 
 function ChangeFlowEventTarget(id)
 {
-    
+    let diagramArea = $('#diagram_area');
+
+    let eventlist = GetEventListFromSelection(diagramArea);
+
     let foundIndex = -1;
 
-    let foundEvent = globalEventCache.find((ev) => ev.id == id);
+    let foundEvent = eventlist.find((ev) => ev.id == id);
 
-    for(let i =0; i < assetList.length; ++i)
+    let selectedAssetList = GetAssetListFromSelection(diagramArea);
+
+    for(let i =0; i < selectedAssetList.length; ++i)
     {
-        if(assetList[i].id == foundEvent.target)
+        if(selectedAssetList[i].id == foundEvent.target)
         {
             foundIndex = i;
         }
     }    
 
-    if(foundIndex + 1 >= assetList.length)
-        foundEvent.target = assetList[0].id;
+    if(foundIndex + 1 >= selectedAssetList.length)
+        foundEvent.target = selectedAssetList[0].id;
     else
-        foundEvent.target = assetList[foundIndex + 1].id;
+        foundEvent.target = selectedAssetList[foundIndex + 1].id;
 
     UpdateEventList();
     
@@ -313,6 +416,12 @@ function ChangeFlowEventTarget(id)
 
 function CreateStreamlineEvent()
 {
+    let diagramArea = $("#diagram_area");
+    
+    let eventList = GetEventListFromSelection( diagramArea );
+
+    let eventID = SelectedEventFromArea(diagramArea);
+
     if(streamlineStage == STREAMLINESTAGE_START)
     {
         CreateNewEvent(cacheMousePosition, null );
@@ -321,7 +430,7 @@ function CreateStreamlineEvent()
     }
     else if (streamlineStage == STREAMLINESTAGE_END)
     {
-        var foundEvent = globalEventCache.find( (ev) => ev.id == selectedID);
+        var foundEvent = eventList.find( (ev) => ev.id == eventID);
 
         if(foundEvent !== undefined)
         {
@@ -332,7 +441,7 @@ function CreateStreamlineEvent()
         }
         else
         {
-            console.error('ID not found in event cache ' + selectedID);
+            console.error('ID not found in event cache ' + eventID);
         }
         
     }
