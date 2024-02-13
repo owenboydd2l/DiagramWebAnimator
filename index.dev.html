@@ -31,6 +31,13 @@
 		<link rel="stylesheet" href="style/DiagramAnimation.css">
 		<link rel="stylesheet" href="style/Editor.css">
 
+		<style>
+			body{
+				font-family:arial;
+			}
+			
+		</style>
+
 		<script>
 			window.addEventListener('load', () =>
 			{
@@ -51,10 +58,12 @@
 			<div id='isOverArea'></div>
 			<div id='pageScrollTop'></div>
 		</div>
-		<div id='diagram_area'>
-			<img id="box" class="box" style="display:none;" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTukEhbRDPETDiNMl5ZO8Lm3nQRSzPLnvdsPK30nTmMig&s" />			
-			<canvas id="diagram_canvas" class="diagramCanvas"></canvas>
-			<img id='diagram_image' src='images/Blank diagram.png' onclick='ActivateImage(this)' style='width: 100%' />			
+		<div style="margin-top:150px;padding-left:50px">
+			<div id='diagram_area'>
+				<img id="box" class="box" style="display:none;" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTukEhbRDPETDiNMl5ZO8Lm3nQRSzPLnvdsPK30nTmMig&s" />			
+				<canvas id="diagram_canvas" class="diagramCanvas"></canvas>
+				<img id='diagram_image' src='images/Blank diagram.png' onclick='ActivateImage(this)' style='width: 100%' />			
+			</div>
 		</div>
 		<div class="floatingControls">
 				

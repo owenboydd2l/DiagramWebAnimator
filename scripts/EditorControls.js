@@ -231,8 +231,6 @@ function UpdatePathPreview()
 {
     let diagramAreaJ = $('#diagram_area');
 
-    console.log(diagramAreaJ);
-
     diagramAreaJ.each( function()
     {
         let diagramArea = this;
@@ -250,11 +248,8 @@ function UpdatePathPreview()
 
             if(!GetIsPathPreviewMode(diagramArea))
             {
-                console.log("Not in path preview mode");
                 return;
             }
-            else
-                console.log("path preview mode");
 
             let previewData = [];
 

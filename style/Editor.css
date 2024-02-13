@@ -1,30 +1,30 @@
 .floatingControls
-			{
-				position: fixed;
-				right:0;
-				top:0;
-				background-color: silver;
-				width:200px;
-				height:450px;				
-			}
+{
+	position: fixed;
+	right:0;
+	top:0;
+	background-color: silver;
+	width:200px;
+	height:450px;				
+}
 
-			.floatingControls td
-			{
-				border: 1px solid black;				
-			}
+.floatingControls td
+{
+	border: 1px solid black;				
+}
 
-			.previewImage
-			{
-				width:25px;
-			}
+.previewImage
+{
+	width:25px;
+}
 
-			.locationData
-			{
-				font-size:x-small;
-			}
+.locationData
+{
+	font-size:x-small;
+}
 
-			.smollAssetChanger
-			{
-				font-size:x-small;
-				width:5px;
-			}
+.smollAssetChanger
+{
+	font-size:x-small;
+	width:5px;
+}
