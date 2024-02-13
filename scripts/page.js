@@ -116,11 +116,38 @@ function SetupDiagramAnimator()
 
 function LoadSampleData()
 {
+    let newData = [];
+
     for(let i=0; i != sampleData.length; ++i)
     {
-        let data = sampleData[i];
-        loadedData.push( JSON.parse(data) );
+        let rawData = JSON.parse(sampleData[i]);
+
+        for(let j=0; j != rawData.length; ++j)
+        {
+            let animationList = [];
+
+            for(let k=0; k != rawData[j].flowAnimations.length;++k)
+            {                
+                let flowAnim = Object.create(FlowAnimation.prototype, Object.getOwnPropertyDescriptors(rawData[j].flowAnimations[k]))
+
+                let convertedEvents = [];
+
+                for(let l=0;l != flowAnim.stages[0].flowEvents.length;++l)
+                    convertedEvents.push( Object.create(FlowEvent.prototype, Object.getOwnPropertyDescriptors(flowAnim.stages[0].flowEvents[l])) );
+
+                flowAnim.stages[0].flowEvents = convertedEvents;
+
+                animationList.push(flowAnim);
+            }
+
+            let newImage = new DiagramImage( imageName = rawData[j].imageName, flowAnimations = animationList);
+
+            newData.push(newImage);
+        }
+
     }
+
+    animationCache = newData;
 }
 
 function ViewToImagePosition(targetArea, clientX, clientY)
@@ -163,11 +190,11 @@ function PerformSingleEventStep()
 
     if(foundEvent !== undefined)
     {
-        if(activateMode == STARTMODE)
+        if(activateMode == PLACEMENTMODE_STARTMODE)
         {
             foundEvent.startOffset = cacheMousePosition;            
         }
-        else if (activateMode == ENDMODE)
+        else if (activateMode == PLACEMENTMODE_ENDMODE)
         {
             foundEvent.endPosition = cacheMousePosition;
         }

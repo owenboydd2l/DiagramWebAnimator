@@ -16,6 +16,4 @@ let assetList =
 
 const sampleData = [ test01 ];
 
-const loadedData = [];
-
-const animationCache = [];
+let animationCache = [];

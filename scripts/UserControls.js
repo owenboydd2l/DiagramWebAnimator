@@ -58,8 +58,17 @@ function ChangePathPreviewMode(targetArea)
     UpdatePathPreview();
 }
 
+function DataFromArea(targetArea)
+{
+    let imageName = ImageFromDiagramArea(targetArea);
+    
+    return animationCache.find( (cacheItem) => cacheItem.imageName === imageName );
+}
+
 function CreateAnimationDropDown(targetArea)
 {
+    let diagramData = DataFromArea(targetArea);
+
     let ddlFlowAnimation = document.createElement('select');
     
     ddlFlowAnimation.id = 'ddl_flow_animation';
@@ -68,7 +77,7 @@ function CreateAnimationDropDown(targetArea)
     emptyOption.text = '----';
     ddlFlowAnimation.appendChild(emptyOption);
 
-    loadedData.forEach( (data) => {
+    diagramData.flowAnimations.forEach( (data) => {
             let newOption = document.createElement('option');
             newOption.text = data.name;
             newOption.value = data.id;
@@ -172,6 +181,8 @@ function CreateInputControl(text, onclick)
 function UpdateEventDropDown(targetArea)
 {
     
+    let diagramData = DataFromArea(targetArea);
+
     let ddlEventSteps = $(targetArea).find('#ddl_event_steps')[0];
 
     let ddlFlowAnimation = $(targetArea).find('#ddl_flow_animation')[0];
@@ -184,7 +195,7 @@ function UpdateEventDropDown(targetArea)
     let emptyOption = document.createElement('option');
     emptyOption.text = '----';
 
-    let foundAnimation = loadedData.find( (an) => an.id == ddlFlowAnimation.value);
+    let foundAnimation = diagramData.flowAnimations.find( (an) => an.id == ddlFlowAnimation.value);
 
     if(!foundAnimation)
     {

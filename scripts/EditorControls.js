@@ -41,13 +41,13 @@ function ChangeStreamlineMode(targetArea, in_isNewStreamlineMode)
 
 function SetStart()
 {
-    activateMode = STARTMODE;
+    activateMode = PLACEMENTMODE_STARTMODE;
     startIndicator = CreateNewIndicator( document.getElementById('diagram_area'), startIndicator, true);
 }
 
 function SetEnd()
 {
-    activateMode = ENDMODE;
+    activateMode = PLACEMENTMODE_ENDMODE;
     endIndicator = CreateNewIndicator(document.getElementById('diagram_area'), endIndicator, false);
 }
 
@@ -291,9 +291,7 @@ function ExportEventsToJson()
         stages = stageList,
         assets = assetList);
 
-    let imageName = $('#diagram_image').attr('src');
-    
-    imageName = imageName.split('/').slice(1);
+    let imageName = ImageFromDiagramArea( $('#diagram_area') );    
 
     let diagramImage = new DiagramImage( imageName, [ newAnimation ]);
 
