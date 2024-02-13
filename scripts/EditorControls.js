@@ -207,6 +207,27 @@ function ClearEditorSettings()
     activateMode = PLACEMENTMODE_NONE;    
 }
 
+function DeleteSelected()
+{
+    let diagramArea = $("#diagram_area");
+
+    let eventList = GetEventListFromSelection(diagramArea);
+    let eventID = SelectedEventFromArea(diagramArea);
+
+    let newList = [];
+
+    for(let i=0; i != eventList.length; ++i)
+    {
+        if(eventList[i].id !== eventID)
+            newList.push(eventList[i]);
+    }
+
+    SetEventListFromSelection(diagramArea, newList);
+
+    UpdateEventList();
+    
+}
+
 function CreateNewEvent(in_startOffset = null, in_endPosition = null)
 {
     let diagramArea = $("#diagram_area");

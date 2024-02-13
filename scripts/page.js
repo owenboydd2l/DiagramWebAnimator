@@ -342,7 +342,7 @@ function SetupAllEventTween(targetArea)
     startIndicator = CreateNewIndicator(targetArea, startIndicator, true);
     endIndicator = CreateNewIndicator(targetArea, endIndicator, false);
 
-    let indicatorSize = PixelToPercent($('#diagram_area')[0], startIndicator.offsetWidth, startIndicator.offsetHeight );
+    let indicatorSize = PixelToPercent(targetArea, startIndicator.offsetWidth, startIndicator.offsetHeight );
 
     SetImagePosition(startIndicator, foundEvent.startOffset.x  - (indicatorSize.x / 2.0), foundEvent.startOffset.y - (indicatorSize.y / 2.0));
     SetImagePosition(endIndicator, foundEvent.endPosition.x  - (indicatorSize.x / 2.0), foundEvent.endPosition.y - (indicatorSize.y / 2.0));
