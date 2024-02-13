@@ -376,10 +376,13 @@ function EditorChangeTransformType(flowEvent)
 
 function ChangeFlowEventTarget(id)
 {
-    
+    let diagramArea = $('#diagram_area');
+
+    let eventlist = GetEventListFromSelection(diagramArea);
+
     let foundIndex = -1;
 
-    let foundEvent = globalEventCache.find((ev) => ev.id == id);
+    let foundEvent = eventlist.find((ev) => ev.id == id);
 
     for(let i =0; i < assetList.length; ++i)
     {

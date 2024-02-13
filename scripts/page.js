@@ -1,8 +1,6 @@
 let startIndicator = null;
 let endIndicator = null;
 
-let globalEventCache = [];
-
 let tweenList = [];
 
 const RUNMODE_SINGLE = 0;
