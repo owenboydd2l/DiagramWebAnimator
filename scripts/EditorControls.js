@@ -363,24 +363,9 @@ function UpdateEventList()
 
 function ExportEventsToJson()
 {
-    let stageList = [];
-
-    stageList.push( new AnimationStage(
-        id = uuidv4(),
-        orderID = 1,
-        flowEvents = globalEventCache
-    ));
-
-    let newAnimation = new FlowAnimation( id = uuidv4(),
-        name = 'TEST',
-        stages = stageList,
-        assets = assetList);
-
-    let imageName = ImageFromDiagramArea( $('#diagram_area') );    
-
-    let diagramImage = new DiagramImage( imageName, [ newAnimation ]);
-
-    $('#event_json').text( JSON.stringify(diagramImage, null, 2) );
+    let diagramData = DataFromArea( $('#diagram_area') );
+    
+    $('#event_json').text( JSON.stringify(diagramData, null, 2) );
 }
 
 function EditorChangeTransformType(flowEvent)
