@@ -99,8 +99,23 @@ function GetEventListFromSelection(targetArea)
     let animID = SelectedAnimationtFromArea(targetArea);
 
     let foundAnimation = diagramData.flowAnimations.find( (anim) => anim.id == animID);
+    
+    if(foundAnimation === undefined)
+        return [];    
 
     return foundAnimation.stages[0].flowEvents;
+}
+
+function SetEventListFromSelection(targetArea, eventList = [])
+{
+
+    let diagramData = DataFromArea(targetArea);
+
+    let animID = SelectedAnimationtFromArea(targetArea);
+
+    let foundAnimation = diagramData.flowAnimations.find( (anim) => anim.id == animID);
+
+    foundAnimation.stages[0].flowEvents = eventList;
 }
 
 function CreateAnimationDropDown(targetArea)

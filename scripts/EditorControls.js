@@ -17,23 +17,71 @@ function PlaySingleFromEditor()
     StartTween(document.getElementById('diagram_area'), RUNMODE_SINGLE);
 }
 
-function ChangeStreamlineMode(targetArea, in_isNewStreamlineMode)
+function CreateNewAnimation(targetArea)
 {
-    isStreamlineMode = in_isNewStreamlineMode;
+    console.log('making new animation');
 
-    if(globalEventCache.length == 0)
+
+    let flowAnimation = new FlowAnimation(
+        id = uuidv4(),
+        name = uuidv4().substring(0,8),
+        stages = [ 
+            new AnimationStage( 
+                id = uuidv4(),
+                orderID = 0,
+                flowEvents = []
+                )],
+        assets = []
+    );
+
+    let diagramData = DataFromArea(targetArea);
+
+    
+    diagramData.flowAnimations.push(flowAnimation);
+
+    let animationOption = document.createElement("option");
+    animationOption.text = flowAnimation.name;
+    animationOption.value = flowAnimation.id;
+    
+    let ddlFlowAnimation = $(targetArea).find("#ddl_flow_animation");
+    ddlFlowAnimation[0].appendChild(animationOption);
+    ddlFlowAnimation.val(flowAnimation.id);
+    
+    UpdateEventList();
+
+}
+
+function ChangeStreamlineMode(targetArea, in_isNewStreamlineMode = null)
+{
+    
+    if(in_isNewStreamlineMode == null)
+        isStreamlineMode = !isStreamlineMode;
+    else
+        isStreamlineMode = in_isNewStreamlineMode;
+
+    let animationID = SelectedAnimationtFromArea(targetArea);
+
+    if(animationID == '----')
+    {
+        console.log('creating new animation');
+        CreateNewAnimation(targetArea);
+    }
+
+    let eventList = GetEventListFromSelection(targetArea);
+
+    if(eventList.length == 0)
         return;
 
     if(!isStreamlineMode)
     {
-        if(globalEventCache[globalEventCache.length - 1].endPosition == null)
+        if(eventList[eventList.length - 1].endPosition == null)
         {
             let newList = [];
 
-            for(let i =0; i < globalEventCache.length - 1; ++i)
-                newList.push(globalEventCache[i]);
+            for(let i =0; i < eventList.length - 1; ++i)
+                newList.push(eventList[i]);
 
-            globalEventCache = newList;
+            SetEventListFromSelection(targetArea, newList);
             UpdateEventList();
         }
     }

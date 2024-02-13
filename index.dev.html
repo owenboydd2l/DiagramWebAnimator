@@ -74,9 +74,9 @@
 				<input type='button' onclick='SetStart()' value='Set Start' />
 				<input type='button' onclick='SetEnd()' value='Set End' />
 				<hr />
-				<input type='button' onclick='ChangeStreamlineMode(document.getElementById("diagram_area"), !isStreamlineMode)' value='Streamline Mode' />
+				<input type='button' onclick='ChangeStreamlineMode(targetArea = document.getElementById("diagram_area"))' value='Streamline Mode' />
 				<hr />
-				<input type='button' onclick='ChangePathPreviewMode(document.getElementById("diagram_area"))' value='Path Preview' />
+				<input type='button' onclick='ChangePathPreviewMode($("#diagram_area"))' value='Path Preview' />
 		</div>
 		
 		<br />

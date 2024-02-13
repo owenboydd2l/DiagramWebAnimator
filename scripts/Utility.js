@@ -71,9 +71,3 @@ function RoundFloat(val)
     return Math.round(val * 100) / 100;
 }
 
-function ImageFromDiagramArea(area)
-{
-    let imageName = $(area).find('#diagram_image').attr('src');
-    
-    return imageName.split('/').slice(1)[0];
-}

@@ -3,8 +3,6 @@ let endIndicator = null;
 
 let globalEventCache = [];
 
-let selectedID = null;
-
 let tweenList = [];
 
 const RUNMODE_SINGLE = 0;
@@ -458,3 +456,9 @@ function SetRunMode(target, newRunMode)
     target.setAttribute('data-run-mode', newRunMode);
 }
 
+function ImageFromDiagramArea(area)
+{
+    let imageName = $(area).find('#diagram_image').attr('src');
+    
+    return imageName.split('/').slice(1)[0];
+}
