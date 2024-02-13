@@ -39,6 +39,18 @@ function ChangeStreamlineMode(targetArea, in_isNewStreamlineMode)
     }
 }
 
+function SetStart()
+{
+    activateMode = STARTMODE;
+    startIndicator = CreateNewIndicator( document.getElementById('diagram_area'), startIndicator, true);
+}
+
+function SetEnd()
+{
+    activateMode = ENDMODE;
+    endIndicator = CreateNewIndicator(document.getElementById('diagram_area'), endIndicator, false);
+}
+
 function AddAsset()
 {
     var newFilePath = $('#txtNewAssetPath')[0].value;
@@ -117,8 +129,6 @@ function AddCellToRow(row, elementList)
     
     row.appendChild(newCell);
 }
-
-
 
 function ClearEditorSettings()
 {
@@ -263,6 +273,11 @@ function UpdateEventList()
 
     UpdatePathPreview();
 
+    ExportEventsToJson();
+}
+
+function ExportEventsToJson()
+{
     let stageList = [];
 
     stageList.push( new AnimationStage(
@@ -275,9 +290,14 @@ function UpdateEventList()
         name = 'TEST',
         stages = stageList,
         assets = assetList);
-    
 
-    $('#event_json').text( JSON.stringify(newAnimation, null, 2) );
+    let imageName = $('#diagram_image').attr('src');
+    
+    imageName = imageName.split('/').slice(1);
+
+    let diagramImage = new DiagramImage( imageName, [ newAnimation ]);
+
+    $('#event_json').text( JSON.stringify(diagramImage, null, 2) );
 }
 
 function EditorChangeTransformType(flowEvent)

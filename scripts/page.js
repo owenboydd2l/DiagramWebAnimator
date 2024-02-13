@@ -119,23 +119,8 @@ function LoadSampleData()
     for(let i=0; i != sampleData.length; ++i)
     {
         let data = sampleData[i];
-
         loadedData.push( JSON.parse(data) );
     }
-}
-
-
-
-function SetStart()
-{
-    activateMode = STARTMODE;
-    startIndicator = CreateNewIndicator( document.getElementById('diagram_area'), startIndicator, true);
-}
-
-function SetEnd()
-{
-    activateMode = ENDMODE;
-    endIndicator = CreateNewIndicator(document.getElementById('diagram_area'), endIndicator, false);
 }
 
 function ViewToImagePosition(targetArea, clientX, clientY)
@@ -190,7 +175,7 @@ function PerformSingleEventStep()
         UpdateEventList();
     }    
 
-    activateMode = NONE;    
+    activateMode = PLACEMENTMODE_NONE;    
 }
 
 function StartTween(targetArea, newRunMode = RUNMODE_SINGLE)
