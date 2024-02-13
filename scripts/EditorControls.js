@@ -142,20 +142,39 @@ function ClearEditorSettings()
 
 function CreateNewEvent(in_startOffset = null, in_endPosition = null)
 {
+    let diagramArea = $("#diagram_area");
+
+    let imageName = ImageFromDiagramArea(diagramArea)
+
+    let eventList = GetEventListFromSelection(diagramArea);
     
     let newEvent = new FlowEvent( id = uuidv4(), 
-        orderID = globalEventCache.length == 0 ? 1 : globalEventCache.reduce((max, event) => max.orderID > event.orderID ? max : event).orderID + 1, 
+        orderID = eventList.length == 0 ? 1 : eventList.reduce((max, event) => max.orderID > event.orderID ? max : event).orderID + 1, 
         target = 1, 
         endPosition = in_endPosition, 
         startOffset =  in_startOffset, 
         duration = 2000, 
         transformType = null);
 
-    globalEventCache.push(newEvent);
+    let animationID = SelectedAnimationtFromArea(diagramArea);
 
-    selectedID = newEvent.id;
+    animationCache.find( t => t.imageName == imageName ).flowAnimations.find( a => a.id == animationID).stages[0].flowEvents.push(newEvent);    
 
     UpdateEventList();
+
+    let ddlEventSteps = diagramArea.find("#ddl_event_steps")[0];
+
+    console.log(ddlEventSteps);
+    
+    let newOption = document.createElement('option');
+    newOption.text = newEvent.orderID;
+    newOption.value = newEvent.id;
+
+    ddlEventSteps.appendChild(newOption);
+
+    ddlEventSteps.value = newEvent.id;
+
+    
 
     return newEvent;
 }
@@ -340,6 +359,12 @@ function ChangeFlowEventTarget(id)
 
 function CreateStreamlineEvent()
 {
+    let diagramArea = $("#diagram_area");
+    
+    let eventList = GetEventListFromSelection( diagramArea );
+
+    let eventID = SelectedEventFromArea(diagramArea);
+
     if(streamlineStage == STREAMLINESTAGE_START)
     {
         CreateNewEvent(cacheMousePosition, null );
@@ -348,7 +373,7 @@ function CreateStreamlineEvent()
     }
     else if (streamlineStage == STREAMLINESTAGE_END)
     {
-        var foundEvent = globalEventCache.find( (ev) => ev.id == selectedID);
+        var foundEvent = eventList.find( (ev) => ev.id == eventID);
 
         if(foundEvent !== undefined)
         {
@@ -359,7 +384,7 @@ function CreateStreamlineEvent()
         }
         else
         {
-            console.error('ID not found in event cache ' + selectedID);
+            console.error('ID not found in event cache ' + eventID);
         }
         
     }

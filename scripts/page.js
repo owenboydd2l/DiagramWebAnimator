@@ -333,7 +333,7 @@ function SetupAllEventTween(targetArea)
 
     if(!foundEvent)
     {
-        console.error( runMode + ' EVENT NOT FOUND ' + (isSingleMode ? selectedID : GetRunningEventIndex(targetArea)));
+        console.error( runMode + ' EVENT NOT FOUND ' + (isSingleMode ? GetRunningEventIndex(targetArea) : GetRunningEventIndex(targetArea)));
         return;
     }
 
