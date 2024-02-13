@@ -1,1 +1,1 @@
-~(DiagramAnimator.png)
+~[Class Diagram](./DiagramAnimator.png)
