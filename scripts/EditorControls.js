@@ -84,12 +84,14 @@ function SelectEventRow(event)
 {
     ClearEditorSettings();
    
-    UpdateEventList();
-
     let diagram_area = $('#diagram_area')[0];
+
+    $(diagram_area).find('#ddl_event_steps').val( event.id);
 
     let eventList = GetEventListFromSelection(diagram_area);
 
+    UpdateEventList();
+    
     var foundEvent = eventList.find( (ev) => ev.id == event.id);    
 
     if(foundEvent.startOffset != null)
@@ -212,6 +214,8 @@ function UpdateEventList()
 
     let eventList = GetEventListFromSelection(diagramArea);
 
+    let selectedEventID = SelectedEventFromArea(diagramArea);    
+
     eventList.forEach(element => {
         
         if(element == null || element === undefined)
@@ -219,7 +223,7 @@ function UpdateEventList()
 
         var newTableRow = document.createElement("tr");
 
-        if(element.id == selectedID)
+        if(element.id === selectedEventID)
         {
             newTableRow.style.backgroundColor = 'red';
         }
