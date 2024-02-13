@@ -23,28 +23,40 @@ function PauseActiveTween(targetArea)
 
 function ShiftEvent(targetArea, direction)
 {//fix this function so it uses the orderid instead of the index of the collection
-    let foundIndex = -1;
+    
+    let diagramData = DataFromArea(targetArea);
+    
+    let eventID = SelectedEventFromArea(targetArea);
+    let animID = SelectedAnimationtFromArea(targetArea);
 
-    for(let i=0; i < globalEventCache.length && foundIndex == -1; ++i)
+    let foundIndex = -1;   
+
+    let foundAnimation = diagramData.flowAnimations.find( (anim) => anim.id == animID);
+
+    let animEvents = foundAnimation.stages[0].flowEvents;
+    
+    for(let i=0; i != animEvents.length && foundIndex == -1; ++i)
     {
-        if(globalEventCache[i].id == selectedID)
+        if(animEvents[i].id == eventID)
         {
             foundIndex = i;
         }
     }
 
     if(foundIndex == -1)
+    {
+        console.warn('index not found ' + selectedID);
         foundIndex = 0;
+    }
 
     let newIndex = foundIndex + direction;
 
     if(newIndex < 0)
-        newIndex = globalEventCache.length -1;
-    else if (newIndex >= globalEventCache.length )
+        newIndex = animEvents.length -1;
+    else if (newIndex >= animEvents.length )
         newIndex = 0;
 
-    selectedID = globalEventCache[newIndex].id;
-    $(targetArea).find('#ddl_event_steps')[0].value = selectedID;
+    $(targetArea).find('#ddl_event_steps')[0].value = animEvents[newIndex].id;
 }
 
 
@@ -63,6 +75,20 @@ function DataFromArea(targetArea)
     let imageName = ImageFromDiagramArea(targetArea);
     
     return animationCache.find( (cacheItem) => cacheItem.imageName === imageName );
+}
+
+function SelectedEventFromArea(targetArea)
+{
+    let ddlEvents = $(targetArea).find('#ddl_event_steps');
+
+    return ddlEvents.val();
+}
+
+function SelectedAnimationtFromArea(targetArea)
+{
+    let ddlEvents = $(targetArea).find('#ddl_flow_animation');
+
+    return ddlEvents.val();
 }
 
 function CreateAnimationDropDown(targetArea)
@@ -221,6 +247,7 @@ function UpdateEventDropDown(targetArea)
         selectedID = $('#ddl_event_steps')[0].value;         
     } );
     
+
     globalEventCache = [];
 
 
