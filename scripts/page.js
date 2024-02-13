@@ -10,8 +10,6 @@ let tweenList = [];
 const RUNMODE_SINGLE = 0;
 const RUNMODE_MULTIPLE = 1;
 
-let runMODE = RUNMODE_SINGLE;
-
 function ResizeDiagramCanvas()
 {
     let diagramCanvasList = $('#diagram_canvas');
@@ -184,9 +182,14 @@ function AddElementToDiagram(diagramArea, element)
     diagramArea.insertBefore(element, diagramArea.firstChild);
 }
 
-function PerformSingleEventStep()
+function PerformSingleEventStep(targetImage)
 {
-    let foundEvent = globalEventCache.find( (ev) => ev.id == selectedID);
+    
+    let eventList = GetEventListFromSelection(targetImage.parentElement);
+
+    let eventID = SelectedEventFromArea(targetImage.parentElement);
+
+    let foundEvent = eventList.find( (ev) => ev.id == eventID);
 
     if(foundEvent !== undefined)
     {
@@ -205,15 +208,10 @@ function PerformSingleEventStep()
     activateMode = PLACEMENTMODE_NONE;    
 }
 
-function StartTween(targetArea, newRunMode = RUNMODE_SINGLE)
+function StartTween(targetArea, runMode = RUNMODE_SINGLE)
 {
-    runMODE = newRunMode;
-
-    if(runMODE == RUNMODE_SINGLE && selectedID == null)
-    {
-        selectedID = globalEventCache[0].id;
-    }
     
+    SetRunMode(targetArea, runMode);
 
     let box = GetCacheBox(targetArea);
     
@@ -231,9 +229,9 @@ function StartTween(targetArea, newRunMode = RUNMODE_SINGLE)
 function ActivateImage(image)
 {		
     if(isStreamlineMode)
-        CreateStreamlineEvent();
+        CreateStreamlineEvent(image);
     else
-        PerformSingleEventStep();
+        PerformSingleEventStep(image);
     
 }
 
@@ -243,7 +241,11 @@ function OnFinishTween(targetArea)
 
     let runningEventIndex = GetRunningEventIndex(targetArea);
 
-    if(runMODE == RUNMODE_MULTIPLE)
+    let runMode = GetRunMode(targetArea);
+
+    let eventList = GetEventListFromSelection(targetArea);
+    
+    if(runMode == RUNMODE_MULTIPLE)
     {        
         runningEventIndex++;
         SetRunningEventIndex(targetArea, runningEventIndex);
@@ -254,9 +256,9 @@ function OnFinishTween(targetArea)
         console.log('loop mode')
         isCleanupTime = false;
 
-        if(runMODE == RUNMODE_MULTIPLE)
+        if(runMode == RUNMODE_MULTIPLE)
         {
-            if(runningEventIndex >= globalEventCache.length)
+            if(runningEventIndex >= eventList.length)
             {
                 runningEventIndex = 0;
                 SetRunningEventIndex(targetArea, runningEventIndex);
@@ -267,9 +269,9 @@ function OnFinishTween(targetArea)
     }   
     else
     {
-        if(runMODE == RUNMODE_MULTIPLE)
+        if(runMode == RUNMODE_MULTIPLE)
         {
-            if(runningEventIndex < globalEventCache.length)
+            if(runningEventIndex < eventList.length)
             {
                 isCleanupTime = false;
             }
@@ -316,21 +318,22 @@ function SetupAllEventTween(targetArea)
 
     let box = GetCacheBox(targetArea);
 
-    let isSingleMode = (runMODE == RUNMODE_SINGLE);
+    let runMode = GetRunMode(targetArea);
+
+    let isSingleMode = (runMode == RUNMODE_SINGLE);
     let foundEvent = null;
 
-    let diagramData = DataFromArea(targetArea);
-
     //todo fix?
+    let eventList = GetEventListFromSelection(targetArea);
     
     if(isSingleMode)
-        foundEvent = globalEventCache.find( (ev) => ev.id == selectedID);
+        foundEvent = eventList.find( (ev) => ev.id == SelectedEventFromArea(targetArea));
     else
-        foundEvent = globalEventCache[GetRunningEventIndex(targetArea)];
+        foundEvent = eventList[GetRunningEventIndex(targetArea)];
 
     if(!foundEvent)
     {
-        console.error( runMODE + ' EVENT NOT FOUND ' + (isSingleMode ? selectedID : GetRunningEventIndex(targetArea)));
+        console.error( runMode + ' EVENT NOT FOUND ' + (isSingleMode ? selectedID : GetRunningEventIndex(targetArea)));
         return;
     }
 
@@ -442,5 +445,16 @@ function GetIsPaused(target)
 function SetIsPaused(target, newPaused)
 {
     target.setAttribute('data-animation-paused', newPaused);
+}
+
+
+function GetRunMode(target)
+{
+    return GetAttrDefault(target, 'data-run-mode', RUNMODE_SINGLE);
+}
+
+function SetRunMode(target, newRunMode)
+{
+    target.setAttribute('data-run-mode', newRunMode);
 }
 
