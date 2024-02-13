@@ -231,6 +231,8 @@ function UpdatePathPreview()
 {
     let diagramAreaJ = $('#diagram_area');
 
+    console.log(diagramAreaJ);
+
     diagramAreaJ.each( function()
     {
         let diagramArea = this;
@@ -247,16 +249,23 @@ function UpdatePathPreview()
             let diagramArea = diagramAreaJ[0];
 
             if(!GetIsPathPreviewMode(diagramArea))
+            {
+                console.log("Not in path preview mode");
                 return;
+            }
+            else
+                console.log("path preview mode");
 
             let previewData = [];
 
-            for(let i=0; i < globalEventCache.length; ++i)
+            let eventList = GetEventListFromSelection(diagramArea);
+
+            for(let i=0; i < eventList.length; ++i)
             {
-                if(globalEventCache[i].startOffset == null || globalEventCache[i].endPosition == null)
+                if(eventList[i].startOffset == null || eventList[i].endPosition == null)
                     continue;
 
-                previewData.push( { start : globalEventCache[i].startOffset, end : globalEventCache[i].endPosition });
+                previewData.push( { start : eventList[i].startOffset, end : eventList[i].endPosition });
             }            
         
             for(let j=0; j < previewData.length; ++j)
