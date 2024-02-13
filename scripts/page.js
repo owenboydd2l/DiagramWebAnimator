@@ -318,6 +318,10 @@ function SetupAllEventTween(targetArea)
 
     let isSingleMode = (runMODE == RUNMODE_SINGLE);
     let foundEvent = null;
+
+    let diagramData = DataFromArea(targetArea);
+
+    //todo fix?
     
     if(isSingleMode)
         foundEvent = globalEventCache.find( (ev) => ev.id == selectedID);

@@ -83,13 +83,14 @@ function UpdateAssetList()
 function SelectEventRow(event)
 {
     ClearEditorSettings();
-    selectedID = event.id;
-    
+   
     UpdateEventList();
 
-    var foundEvent = globalEventCache.find( (ev) => ev.id == selectedID);
-
     let diagram_area = $('#diagram_area')[0];
+
+    let eventList = GetEventListFromSelection(diagram_area);
+
+    var foundEvent = eventList.find( (ev) => ev.id == event.id);    
 
     if(foundEvent.startOffset != null)
     {
@@ -207,7 +208,11 @@ function UpdateEventList()
     let controlTable = $('#controlTable');
     controlTable.empty();
 
-    globalEventCache.forEach(element => {
+    let diagramArea = $('#diagram_area');
+
+    let eventList = GetEventListFromSelection(diagramArea);
+
+    eventList.forEach(element => {
         
         if(element == null || element === undefined)
             return;

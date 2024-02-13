@@ -29,7 +29,7 @@ function ShiftEvent(targetArea, direction)
     let eventID = SelectedEventFromArea(targetArea);
     let animID = SelectedAnimationtFromArea(targetArea);
 
-    let foundIndex = -1;   
+    let foundIndex = -1;
 
     let foundAnimation = diagramData.flowAnimations.find( (anim) => anim.id == animID);
 
@@ -45,7 +45,7 @@ function ShiftEvent(targetArea, direction)
 
     if(foundIndex == -1)
     {
-        console.warn('index not found ' + selectedID);
+        console.warn('index not found ' + eventID);
         foundIndex = 0;
     }
 
@@ -89,6 +89,18 @@ function SelectedAnimationtFromArea(targetArea)
     let ddlEvents = $(targetArea).find('#ddl_flow_animation');
 
     return ddlEvents.val();
+}
+
+function GetEventListFromSelection(targetArea)
+{
+    
+    let diagramData = DataFromArea(targetArea);
+
+    let animID = SelectedAnimationtFromArea(targetArea);
+
+    let foundAnimation = diagramData.flowAnimations.find( (anim) => anim.id == animID);
+
+    return foundAnimation.stages[0].flowEvents;
 }
 
 function CreateAnimationDropDown(targetArea)
@@ -241,30 +253,8 @@ function UpdateEventDropDown(targetArea)
         newOption.value = event.id;
         ddlEventSteps.appendChild(newOption);
     }
-    );
-
-    ddlEventSteps.addEventListener('change', () => { 
-        selectedID = $('#ddl_event_steps')[0].value;         
-    } );
-    
-
-    globalEventCache = [];
-
-
-    for(let i =0; i != foundAnimation.stages[0].flowEvents.length; ++i)
-    {        
-        let rawEvent = foundAnimation.stages[0].flowEvents[i];
-        globalEventCache.push( Object.create(FlowEvent.prototype, Object.getOwnPropertyDescriptors(rawEvent)) ); 
-    }
+    );    
    
-    assetList = [];
-
-    for(let i =0; i != foundAnimation.assets.length; ++i)
-    {
-        let asset = foundAnimation.assets[i];
-        assetList.push( Object.create(Asset.prototype, Object.getOwnPropertyDescriptors(asset)) );
-    }
-    
     UpdateEventList();
     
 }
