@@ -106,6 +106,36 @@ function GetEventListFromSelection(targetArea)
     return foundAnimation.stages[0].flowEvents;
 }
 
+function SetAssetListFromSelection(targetArea, assetlist)
+{
+    
+    let diagramData = DataFromArea(targetArea);
+
+    let animID = SelectedAnimationtFromArea(targetArea);
+
+    let foundAnimation = diagramData.flowAnimations.find( (anim) => anim.id == animID);
+    
+    if(foundAnimation === undefined)
+        return [];    
+
+    foundAnimation.assets = assetlist;
+}
+
+function GetAssetListFromSelection(targetArea)
+{
+    
+    let diagramData = DataFromArea(targetArea);
+
+    let animID = SelectedAnimationtFromArea(targetArea);
+
+    let foundAnimation = diagramData.flowAnimations.find( (anim) => anim.id == animID);
+    
+    if(foundAnimation === undefined)
+        return [];    
+
+    return foundAnimation.assets;
+}
+
 function SetEventListFromSelection(targetArea, eventList = [])
 {
 

@@ -12,6 +12,13 @@ let activateMode = PLACEMENTMODE_NONE;
 
 let cacheMousePosition = {};
 
+const default_assetList = 
+[ 
+    new Asset(1, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTukEhbRDPETDiNMl5ZO8Lm3nQRSzPLnvdsPK30nTmMig&s'),
+    new Asset(2, 'images/136443.png'),
+    new Asset(3, 'images/1950399.webp') 
+];
+
 function PlaySingleFromEditor()
 {
     StartTween(document.getElementById('diagram_area'), RUNMODE_SINGLE);
@@ -31,7 +38,7 @@ function CreateNewAnimation(targetArea)
                 orderID = 0,
                 flowEvents = []
                 )],
-        assets = []
+        assets = default_assetList
     );
 
     let diagramData = DataFromArea(targetArea);
@@ -103,9 +110,15 @@ function AddAsset()
 {
     var newFilePath = $('#txtNewAssetPath')[0].value;
 
-    var newAsset = new Asset(id = assetList.length, fileName = newFilePath );
+    let diagramArea = $('#diagram_area');
 
-    assetList.push(newAsset);
+    let selectedAssetList = GetAssetListFromSelection( diagramArea );
+
+    var newAsset = new Asset(id = uuidv4(), fileName = newFilePath );
+
+    selectedAssetList.push(newAsset);
+
+    SetAssetListFromSelection(diagramArea, selectedAssetList);
 
     UpdateAssetList();
 }
@@ -115,11 +128,13 @@ function UpdateAssetList()
     let assetTable = $('#assetTable');
 
     if(assetTable.length == 0)
-        return; 
+        return;    
 
     assetTable.empty();
 
-    assetList.forEach(element => {
+    let selectedAssetList = GetAssetListFromSelection( $('#diagram_area') );
+
+    selectedAssetList.forEach(element => {
         var newImage = document.createElement('img');
         newImage.setAttribute('src', element.fileName);
         newImage.classList.add('previewImage');
@@ -212,8 +227,6 @@ function CreateNewEvent(in_startOffset = null, in_endPosition = null)
 
     let ddlEventSteps = diagramArea.find("#ddl_event_steps")[0];
 
-    console.log(ddlEventSteps);
-    
     let newOption = document.createElement('option');
     newOption.text = newEvent.orderID;
     newOption.value = newEvent.id;
@@ -285,7 +298,9 @@ function UpdateEventList()
 
     let eventList = GetEventListFromSelection(diagramArea);
 
-    let selectedEventID = SelectedEventFromArea(diagramArea);    
+    let selectedEventID = SelectedEventFromArea(diagramArea);
+
+    let selectedAssets = GetAssetListFromSelection(diagramArea);
 
     eventList.forEach(element => {
         
@@ -313,7 +328,7 @@ function UpdateEventList()
 
         {//icon preview
             let previewIcon = document.createElement('img');
-            previewIcon.src = assetList.find( (a) => a.id == element.target).fileName;
+            previewIcon.src = selectedAssets.find( (a) => a.id == element.target).fileName;
             previewIcon.classList.add("previewImage");
             previewIcon.addEventListener('click', function() {  ChangeFlowEventTarget(element.id); });
             AddCellToRow(newTableRow, [ previewIcon ] );
@@ -379,18 +394,20 @@ function ChangeFlowEventTarget(id)
 
     let foundEvent = eventlist.find((ev) => ev.id == id);
 
-    for(let i =0; i < assetList.length; ++i)
+    let selectedAssetList = GetAssetListFromSelection(diagramArea);
+
+    for(let i =0; i < selectedAssetList.length; ++i)
     {
-        if(assetList[i].id == foundEvent.target)
+        if(selectedAssetList[i].id == foundEvent.target)
         {
             foundIndex = i;
         }
     }    
 
-    if(foundIndex + 1 >= assetList.length)
-        foundEvent.target = assetList[0].id;
+    if(foundIndex + 1 >= selectedAssetList.length)
+        foundEvent.target = selectedAssetList[0].id;
     else
-        foundEvent.target = assetList[foundIndex + 1].id;
+        foundEvent.target = selectedAssetList[foundIndex + 1].id;
 
     UpdateEventList();
     

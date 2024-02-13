@@ -333,7 +333,9 @@ function SetupAllEventTween(targetArea)
         return;
     }
 
-    box.setAttribute('src', assetList.find( 
+    let selectedAssetlist = GetAssetListFromSelection(targetArea);
+
+    box.setAttribute('src', selectedAssetlist.find( 
         (a) => a.id == foundEvent.target).fileName);
 
     startIndicator = CreateNewIndicator(targetArea, startIndicator, true);
