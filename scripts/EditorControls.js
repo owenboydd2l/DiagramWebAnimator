@@ -67,24 +67,12 @@ function ChangeStreamlineMode(targetArea, in_isNewStreamlineMode = null)
         isStreamlineMode = in_isNewStreamlineMode;
 
     if(!isStreamlineMode)
-        return;
-
-    let animationID = SelectedAnimationtFromArea(targetArea);
-
-    if(animationID == '----')
     {
-        console.log('creating new animation');
+        let eventList = GetEventListFromSelection(targetArea);
 
-        CreateNewAnimation(targetArea);        
-    }
+        if(eventList.length == 0)
+            return;
 
-    let eventList = GetEventListFromSelection(targetArea);
-
-    if(eventList.length == 0)
-        return;
-
-    if(!isStreamlineMode)
-    {
         if(eventList[eventList.length - 1].endPosition == null)
         {
             let newList = [];
@@ -95,7 +83,19 @@ function ChangeStreamlineMode(targetArea, in_isNewStreamlineMode = null)
             SetEventListFromSelection(targetArea, newList);
             UpdateEventList();
         }
+
+        return;
     }
+
+    let animationID = SelectedAnimationtFromArea(targetArea);
+
+    if(animationID == '----')
+    {
+        console.log('creating new animation');
+
+        CreateNewAnimation(targetArea);        
+    }
+    
 }
 
 function SetStart()
@@ -212,6 +212,10 @@ function DeleteSelected()
     let diagramArea = $("#diagram_area");
 
     let eventList = GetEventListFromSelection(diagramArea);
+
+    if(eventList.length == 0)
+        return;
+    
     let eventID = SelectedEventFromArea(diagramArea);
 
     let newList = [];
