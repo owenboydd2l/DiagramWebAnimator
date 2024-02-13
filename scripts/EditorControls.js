@@ -66,12 +66,16 @@ function ChangeStreamlineMode(targetArea, in_isNewStreamlineMode = null)
     else
         isStreamlineMode = in_isNewStreamlineMode;
 
+    if(!isStreamlineMode)
+        return;
+
     let animationID = SelectedAnimationtFromArea(targetArea);
 
     if(animationID == '----')
     {
         console.log('creating new animation');
-        CreateNewAnimation(targetArea);
+
+        CreateNewAnimation(targetArea);        
     }
 
     let eventList = GetEventListFromSelection(targetArea);

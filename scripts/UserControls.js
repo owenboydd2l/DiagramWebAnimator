@@ -3,7 +3,10 @@ function PauseActiveTween(targetArea)
 {
     let tweenID = targetArea.getAttribute('data-tween-id');
 
-    let activeTween = tweenList.find( (t) => t.id == tweenID).tween;
+    let activeTween = tweenList.find( (t) => t.id == tweenID);
+
+    if(!activeTween)
+        return;
 
     let isPaused = GetIsPaused(targetArea);
     
@@ -13,11 +16,11 @@ function PauseActiveTween(targetArea)
 
     if(isPaused)
     {
-        activeTween.pause();
+        activeTween.tween.pause();
     }
     else
     {
-        activeTween.resume();
+        activeTween.tween.resume();
     }
 }
 
@@ -32,6 +35,9 @@ function ShiftEvent(targetArea, direction)
     let foundIndex = -1;
 
     let foundAnimation = diagramData.flowAnimations.find( (anim) => anim.id == animID);
+
+    if(!foundAnimation)
+        return;
 
     let animEvents = foundAnimation.stages[0].flowEvents;
     

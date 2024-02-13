@@ -329,7 +329,8 @@ function SetupAllEventTween(targetArea)
 
     if(!foundEvent)
     {
-        console.error( runMode + ' EVENT NOT FOUND ' + (isSingleMode ? GetRunningEventIndex(targetArea) : GetRunningEventIndex(targetArea)));
+        box.style.display = "none";
+        console.warn( runMode + ' EVENT NOT FOUND ' + (isSingleMode ? GetRunningEventIndex(targetArea) : GetRunningEventIndex(targetArea)));
         return;
     }
 
