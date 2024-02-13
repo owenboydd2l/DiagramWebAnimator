@@ -227,8 +227,6 @@ function UpdateEventDropDown(targetArea)
         assetList.push( Object.create(Asset.prototype, Object.getOwnPropertyDescriptors(asset)) );
     }
     
-    //assetList = foundAnimation.assets;
-
     UpdateEventList();
     
 }
