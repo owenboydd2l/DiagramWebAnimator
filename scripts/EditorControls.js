@@ -342,10 +342,15 @@ function UpdateEventList()
 
     let selectedAssets = GetAssetListFromSelection(diagramArea);
 
+    console.log('events: ' + eventList?.length);
+
     eventList.forEach(element => {
 
-        if(controlTable.length == 0)        
+        if(controlTable.length == 0)
+        {
+            console.log('no control table');
             return;
+        }
         
         if(element == null || element === undefined)
             return;
@@ -403,6 +408,8 @@ function UpdateEventList()
             transformIcon.addEventListener("click", function() { EditorChangeTransformType(element);  } );
             AddCellToRow(newTableRow, [ transformIcon ]);
         }
+
+        controlTable[0].appendChild(newTableRow);
 
     });
 

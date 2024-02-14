@@ -142,7 +142,7 @@ function GetAssetListFromSelection(targetArea)
     if(foundAnimation === undefined)
     {
         console.warn('no animations found ' + animID);
-        return [];    
+        return [];
     }
 
     return foundAnimation.assets;
