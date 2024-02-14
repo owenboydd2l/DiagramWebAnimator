@@ -15,8 +15,8 @@ let cacheMousePosition = {};
 const default_assetList = 
 [ 
     new Asset(1, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTukEhbRDPETDiNMl5ZO8Lm3nQRSzPLnvdsPK30nTmMig&s'),
-    new Asset(2, 'images/136443.png'),
-    new Asset(3, 'images/1950399.webp') 
+    new Asset(2, 'static/images/136443.png'),
+    new Asset(3, 'static/images/1950399.webp') 
 ];
 
 function PlaySingleFromEditor()

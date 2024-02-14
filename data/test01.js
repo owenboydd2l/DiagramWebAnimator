@@ -64,11 +64,11 @@ const test01 = `[{
         },
         {
           "id": 2,
-          "fileName": "images/136443.png"
+          "fileName": "static/images/136443.png"
         },
         {
           "id": 3,
-          "fileName": "images/1950399.webp"
+          "fileName": "static/images/1950399.webp"
         }
       ]
     }

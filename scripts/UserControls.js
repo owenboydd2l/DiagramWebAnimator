@@ -79,7 +79,7 @@ function ChangePathPreviewMode(targetArea)
 function DataFromArea(targetArea)
 {
     let imageName = ImageFromDiagramArea(targetArea);
-    
+
     return animationCache.find( (cacheItem) => cacheItem.imageName === imageName );
 }
 
@@ -137,7 +137,10 @@ function GetAssetListFromSelection(targetArea)
     let foundAnimation = diagramData.flowAnimations.find( (anim) => anim.id == animID);
     
     if(foundAnimation === undefined)
+    {
+        console.warn('no animations found ' + animID);
         return [];    
+    }
 
     return foundAnimation.assets;
 }

@@ -6,6 +6,10 @@ let tweenList = [];
 const RUNMODE_SINGLE = 0;
 const RUNMODE_MULTIPLE = 1;
 
+const GREEN_CIRCLE_IMAGE = 'static/images/800px-Circle_-_green_simple.png';
+
+const WHITE_CIRCLE_IMAGE = 'static/images/800px-Circle_-_black_simple.svg.png';
+
 function ResizeDiagramCanvas()
 {
     let diagramCanvasList = $('#diagram_canvas');
@@ -161,9 +165,9 @@ function CreateNewIndicator(targetArea, indicatorElement, isStart = false)
         AddElementToDiagram(targetArea, indicatorElement);
         
         if(isStart)
-            indicatorElement.setAttribute('src', 'images/800px-Circle_-_green_simple.png');
+            indicatorElement.setAttribute('src', GREEN_CIRCLE_IMAGE);
         else
-            indicatorElement.setAttribute('src', 'images/800px-Circle_-_black_simple.svg.png');
+            indicatorElement.setAttribute('src', WHITE_CIRCLE_IMAGE);
 
         indicatorElement.classList.add('indicator');
     }
@@ -460,6 +464,8 @@ function SetRunMode(target, newRunMode)
 function ImageFromDiagramArea(area)
 {
     let imageName = $(area).find('#diagram_image').attr('src');
-    
-    return imageName.split('/').slice(1)[0];
+
+    let imageSplit = imageName.split('/');   
+
+    return imageSplit[ imageSplit.length - 1];
 }
