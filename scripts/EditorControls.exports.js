@@ -6,7 +6,6 @@ export {
     PLACEMENTMODE_STARTMODE,
     PLACEMENTMODE_ENDMODE,
     PLACEMENTMODE_NONE,
-    activateMode,
     default_assetList,
     
     PlaySingleFromEditor,

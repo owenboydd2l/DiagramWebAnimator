@@ -5,12 +5,17 @@
 
         <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
 
-        <script src="/static/build/page.js" type="module"></script>
+        <script src="data/test01.js"></script>
 
+        <link rel="stylesheet" href="/static/style/DiagramControls.css">
+		<link rel="stylesheet" href="/static/style/DiagramAnimation.css">
+		<link rel="stylesheet" href="/static/style/Editor.css">
 
         <script type="module">
             
-            import { SetupDiagramAnimator } from '/static/build/page.js';
+            import { SetupDiagramAnimator, ResizeDiagramCanvas } from '/static/build/page.js';
+
+            import { UserLiveData, sampleData, transformList } from '/static/data/DATA.js';
 
             window.addEventListener('load', () =>
 			{

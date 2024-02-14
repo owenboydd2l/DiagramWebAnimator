@@ -12,7 +12,8 @@ let activateMode = PLACEMENTMODE_NONE;
 
 const EditorLiveData =
 {
-    cacheMousePosition : {}
+    cacheMousePosition : {},
+    activateMode : PLACEMENTMODE_NONE
 };
 
 const default_assetList = 
@@ -103,14 +104,14 @@ function ChangeStreamlineMode(targetArea, in_isNewStreamlineMode = null)
 
 function SetStart()
 {
-    activateMode = PLACEMENTMODE_STARTMODE;
-    startIndicator = CreateNewIndicator( document.getElementById('diagram_area'), startIndicator, true);
+    EditorLiveData.activateMode = PLACEMENTMODE_STARTMODE;
+    PageLiveData.startIndicator = CreateNewIndicator( document.getElementById('diagram_area'), PageLiveData.startIndicator, true);
 }
 
 function SetEnd()
 {
-    activateMode = PLACEMENTMODE_ENDMODE;
-    endIndicator = CreateNewIndicator(document.getElementById('diagram_area'), endIndicator, false);
+    EditorLiveData.activateMode = PLACEMENTMODE_ENDMODE;
+    PageLiveData.endIndicator = CreateNewIndicator(document.getElementById('diagram_area'), PageLiveData.endIndicator, false);
 }
 
 function AddAsset()
@@ -166,19 +167,19 @@ function SelectEventRow(event)
 
     if(foundEvent.startOffset != null)
     {
-        startIndicator = CreateNewIndicator(diagram_area, startIndicator, true);
+        PageLiveData.startIndicator = CreateNewIndicator(diagram_area, PageLiveData.startIndicator, true);
         
-        let indicatorSize = PixelToPercent(diagram_area, startIndicator.offsetWidth, startIndicator.offsetHeight );
-        SetImagePosition(startIndicator, foundEvent.startOffset.x - (indicatorSize.x / 2.0), foundEvent.startOffset.y - (indicatorSize.y / 2.0));
+        let indicatorSize = PixelToPercent(diagram_area, PageLiveData.startIndicator.offsetWidth, PageLiveData.startIndicator.offsetHeight );
+        SetImagePosition(PageLiveData.startIndicator, foundEvent.startOffset.x - (indicatorSize.x / 2.0), foundEvent.startOffset.y - (indicatorSize.y / 2.0));
     }
 
     if(foundEvent.endPosition != null)
     {
-        endIndicator = CreateNewIndicator(diagram_area, endIndicator, false);
+        PageLiveData.endIndicator = CreateNewIndicator(diagram_area, PageLiveData.endIndicator, false);
 
-        let indicatorSize = PixelToPercent(diagram_area, endIndicator.offsetWidth, endIndicator.offsetHeight );
+        let indicatorSize = PixelToPercent(diagram_area, PageLiveData.endIndicator.offsetWidth, PageLiveData.endIndicator.offsetHeight );
 
-        SetImagePosition(endIndicator, foundEvent.endPosition.x - (indicatorSize.x / 2.0), foundEvent.endPosition.y - (indicatorSize.y / 2.0));
+        SetImagePosition(PageLiveData.endIndicator, foundEvent.endPosition.x - (indicatorSize.x / 2.0), foundEvent.endPosition.y - (indicatorSize.y / 2.0));
     }
 }
 
@@ -207,7 +208,7 @@ function ClearEditorSettings()
 {
     streamlineStage = STREAMLINESTAGE_START;
     isStreamlineMode = false;
-    activateMode = PLACEMENTMODE_NONE;    
+    EditorLiveData.activateMode = PLACEMENTMODE_NONE;    
 }
 
 function DeleteSelected()

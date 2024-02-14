@@ -3,6 +3,13 @@ let endIndicator = null;
 
 let tweenList = [];
 
+const PageLiveData = 
+{
+    startIndicator : null,
+    endIndicator : null,
+    tweenList : []
+};
+
 const RUNMODE_SINGLE = 0;
 const RUNMODE_MULTIPLE = 1;
 
@@ -55,23 +62,23 @@ function PerformLocationCheck(event)
             
             EditorLiveData.cacheMousePosition = PixelToPercent(diagramArea, clickPosition.x, clickPosition.y);
         
-            if(activateMode == PLACEMENTMODE_NONE)
+            if(EditorLiveData.activateMode == PLACEMENTMODE_NONE)
                 return;
             
             let targetElement = null;
 
             let targetIndicator = null;
            
-            if(activateMode == PLACEMENTMODE_STARTMODE)
+            if(EditorLiveData.activateMode == PLACEMENTMODE_STARTMODE)
             {
                 targetElement = document.getElementById('startData');
-                targetIndicator =startIndicator;
+                targetIndicator = PageLiveData.startIndicator;
                     
             }
-            else if (activateMode == PLACEMENTMODE_ENDMODE)
+            else if (EditorLiveData.activateMode == PLACEMENTMODE_ENDMODE)
             {
                 targetElement = document.getElementById('endData');
-                targetIndicator = endIndicator;
+                targetIndicator = PageLiveData.endIndicator;
             }
             
             let relativeClickPosition = new Point(x = clickPosition.x - (targetIndicator.offsetWidth / 2.0), y = clickPosition.y - (targetIndicator.offsetHeight / 2.0));
@@ -196,11 +203,11 @@ function PerformSingleEventStep(targetImage)
 
     if(foundEvent !== undefined)
     {
-        if(activateMode == PLACEMENTMODE_STARTMODE)
+        if(EditorLiveData.activateMode == PLACEMENTMODE_STARTMODE)
         {
             foundEvent.startOffset = EditorLiveData.cacheMousePosition;            
         }
-        else if (activateMode == PLACEMENTMODE_ENDMODE)
+        else if (EditorLiveData.activateMode == PLACEMENTMODE_ENDMODE)
         {
             foundEvent.endPosition = EditorLiveData.cacheMousePosition;
         }
@@ -208,7 +215,7 @@ function PerformSingleEventStep(targetImage)
         UpdateEventList();
     }    
 
-    activateMode = PLACEMENTMODE_NONE;    
+    EditorLiveData.activateMode = PLACEMENTMODE_NONE;    
 }
 
 function StartTween(targetArea, runMode = RUNMODE_SINGLE)
@@ -346,24 +353,24 @@ function SetupAllEventTween(targetArea)
     box.setAttribute('src', selectedAssetlist.find( 
         (a) => a.id == foundEvent.target).fileName);
 
-    startIndicator = CreateNewIndicator(targetArea, startIndicator, true);
-    endIndicator = CreateNewIndicator(targetArea, endIndicator, false);
+    PageLiveData.startIndicator = CreateNewIndicator(targetArea, PageLiveData.startIndicator, true);
+    PageLiveData.endIndicator = CreateNewIndicator(targetArea, PageLiveData.endIndicator, false);
 
-    let indicatorSize = PixelToPercent(targetArea, startIndicator.offsetWidth, startIndicator.offsetHeight );
+    let indicatorSize = PixelToPercent(targetArea, PageLiveData.startIndicator.offsetWidth, PageLiveData.startIndicator.offsetHeight );
 
-    SetImagePosition(startIndicator, foundEvent.startOffset.x  - (indicatorSize.x / 2.0), foundEvent.startOffset.y - (indicatorSize.y / 2.0));
-    SetImagePosition(endIndicator, foundEvent.endPosition.x  - (indicatorSize.x / 2.0), foundEvent.endPosition.y - (indicatorSize.y / 2.0));
+    SetImagePosition(PageLiveData.startIndicator, foundEvent.startOffset.x  - (indicatorSize.x / 2.0), foundEvent.startOffset.y - (indicatorSize.y / 2.0));
+    SetImagePosition(PageLiveData.endIndicator, foundEvent.endPosition.x  - (indicatorSize.x / 2.0), foundEvent.endPosition.y - (indicatorSize.y / 2.0));
 
-    let startPosition = ObjectToPosition(startIndicator);
-    let endPosition = ObjectToPosition(endIndicator);
+    let startPosition = ObjectToPosition(PageLiveData.startIndicator);
+    let endPosition = ObjectToPosition(PageLiveData.endIndicator);
 
     const startCoords = {x: startPosition.x, y: startPosition.y};
     const endCoords = {x: endPosition.x, y: endPosition.y};
     
     if(isSingleMode)
     {
-        startIndicator.style.zIndex = -1;
-        endIndicator.style.zIndex = -1;
+        PageLiveData.startIndicator.style.zIndex = -1;
+        PageLiveData.endIndicator.style.zIndex = -1;
     }
 
     let newTween = new TWEEN.Tween(startCoords, false) // Create a new tween that modifies 'coords'.

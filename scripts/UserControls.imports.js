@@ -4,6 +4,9 @@ import {
 } from './EditorControls.js';
 
 import {
-    ImageFromDiagramArea
+    ImageFromDiagramArea,
+    StartTween,
+    RUNMODE_MULTIPLE,
+    RUNMODE_SINGLE
 }
 from './page.js';

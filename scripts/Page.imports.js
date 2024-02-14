@@ -26,5 +26,9 @@ import {
     UpdatePathPreview,
     UpdateEventList,
     CreateStreamlineEvent,
-    EditorLiveData
+    EditorLiveData,
+    
+    PLACEMENTMODE_STARTMODE,
+    PLACEMENTMODE_ENDMODE,
+    PLACEMENTMODE_NONE
 } from './EditorControls.js';
