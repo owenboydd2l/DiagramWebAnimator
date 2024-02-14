@@ -99,7 +99,7 @@ function PerformLocationCheck(event)
     });
 }
 
-function SetupDiagramAnimator()
+function SetupDiagramAnimator(sampleData = null)
 {
     
     document.addEventListener('mousemove', (event) => {
@@ -109,7 +109,7 @@ function SetupDiagramAnimator()
     });
     
     
-    LoadSampleData();
+    LoadSampleData(sampleData);
 
     UpdateAssetList();
 
@@ -119,12 +119,15 @@ function SetupDiagramAnimator()
 
 }
 
-function LoadSampleData()
+function LoadSampleData(sampleData = null)
 {
     let newData = [];
 
-    if(typeof sampleData === 'undefined')
+    if(sampleData == null)
+    {
+        console.error('no sample data defined');
         return;
+    }    
 
     for(let i=0; i != sampleData.length; ++i)
     {
@@ -148,14 +151,14 @@ function LoadSampleData()
                 animationList.push(flowAnim);
             }
 
-            let newImage = new DiagramImage( imageName = rawData[j].imageName, flowAnimations = animationList);
+            let newImage = new DiagramImage( rawData[j].imageName, animationList);
 
             newData.push(newImage);
         }
 
     }
 
-    animationCache = newData;
+    UserLiveData.animationCache = newData;
 }
 
 function ViewToImagePosition(targetArea, clientX, clientY)

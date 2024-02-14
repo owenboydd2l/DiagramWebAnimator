@@ -8,14 +8,10 @@ const transformList =
     new ShapeTransform(TRANSFORM_GROW, 'static/images/44603.png', 'GROW', function(progress) { return lerp(0.01,1, progress); } ),
 ];
 
-const sampleData = [ test01 ];
-
-let animationCache = [];
-
 const UserLiveData =
 {
     animationCache : []
 }
 
 
-export { UserLiveData, sampleData, transformList };
+export { UserLiveData, transformList };

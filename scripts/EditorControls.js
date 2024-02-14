@@ -260,7 +260,7 @@ function CreateNewEvent(in_startOffset = null, in_endPosition = null)
         animationID = SelectedAnimationtFromArea(diagramArea);
     }
 
-    animationCache.find( t => t.imageName == imageName ).flowAnimations.find( a => a.id == animationID).stages[0].flowEvents.push(newEvent);    
+    UserLiveData.animationCache.find( t => t.imageName == imageName ).flowAnimations.find( a => a.id == animationID).stages[0].flowEvents.push(newEvent);    
 
     UpdateEventList();
 

@@ -10,3 +10,7 @@ import {
     RUNMODE_SINGLE
 }
 from './page.js';
+
+import {
+    UserLiveData
+} from '../data/DATA.js';

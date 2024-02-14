@@ -15,11 +15,12 @@
             
             import { SetupDiagramAnimator, ResizeDiagramCanvas } from '/static/build/page.js';
 
-            import { UserLiveData, sampleData, transformList } from '/static/data/DATA.js';
+            import { UserLiveData, transformList } from '/static/data/DATA.js';
 
             window.addEventListener('load', () =>
 			{
-				SetupDiagramAnimator();
+                let sampleData = [ test01 ];
+				SetupDiagramAnimator(sampleData);
 			});
 
 			window.addEventListener('resize', () =>

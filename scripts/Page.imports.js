@@ -1,6 +1,9 @@
 
 import { Point } from './Point.js';
 
+import { FlowAnimation } from './FlowAnimation.js';
+import { FlowEvent } from './FlowEvent.js';
+
 import { 
     uuidv4,
     PositionToProgress,

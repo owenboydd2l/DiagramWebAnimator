@@ -80,10 +80,10 @@ function DataFromArea(targetArea)
 {
     let imageName = ImageFromDiagramArea(targetArea);
 
-    if(typeof animationCache === 'undefined')
+    if(typeof UserLiveData.animationCache === 'undefined')
         return null;
 
-    return animationCache.find( (cacheItem) => cacheItem.imageName === imageName );
+    return UserLiveData.animationCache.find( (cacheItem) => cacheItem.imageName === imageName );
 }
 
 function SelectedEventFromArea(targetArea)
