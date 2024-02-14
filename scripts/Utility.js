@@ -71,3 +71,7 @@ function RoundFloat(val)
     return Math.round(val * 100) / 100;
 }
 
+function PointTest()
+{
+    return new Point();
+}
