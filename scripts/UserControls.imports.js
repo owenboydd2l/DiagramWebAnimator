@@ -1,6 +1,7 @@
 import { 
     UpdatePathPreview,
-    UpdateEventList 
+    UpdateEventList,
+    UpdateAssetList
 } from './EditorControls.js';
 
 import {

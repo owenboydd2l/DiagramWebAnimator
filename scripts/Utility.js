@@ -5,6 +5,13 @@ function uuidv4() {
     );
 }
 
+function IsWebHosted()
+{
+    const fileSystemRegex = /^file:\/\//g;    
+    let isFileSystem = window.location.href.match( fileSystemRegex );
+    return !isFileSystem;
+}
+
 
 function lerp( a, b, alpha ) {
     return a + alpha * ( b - a );
@@ -45,13 +52,13 @@ function TransformFromElement(targetElement)
 
 function PixelToPercent(image, x, y)
 {
-    return new Point(x = x / image.offsetWidth, y = Math.abs(y) / image.offsetHeight);
+    return new Point(x / image.offsetWidth, Math.abs(y) / image.offsetHeight);
 }
 
 function ObjectToPosition(image)
 {
-    return new Point( x = image.offsetLeft + (image.offsetWidth / 2.0),
-        y = image.offsetTop - (image.offsetHeight / 2.0));
+    return new Point( image.offsetLeft + (image.offsetWidth / 2.0),
+        image.offsetTop - (image.offsetHeight / 2.0));
 }
 
 function SetImagePosition(image, x, y)

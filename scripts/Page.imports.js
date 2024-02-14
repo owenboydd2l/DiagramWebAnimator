@@ -11,7 +11,8 @@ import {
     TransformFromElement,
     PixelToPercent,
     ObjectToPosition,
-    SetImagePosition
+    SetImagePosition,
+    IsWebHosted
 } from "./Utility.js";
 
 import { DiagramImage } from "./DiagramImage.js";

@@ -178,10 +178,10 @@ function CreateNewIndicator(targetArea, indicatorElement, isStart = false)
         AddElementToDiagram(targetArea, indicatorElement);
         
         if(isStart)
-            indicatorElement.setAttribute('src', GREEN_CIRCLE_IMAGE);
+            indicatorElement.setAttribute('src', (IsWebHosted() ? '/' : '') + GREEN_CIRCLE_IMAGE);
         else
-            indicatorElement.setAttribute('src', WHITE_CIRCLE_IMAGE);
-
+            indicatorElement.setAttribute('src', (IsWebHosted() ? '/' : '') + WHITE_CIRCLE_IMAGE);
+        
         indicatorElement.classList.add('indicator');
     }
 

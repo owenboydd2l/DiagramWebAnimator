@@ -343,6 +343,9 @@ function UpdateEventList()
     let selectedAssets = GetAssetListFromSelection(diagramArea);
 
     eventList.forEach(element => {
+
+        if(controlTable.length == 0)        
+            return;
         
         if(element == null || element === undefined)
             return;
@@ -400,9 +403,6 @@ function UpdateEventList()
             transformIcon.addEventListener("click", function() { EditorChangeTransformType(element);  } );
             AddCellToRow(newTableRow, [ transformIcon ]);
         }
-
-        if(controlTable.length > 0)
-            controlTable[0].appendChild(newTableRow);
 
     });
 
