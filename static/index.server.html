@@ -1,40 +1,23 @@
 <html>
-	<head>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/20.0.0/tween.umd.js"></script>
-		
-		<script src="scripts/Point.js"></script>
+    <head>
 
-		<script src="scripts/Utility.js"></script>
-		<script src="scripts/EntityID.js"></script>
-		<script src="scripts/OrderEntity.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/20.0.0/tween.umd.js"></script>
 
-		<script src="scripts/AnimationStage.js"></script>
-		<script src="scripts/FlowAnimation.js"></script>
-		<script src="scripts/FlowEvent.js"></script>
-		<script src="scripts/Asset.js"></script>
-		<script src="scripts/ShapeTransform.js"></script>
-		<script src="scripts/ProgressDisplay.js"></script>
-		<script src="scripts/DiagramImage.js"></script>
-		
-		<script src="data/test01.js"></script>
-		<script src="scripts/DATA.js"></script>
+        <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
 
-		<script src="scripts/EditorControls.js"></script>
+        <script src="data/test01.js"></script>
 
-		<script src="scripts/UserControls.js"></script>
-		
-		<script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="/static/style/DiagramControls.css">
+		<link rel="stylesheet" href="/static/style/DiagramAnimation.css">
+		<link rel="stylesheet" href="/static/style/Editor.css">
 
-		<script type="text/javascript" src="scripts/Page.js"></script>
+        <script type="module">
+            
+            import { SetupDiagramAnimator, ResizeDiagramCanvas } from '/static/build/page.js';
 
-		<link rel="stylesheet" href="static/style/DiagramControls.css">
-		<link rel="stylesheet" href="static/style/DiagramAnimation.css">
-		<link rel="stylesheet" href="static/style/Editor.css">
-
-		<script>
-			window.addEventListener('load', () =>
+            window.addEventListener('load', () =>
 			{
-				let sampleData = [ test01 ];
+                let sampleData = [ test01 ];
 				SetupDiagramAnimator(sampleData);
 			});
 
@@ -42,10 +25,10 @@
 			{
 				ResizeDiagramCanvas();
 			});
-		</script>
-
-	</head>
-	<body style="margin-left:50px;margin-top:50px;">
+            
+        </script>
+    </head>
+    <body style="margin-left:50px;margin-top:50px;">
 
 		<h1>Heading 01</h1>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur non laoreet purus. Donec non convallis mauris. Etiam molestie, nunc quis sollicitudin porta, lorem nunc porttitor lectus, in lobortis magna libero non felis. Pellentesque erat ipsum, eleifend quis faucibus id, dignissim ut lacus. Phasellus sit amet mauris sem. Mauris eu nunc id dolor accumsan convallis. Vestibulum pretium ante eu ex ultrices semper. Duis vehicula sapien hendrerit porttitor pellentesque. Suspendisse ac sapien a lorem tempus tempor ut in augue. Etiam lacinia lacinia maximus.
@@ -58,7 +41,7 @@
 		<div id='diagram_area'>
 			<img id="box" class="box" style="display:none;" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTukEhbRDPETDiNMl5ZO8Lm3nQRSzPLnvdsPK30nTmMig&s" />			
 			<canvas id="diagram_canvas" class="diagramCanvas"></canvas>
-			<img id='diagram_image' src='static/images/Blank diagram.png' onclick='ActivateImage(this)' style='width: 100%' />			
+			<img id='diagram_image' src='images/Blank diagram.png' onclick='ActivateImage(this)' style='width: 100%' />			
 		</div>	
 
 		<h2>Heading 03</h2>

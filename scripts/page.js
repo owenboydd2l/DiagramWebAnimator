@@ -3,8 +3,19 @@ let endIndicator = null;
 
 let tweenList = [];
 
+const PageLiveData = 
+{
+    startIndicator : null,
+    endIndicator : null,
+    tweenList : []
+};
+
 const RUNMODE_SINGLE = 0;
 const RUNMODE_MULTIPLE = 1;
+
+const GREEN_CIRCLE_IMAGE = 'static/images/800px-Circle_-_green_simple.png';
+
+const WHITE_CIRCLE_IMAGE = 'static/images/800px-Circle_-_black_simple.svg.png';
 
 function ResizeDiagramCanvas()
 {
@@ -36,8 +47,8 @@ function PerformLocationCheck(event)
         
         let diagramTransform = TransformFromElement(diagramArea);        
 
-        let mousePosition = new Point(x = event.clientX, 
-            y = event.clientY + document.body.scrollTop);
+        let mousePosition = new Point(event.clientX, 
+            event.clientY + document.body.scrollTop);
         
         if($('#imagePosition').length > 0)
             $('#imagePosition')[0].innerHTML = JSON.stringify(diagramTransform);
@@ -49,27 +60,27 @@ function PerformLocationCheck(event)
 
             let clickPosition = ViewToImagePosition(diagramArea, mousePosition.x, mousePosition.y);
             
-            cacheMousePosition = PixelToPercent(diagramArea, clickPosition.x, clickPosition.y);
+            EditorLiveData.cacheMousePosition = PixelToPercent(diagramArea, clickPosition.x, clickPosition.y);
         
-            if(activateMode == PLACEMENTMODE_NONE)
+            if(EditorLiveData.activateMode == PLACEMENTMODE_NONE)
                 return;
             
             let targetElement = null;
 
             let targetIndicator = null;
            
-            if(activateMode == PLACEMENTMODE_STARTMODE)
+            if(EditorLiveData.activateMode == PLACEMENTMODE_STARTMODE)
             {
                 targetElement = document.getElementById('startData');
-                targetIndicator =startIndicator;
+                targetIndicator = PageLiveData.startIndicator;
                     
             }
-            else if (activateMode == PLACEMENTMODE_ENDMODE)
+            else if (EditorLiveData.activateMode == PLACEMENTMODE_ENDMODE)
             {
                 targetElement = document.getElementById('endData');
-                targetIndicator = endIndicator;
+                targetIndicator = PageLiveData.endIndicator;
             }
-
+            
             let relativeClickPosition = new Point(x = clickPosition.x - (targetIndicator.offsetWidth / 2.0), y = clickPosition.y - (targetIndicator.offsetHeight / 2.0));
             
             let percentPosition = PixelToPercent(diagram_area, relativeClickPosition.x, relativeClickPosition.y);
@@ -88,7 +99,7 @@ function PerformLocationCheck(event)
     });
 }
 
-function SetupDiagramAnimator()
+function SetupDiagramAnimator(sampleData = null)
 {
     
     document.addEventListener('mousemove', (event) => {
@@ -98,7 +109,7 @@ function SetupDiagramAnimator()
     });
     
     
-    LoadSampleData();
+    LoadSampleData(sampleData);
 
     UpdateAssetList();
 
@@ -108,9 +119,15 @@ function SetupDiagramAnimator()
 
 }
 
-function LoadSampleData()
+function LoadSampleData(sampleData = null)
 {
     let newData = [];
+
+    if(sampleData == null)
+    {
+        console.error('no sample data defined');
+        return;
+    }    
 
     for(let i=0; i != sampleData.length; ++i)
     {
@@ -134,14 +151,14 @@ function LoadSampleData()
                 animationList.push(flowAnim);
             }
 
-            let newImage = new DiagramImage( imageName = rawData[j].imageName, flowAnimations = animationList);
+            let newImage = new DiagramImage( rawData[j].imageName, animationList);
 
             newData.push(newImage);
         }
 
     }
 
-    animationCache = newData;
+    UserLiveData.animationCache = newData;
 }
 
 function ViewToImagePosition(targetArea, clientX, clientY)
@@ -149,7 +166,7 @@ function ViewToImagePosition(targetArea, clientX, clientY)
     let offsetTop = targetArea.offsetTop;
     let offsetLeft = targetArea.offsetLeft;
     
-    return new Point( x = (clientX - offsetLeft), y = (clientY - offsetTop));
+    return new Point( (clientX - offsetLeft), (clientY - offsetTop));
 }
 
 function CreateNewIndicator(targetArea, indicatorElement, isStart = false)
@@ -161,10 +178,10 @@ function CreateNewIndicator(targetArea, indicatorElement, isStart = false)
         AddElementToDiagram(targetArea, indicatorElement);
         
         if(isStart)
-            indicatorElement.setAttribute('src', 'images/800px-Circle_-_green_simple.png');
+            indicatorElement.setAttribute('src', (IsWebHosted() ? '/' : '') + GREEN_CIRCLE_IMAGE);
         else
-            indicatorElement.setAttribute('src', 'images/800px-Circle_-_black_simple.svg.png');
-
+            indicatorElement.setAttribute('src', (IsWebHosted() ? '/' : '') + WHITE_CIRCLE_IMAGE);
+        
         indicatorElement.classList.add('indicator');
     }
 
@@ -189,19 +206,19 @@ function PerformSingleEventStep(targetImage)
 
     if(foundEvent !== undefined)
     {
-        if(activateMode == PLACEMENTMODE_STARTMODE)
+        if(EditorLiveData.activateMode == PLACEMENTMODE_STARTMODE)
         {
-            foundEvent.startOffset = cacheMousePosition;            
+            foundEvent.startOffset = EditorLiveData.cacheMousePosition;            
         }
-        else if (activateMode == PLACEMENTMODE_ENDMODE)
+        else if (EditorLiveData.activateMode == PLACEMENTMODE_ENDMODE)
         {
-            foundEvent.endPosition = cacheMousePosition;
+            foundEvent.endPosition = EditorLiveData.cacheMousePosition;
         }
 
         UpdateEventList();
     }    
 
-    activateMode = PLACEMENTMODE_NONE;    
+    EditorLiveData.activateMode = PLACEMENTMODE_NONE;    
 }
 
 function StartTween(targetArea, runMode = RUNMODE_SINGLE)
@@ -339,24 +356,24 @@ function SetupAllEventTween(targetArea)
     box.setAttribute('src', selectedAssetlist.find( 
         (a) => a.id == foundEvent.target).fileName);
 
-    startIndicator = CreateNewIndicator(targetArea, startIndicator, true);
-    endIndicator = CreateNewIndicator(targetArea, endIndicator, false);
+    PageLiveData.startIndicator = CreateNewIndicator(targetArea, PageLiveData.startIndicator, true);
+    PageLiveData.endIndicator = CreateNewIndicator(targetArea, PageLiveData.endIndicator, false);
 
-    let indicatorSize = PixelToPercent(targetArea, startIndicator.offsetWidth, startIndicator.offsetHeight );
+    let indicatorSize = PixelToPercent(targetArea, PageLiveData.startIndicator.offsetWidth, PageLiveData.startIndicator.offsetHeight );
 
-    SetImagePosition(startIndicator, foundEvent.startOffset.x  - (indicatorSize.x / 2.0), foundEvent.startOffset.y - (indicatorSize.y / 2.0));
-    SetImagePosition(endIndicator, foundEvent.endPosition.x  - (indicatorSize.x / 2.0), foundEvent.endPosition.y - (indicatorSize.y / 2.0));
+    SetImagePosition(PageLiveData.startIndicator, foundEvent.startOffset.x  - (indicatorSize.x / 2.0), foundEvent.startOffset.y - (indicatorSize.y / 2.0));
+    SetImagePosition(PageLiveData.endIndicator, foundEvent.endPosition.x  - (indicatorSize.x / 2.0), foundEvent.endPosition.y - (indicatorSize.y / 2.0));
 
-    let startPosition = ObjectToPosition(startIndicator);
-    let endPosition = ObjectToPosition(endIndicator);
+    let startPosition = ObjectToPosition(PageLiveData.startIndicator);
+    let endPosition = ObjectToPosition(PageLiveData.endIndicator);
 
     const startCoords = {x: startPosition.x, y: startPosition.y};
     const endCoords = {x: endPosition.x, y: endPosition.y};
     
     if(isSingleMode)
     {
-        startIndicator.style.zIndex = -1;
-        endIndicator.style.zIndex = -1;
+        PageLiveData.startIndicator.style.zIndex = -1;
+        PageLiveData.endIndicator.style.zIndex = -1;
     }
 
     let newTween = new TWEEN.Tween(startCoords, false) // Create a new tween that modifies 'coords'.
@@ -375,8 +392,7 @@ function SetupAllEventTween(targetArea)
             let newHeight = box.getAttribute('data-start-height');
             let newWidth = box.getAttribute('data-start-width');
 
-            let foundTransform = transformList.find( (tt) => tt.id == foundEvent.transformType);
-
+            let foundTransform = TRANSFORM_LIST.find( (tt) => tt.id == foundEvent.transformType);
             
             if(foundTransform)
             {               
@@ -460,6 +476,8 @@ function SetRunMode(target, newRunMode)
 function ImageFromDiagramArea(area)
 {
     let imageName = $(area).find('#diagram_image').attr('src');
-    
-    return imageName.split('/').slice(1)[0];
+
+    let imageSplit = imageName.split('/');   
+
+    return imageSplit[ imageSplit.length - 1];
 }

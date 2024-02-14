@@ -10,13 +10,17 @@ const PLACEMENTMODE_NONE = 0;
 
 let activateMode = PLACEMENTMODE_NONE;
 
-let cacheMousePosition = {};
+const EditorLiveData =
+{
+    cacheMousePosition : {},
+    activateMode : PLACEMENTMODE_NONE
+};
 
 const default_assetList = 
 [ 
     new Asset(1, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTukEhbRDPETDiNMl5ZO8Lm3nQRSzPLnvdsPK30nTmMig&s'),
-    new Asset(2, 'images/136443.png'),
-    new Asset(3, 'images/1950399.webp') 
+    new Asset(2, 'static/images/136443.png'),
+    new Asset(3, 'static/images/1950399.webp') 
 ];
 
 function PlaySingleFromEditor()
@@ -100,14 +104,14 @@ function ChangeStreamlineMode(targetArea, in_isNewStreamlineMode = null)
 
 function SetStart()
 {
-    activateMode = PLACEMENTMODE_STARTMODE;
-    startIndicator = CreateNewIndicator( document.getElementById('diagram_area'), startIndicator, true);
+    EditorLiveData.activateMode = PLACEMENTMODE_STARTMODE;
+    PageLiveData.startIndicator = CreateNewIndicator( document.getElementById('diagram_area'), PageLiveData.startIndicator, true);
 }
 
 function SetEnd()
 {
-    activateMode = PLACEMENTMODE_ENDMODE;
-    endIndicator = CreateNewIndicator(document.getElementById('diagram_area'), endIndicator, false);
+    EditorLiveData.activateMode = PLACEMENTMODE_ENDMODE;
+    PageLiveData.endIndicator = CreateNewIndicator(document.getElementById('diagram_area'), PageLiveData.endIndicator, false);
 }
 
 function AddAsset()
@@ -132,12 +136,13 @@ function UpdateAssetList()
     let assetTable = $('#assetTable');
 
     if(assetTable.length == 0)
-        return;    
+        return;
 
     assetTable.empty();
 
     let selectedAssetList = GetAssetListFromSelection( $('#diagram_area') );
 
+    console.log("Assets:" + selectedAssetList.length);
     selectedAssetList.forEach(element => {
         var newImage = document.createElement('img');
         newImage.setAttribute('src', element.fileName);
@@ -163,19 +168,19 @@ function SelectEventRow(event)
 
     if(foundEvent.startOffset != null)
     {
-        startIndicator = CreateNewIndicator(diagram_area, startIndicator, true);
+        PageLiveData.startIndicator = CreateNewIndicator(diagram_area, PageLiveData.startIndicator, true);
         
-        let indicatorSize = PixelToPercent(diagram_area, startIndicator.offsetWidth, startIndicator.offsetHeight );
-        SetImagePosition(startIndicator, foundEvent.startOffset.x - (indicatorSize.x / 2.0), foundEvent.startOffset.y - (indicatorSize.y / 2.0));
+        let indicatorSize = PixelToPercent(diagram_area, PageLiveData.startIndicator.offsetWidth, PageLiveData.startIndicator.offsetHeight );
+        SetImagePosition(PageLiveData.startIndicator, foundEvent.startOffset.x - (indicatorSize.x / 2.0), foundEvent.startOffset.y - (indicatorSize.y / 2.0));
     }
 
     if(foundEvent.endPosition != null)
     {
-        endIndicator = CreateNewIndicator(diagram_area, endIndicator, false);
+        PageLiveData.endIndicator = CreateNewIndicator(diagram_area, PageLiveData.endIndicator, false);
 
-        let indicatorSize = PixelToPercent(diagram_area, endIndicator.offsetWidth, endIndicator.offsetHeight );
+        let indicatorSize = PixelToPercent(diagram_area, PageLiveData.endIndicator.offsetWidth, PageLiveData.endIndicator.offsetHeight );
 
-        SetImagePosition(endIndicator, foundEvent.endPosition.x - (indicatorSize.x / 2.0), foundEvent.endPosition.y - (indicatorSize.y / 2.0));
+        SetImagePosition(PageLiveData.endIndicator, foundEvent.endPosition.x - (indicatorSize.x / 2.0), foundEvent.endPosition.y - (indicatorSize.y / 2.0));
     }
 }
 
@@ -204,7 +209,7 @@ function ClearEditorSettings()
 {
     streamlineStage = STREAMLINESTAGE_START;
     isStreamlineMode = false;
-    activateMode = PLACEMENTMODE_NONE;    
+    EditorLiveData.activateMode = PLACEMENTMODE_NONE;    
 }
 
 function DeleteSelected()
@@ -256,7 +261,7 @@ function CreateNewEvent(in_startOffset = null, in_endPosition = null)
         animationID = SelectedAnimationtFromArea(diagramArea);
     }
 
-    animationCache.find( t => t.imageName == imageName ).flowAnimations.find( a => a.id == animationID).stages[0].flowEvents.push(newEvent);    
+    UserLiveData.animationCache.find( t => t.imageName == imageName ).flowAnimations.find( a => a.id == animationID).stages[0].flowEvents.push(newEvent);    
 
     UpdateEventList();
 
@@ -338,6 +343,9 @@ function UpdateEventList()
     let selectedAssets = GetAssetListFromSelection(diagramArea);
 
     eventList.forEach(element => {
+
+        if(controlTable.length == 0)        
+            return;
         
         if(element == null || element === undefined)
             return;
@@ -384,7 +392,7 @@ function UpdateEventList()
             let transformIcon = document.createElement('img');
             transformIcon.style.width = 25 + "px";                
 
-            let foundTransform = transformList.find( (tt ) => tt.id == element.transformType);
+            let foundTransform = TRANSFORM_LIST.find( (tt ) => tt.id == element.transformType);
 
             if(foundTransform)
             {
@@ -395,9 +403,6 @@ function UpdateEventList()
             transformIcon.addEventListener("click", function() { EditorChangeTransformType(element);  } );
             AddCellToRow(newTableRow, [ transformIcon ]);
         }
-
-        if(controlTable.length > 0)
-            controlTable[0].appendChild(newTableRow);
 
     });
 
@@ -459,7 +464,7 @@ function CreateStreamlineEvent()
 
     if(streamlineStage == STREAMLINESTAGE_START)
     {
-        CreateNewEvent(cacheMousePosition, null );
+        CreateNewEvent(EditorLiveData.cacheMousePosition, null );
 
         streamlineStage = STREAMLINESTAGE_END;
     }
@@ -469,9 +474,9 @@ function CreateStreamlineEvent()
 
         if(foundEvent !== undefined)
         {
-            foundEvent.endPosition = cacheMousePosition;
+            foundEvent.endPosition = EditorLiveData.cacheMousePosition;
 
-            CreateNewEvent(cacheMousePosition, null );
+            CreateNewEvent(EditorLiveData.cacheMousePosition, null );
             
         }
         else

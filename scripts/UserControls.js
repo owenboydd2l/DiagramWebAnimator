@@ -79,8 +79,11 @@ function ChangePathPreviewMode(targetArea)
 function DataFromArea(targetArea)
 {
     let imageName = ImageFromDiagramArea(targetArea);
-    
-    return animationCache.find( (cacheItem) => cacheItem.imageName === imageName );
+
+    if(typeof UserLiveData.animationCache === 'undefined')
+        return null;
+
+    return UserLiveData.animationCache.find( (cacheItem) => cacheItem.imageName === imageName );
 }
 
 function SelectedEventFromArea(targetArea)
@@ -137,7 +140,10 @@ function GetAssetListFromSelection(targetArea)
     let foundAnimation = diagramData.flowAnimations.find( (anim) => anim.id == animID);
     
     if(foundAnimation === undefined)
+    {
+        console.warn('no animations found ' + animID);
         return [];    
+    }
 
     return foundAnimation.assets;
 }
@@ -156,7 +162,7 @@ function SetEventListFromSelection(targetArea, eventList = [])
 
 function CreateAnimationDropDown(targetArea)
 {
-    let diagramData = DataFromArea(targetArea);
+    let diagramData = DataFromArea(targetArea);    
 
     let ddlFlowAnimation = document.createElement('select');
     
@@ -165,6 +171,9 @@ function CreateAnimationDropDown(targetArea)
     let emptyOption = document.createElement('option');
     emptyOption.text = '----';
     ddlFlowAnimation.appendChild(emptyOption);
+
+    if(diagramData == null)
+        return ddlFlowAnimation;
 
     diagramData.flowAnimations.forEach( (data) => {
             let newOption = document.createElement('option');
@@ -175,14 +184,15 @@ function CreateAnimationDropDown(targetArea)
     );
 
     ddlFlowAnimation.addEventListener('change', () => 
-            {
-                UpdateEventDropDown(targetArea);
-            });
+        {
+            UpdateEventDropDown(targetArea);
+            UpdateAssetList();
+        });
     
     return ddlFlowAnimation;
 }
 
-function CrateEventDropDown()
+function CreateEventDropDown()
 {
     let ddlEventSteps = document.createElement('select');
     ddlEventSteps.id = 'ddl_event_steps';
@@ -208,7 +218,7 @@ function CreateDiagramControls()
 
         //Event drop down
         controlArea.appendChild(document.createTextNode("Event: ") );
-        controlArea.appendChild(CrateEventDropDown());
+        controlArea.appendChild(CreateEventDropDown());
         
         UpdateEventDropDown(diagramArea);    
 

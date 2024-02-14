@@ -26,14 +26,16 @@
 
 		<script type="text/javascript" src="scripts/Page.js"></script>
 
-		<link rel="stylesheet" href="style/DiagramControls.css">
-		<link rel="stylesheet" href="style/DiagramAnimation.css">
-		<link rel="stylesheet" href="style/Editor.css">
+		<link rel="stylesheet" href="static/style/DiagramControls.css">
+		<link rel="stylesheet" href="static/style/DiagramAnimation.css">
+		<link rel="stylesheet" href="static/style/Editor.css">
 
 		<script>
 			window.addEventListener('load', () =>
 			{
-				SetupDiagramAnimator();
+				let sampleData = [ test01 ];
+				console.log(sampleData);
+				SetupDiagramAnimator(sampleData);
 			});
 
 			window.addEventListener('resize', () =>
@@ -48,7 +50,7 @@
 		<div id='diagram_area'>
 			<img id="box" class="box" style="display:none;" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTukEhbRDPETDiNMl5ZO8Lm3nQRSzPLnvdsPK30nTmMig&s" />			
 			<canvas id="diagram_canvas" class="diagramCanvas"></canvas>
-			<img id='diagram_image' src='images/MAJ-11 - Legacy Migration Flow.png' onclick='ActivateImage(this)' style='width: 100%' />			
+			<img id='diagram_image' src='static/images/MAJ-11 - Legacy Migration Flow.png' onclick='ActivateImage(this)' style='width: 100%' />			
 		</div>	
 
 	</body>
