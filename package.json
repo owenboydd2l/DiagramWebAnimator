@@ -1,7 +1,7 @@
 {
   "name": "diagramanimator",
   "version": "1.0.0",
-  "description": "![Class Diagram](./DiagramAnimator.png)",
+  "description": "Javascript project to add animation to diagrams",
   "main": "index.js",
   "scripts": {
     "build": "node modules.build.js",
