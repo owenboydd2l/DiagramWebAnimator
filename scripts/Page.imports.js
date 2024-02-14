@@ -25,5 +25,6 @@ import {
     ClearEditorSettings,
     UpdatePathPreview,
     UpdateEventList,
-    CreateStreamlineEvent 
+    CreateStreamlineEvent,
+    EditorLiveData
 } from './EditorControls.js';

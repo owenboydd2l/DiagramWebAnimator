@@ -12,3 +12,5 @@ import {
     GetAssetListFromSelection
 } from './UserControls.js';
 
+import { GetIsPathPreviewMode } from './page.js';
+

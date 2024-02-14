@@ -40,8 +40,8 @@ function PerformLocationCheck(event)
         
         let diagramTransform = TransformFromElement(diagramArea);        
 
-        let mousePosition = new Point(x = event.clientX, 
-            y = event.clientY + document.body.scrollTop);
+        let mousePosition = new Point(event.clientX, 
+            event.clientY + document.body.scrollTop);
         
         if($('#imagePosition').length > 0)
             $('#imagePosition')[0].innerHTML = JSON.stringify(diagramTransform);
@@ -53,7 +53,7 @@ function PerformLocationCheck(event)
 
             let clickPosition = ViewToImagePosition(diagramArea, mousePosition.x, mousePosition.y);
             
-            cacheMousePosition = PixelToPercent(diagramArea, clickPosition.x, clickPosition.y);
+            EditorLiveData.cacheMousePosition = PixelToPercent(diagramArea, clickPosition.x, clickPosition.y);
         
             if(activateMode == PLACEMENTMODE_NONE)
                 return;
@@ -73,7 +73,7 @@ function PerformLocationCheck(event)
                 targetElement = document.getElementById('endData');
                 targetIndicator = endIndicator;
             }
-
+            
             let relativeClickPosition = new Point(x = clickPosition.x - (targetIndicator.offsetWidth / 2.0), y = clickPosition.y - (targetIndicator.offsetHeight / 2.0));
             
             let percentPosition = PixelToPercent(diagram_area, relativeClickPosition.x, relativeClickPosition.y);
@@ -116,6 +116,9 @@ function LoadSampleData()
 {
     let newData = [];
 
+    if(typeof sampleData === 'undefined')
+        return;
+
     for(let i=0; i != sampleData.length; ++i)
     {
         let rawData = JSON.parse(sampleData[i]);
@@ -153,7 +156,7 @@ function ViewToImagePosition(targetArea, clientX, clientY)
     let offsetTop = targetArea.offsetTop;
     let offsetLeft = targetArea.offsetLeft;
     
-    return new Point( x = (clientX - offsetLeft), y = (clientY - offsetTop));
+    return new Point( (clientX - offsetLeft), (clientY - offsetTop));
 }
 
 function CreateNewIndicator(targetArea, indicatorElement, isStart = false)
@@ -195,11 +198,11 @@ function PerformSingleEventStep(targetImage)
     {
         if(activateMode == PLACEMENTMODE_STARTMODE)
         {
-            foundEvent.startOffset = cacheMousePosition;            
+            foundEvent.startOffset = EditorLiveData.cacheMousePosition;            
         }
         else if (activateMode == PLACEMENTMODE_ENDMODE)
         {
-            foundEvent.endPosition = cacheMousePosition;
+            foundEvent.endPosition = EditorLiveData.cacheMousePosition;
         }
 
         UpdateEventList();

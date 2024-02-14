@@ -10,7 +10,10 @@ const PLACEMENTMODE_NONE = 0;
 
 let activateMode = PLACEMENTMODE_NONE;
 
-let cacheMousePosition = {};
+const EditorLiveData =
+{
+    cacheMousePosition : {}
+};
 
 const default_assetList = 
 [ 
@@ -459,7 +462,7 @@ function CreateStreamlineEvent()
 
     if(streamlineStage == STREAMLINESTAGE_START)
     {
-        CreateNewEvent(cacheMousePosition, null );
+        CreateNewEvent(EditorLiveData.cacheMousePosition, null );
 
         streamlineStage = STREAMLINESTAGE_END;
     }
@@ -469,9 +472,9 @@ function CreateStreamlineEvent()
 
         if(foundEvent !== undefined)
         {
-            foundEvent.endPosition = cacheMousePosition;
+            foundEvent.endPosition = EditorLiveData.cacheMousePosition;
 
-            CreateNewEvent(cacheMousePosition, null );
+            CreateNewEvent(EditorLiveData.cacheMousePosition, null );
             
         }
         else

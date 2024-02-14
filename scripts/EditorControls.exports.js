@@ -7,7 +7,6 @@ export {
     PLACEMENTMODE_ENDMODE,
     PLACEMENTMODE_NONE,
     activateMode,
-    cacheMousePosition,
     default_assetList,
     
     PlaySingleFromEditor,
@@ -29,5 +28,7 @@ export {
     EditorChangeTransformType,
     ChangeFlowEventTarget,
     CreateStreamlineEvent,
+
+    EditorLiveData
 
 }
