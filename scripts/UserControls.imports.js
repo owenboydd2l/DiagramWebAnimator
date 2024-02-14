@@ -13,4 +13,4 @@ from './page.js';
 
 import {
     UserLiveData
-} from '../data/DATA.js';
+} from './DATA.js';

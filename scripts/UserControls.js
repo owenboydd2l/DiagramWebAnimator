@@ -186,6 +186,7 @@ function CreateAnimationDropDown(targetArea)
     ddlFlowAnimation.addEventListener('change', () => 
         {
             UpdateEventDropDown(targetArea);
+            UpdateAssetList();
         });
     
     return ddlFlowAnimation;

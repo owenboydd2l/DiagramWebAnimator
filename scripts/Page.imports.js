@@ -35,3 +35,15 @@ import {
     PLACEMENTMODE_ENDMODE,
     PLACEMENTMODE_NONE
 } from './EditorControls.js';
+
+
+import 
+{
+    UserLiveData,
+    TRANSFORM_LIST
+} from './DATA.js';
+
+import
+{
+    ProgressDisplay
+} from './ProgressDisplay.js';

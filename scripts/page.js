@@ -392,8 +392,7 @@ function SetupAllEventTween(targetArea)
             let newHeight = box.getAttribute('data-start-height');
             let newWidth = box.getAttribute('data-start-width');
 
-            let foundTransform = transformList.find( (tt) => tt.id == foundEvent.transformType);
-
+            let foundTransform = TRANSFORM_LIST.find( (tt) => tt.id == foundEvent.transformType);
             
             if(foundTransform)
             {               

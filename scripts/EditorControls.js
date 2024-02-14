@@ -136,12 +136,13 @@ function UpdateAssetList()
     let assetTable = $('#assetTable');
 
     if(assetTable.length == 0)
-        return;    
+        return;
 
     assetTable.empty();
 
     let selectedAssetList = GetAssetListFromSelection( $('#diagram_area') );
 
+    console.log("Assets:" + selectedAssetList.length);
     selectedAssetList.forEach(element => {
         var newImage = document.createElement('img');
         newImage.setAttribute('src', element.fileName);
@@ -388,7 +389,7 @@ function UpdateEventList()
             let transformIcon = document.createElement('img');
             transformIcon.style.width = 25 + "px";                
 
-            let foundTransform = transformList.find( (tt ) => tt.id == element.transformType);
+            let foundTransform = TRANSFORM_LIST.find( (tt ) => tt.id == element.transformType);
 
             if(foundTransform)
             {
