@@ -1,4 +1,3 @@
-
 const transformList = 
 [
     new ShapeTransform(TRANSFORM_NONE, 'images/knife-scalable-vector-graphics-computer-icons-no-symbol-forbidden-save-icon-format.jpg', 'NONE', function(progress) { return 1; } ),
