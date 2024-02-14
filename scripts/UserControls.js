@@ -209,6 +209,8 @@ function CreateDiagramControls()
 
         let diagramImage = $(diagramArea).find('#diagram_image')[0];
 
+        diagramImage.addEventListener('click', () => { ActivateImage(diagramImage) } );
+
         let controlArea = document.createElement('div');
         controlArea.classList.add('DiagramControlBar');
     

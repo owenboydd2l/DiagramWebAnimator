@@ -488,3 +488,12 @@ function CreateStreamlineEvent()
     
     UpdateEventList();
 }
+
+function ActivateImage(image)
+{		
+    if(isStreamlineMode)
+        CreateStreamlineEvent(image);
+    else
+        PerformSingleEventStep(image);
+    
+}

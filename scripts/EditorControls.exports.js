@@ -27,6 +27,7 @@ export {
     EditorChangeTransformType,
     ChangeFlowEventTarget,
     CreateStreamlineEvent,
+    ActivateImage,
 
     EditorLiveData
 

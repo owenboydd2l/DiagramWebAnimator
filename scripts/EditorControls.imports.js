@@ -12,7 +12,11 @@ import {
     GetAssetListFromSelection
 } from './UserControls.js';
 
-import { GetIsPathPreviewMode } from './page.js';
+import 
+{ 
+    GetIsPathPreviewMode, 
+    PerformSingleEventStep 
+} from './page.js';
 
 import { TRANSFORM_LIST } from './DATA.js';
 
