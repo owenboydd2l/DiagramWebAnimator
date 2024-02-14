@@ -1,12 +1,11 @@
 .DiagramControlBar
 {
-    background-color: silver;
+    background-color: rgb(107, 206, 255);
     height:50px;
     text-align: center;
     border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-    
-    font-family:arial;
+    border-top-right-radius: 10px;    
+    font-family:Arial;
     
 }
 
