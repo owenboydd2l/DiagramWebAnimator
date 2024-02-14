@@ -1,21 +1,52 @@
 <html>
     <head>
-        <script src="/static/build/Utility.js" type="module"></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/20.0.0/tween.umd.js"></script>
+
+        <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
+
+        <script src="/static/build/page.js" type="module"></script>
 
 
         <script type="module">
             
-            import { PointTest } from "/static/build/Utility.js";
+            import { SetupDiagramAnimator } from '/static/build/page.js';
 
-            window.addEventListener( "load", (event) => {
-                
-                console.log(PointTest());
+            window.addEventListener('load', () =>
+			{
+				SetupDiagramAnimator();
+			});
 
-             });
+			window.addEventListener('resize', () =>
+			{
+				ResizeDiagramCanvas();
+			});
             
         </script>
     </head>
-    <body>
-        
-    </body>
+    <body style="margin-left:50px;margin-top:50px;">
+
+		<h1>Heading 01</h1>
+		Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur non laoreet purus. Donec non convallis mauris. Etiam molestie, nunc quis sollicitudin porta, lorem nunc porttitor lectus, in lobortis magna libero non felis. Pellentesque erat ipsum, eleifend quis faucibus id, dignissim ut lacus. Phasellus sit amet mauris sem. Mauris eu nunc id dolor accumsan convallis. Vestibulum pretium ante eu ex ultrices semper. Duis vehicula sapien hendrerit porttitor pellentesque. Suspendisse ac sapien a lorem tempus tempor ut in augue. Etiam lacinia lacinia maximus.
+		<br />
+
+		<br />
+		<h2>Heading 01</h2>
+		Quisque non tincidunt orci, volutpat varius orci. In suscipit, sem non scelerisque pretium, mi lacus faucibus elit, eget dictum mi mauris in turpis. Sed vehicula tempus tellus, nec pharetra ligula gravida vel. Nunc eleifend ipsum nec odio interdum, mollis commodo quam fringilla. Phasellus id magna at dolor euismod auctor a id nunc. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nam venenatis, metus quis rutrum ornare, tortor urna varius magna, a dictum sem eros a nunc. Curabitur volutpat purus elit. Donec quis quam ac odio sodales condimentum. Cras urna ex, euismod nec augue sed, bibendum commodo elit. Mauris et sem quis massa venenatis fermentum.
+		
+		<div id='diagram_area'>
+			<img id="box" class="box" style="display:none;" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTukEhbRDPETDiNMl5ZO8Lm3nQRSzPLnvdsPK30nTmMig&s" />			
+			<canvas id="diagram_canvas" class="diagramCanvas"></canvas>
+			<img id='diagram_image' src='images/Blank diagram.png' onclick='ActivateImage(this)' style='width: 100%' />			
+		</div>	
+
+		<h2>Heading 03</h2>
+		Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur non laoreet purus. Donec non convallis mauris. Etiam molestie, nunc quis sollicitudin porta, lorem nunc porttitor lectus, in lobortis magna libero non felis. Pellentesque erat ipsum, eleifend quis faucibus id, dignissim ut lacus. Phasellus sit amet mauris sem. Mauris eu nunc id dolor accumsan convallis. Vestibulum pretium ante eu ex ultrices semper. Duis vehicula sapien hendrerit porttitor pellentesque. Suspendisse ac sapien a lorem tempus tempor ut in augue. Etiam lacinia lacinia maximus.
+		<br />
+
+		<br />
+		<h3>Heading 04</h3>
+		Quisque non tincidunt orci, volutpat varius orci. In suscipit, sem non scelerisque pretium, mi lacus faucibus elit, eget dictum mi mauris in turpis. Sed vehicula tempus tellus, nec pharetra ligula gravida vel. Nunc eleifend ipsum nec odio interdum, mollis commodo quam fringilla. Phasellus id magna at dolor euismod auctor a id nunc. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nam venenatis, metus quis rutrum ornare, tortor urna varius magna, a dictum sem eros a nunc. Curabitur volutpat purus elit. Donec quis quam ac odio sodales condimentum. Cras urna ex, euismod nec augue sed, bibendum commodo elit. Mauris et sem quis massa venenatis fermentum.
+		
+	</body>
 </html>

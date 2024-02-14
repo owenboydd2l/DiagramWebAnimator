@@ -1,4 +1,6 @@
 
+import { Point } from './Point.js';
+
 import { 
     uuidv4,
     PositionToProgress,
@@ -7,15 +9,15 @@ import {
     PixelToPercent,
     ObjectToPosition,
     SetImagePosition
-} from "./Utility";
-import { DiagramImage } from "./DiagramImage";
+} from "./Utility.js";
+
+import { DiagramImage } from "./DiagramImage.js";
 
 import { SelectedEventFromArea, 
     GetEventListFromSelection,
-    GetAssetListFromSelection,
-    SelectedEventFromArea,
+    GetAssetListFromSelection,    
     CreateDiagramControls
-} from './UserControls';
+} from './UserControls.js';
 
 import { 
     ChangeStreamlineMode,
@@ -24,4 +26,4 @@ import {
     UpdatePathPreview,
     UpdateEventList,
     CreateStreamlineEvent 
-} from './EditorControls';
+} from './EditorControls.js';

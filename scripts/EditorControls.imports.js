@@ -1,8 +1,8 @@
-import { uuidv4 } from './Utility';
-import { Asset } from './Asset';
-import { FlowAnimation } from './FlowAnimation';
-import { AnimationStage } from './AnimationStage';
-import { FlowEvent } from './FlowEvent';
+import { uuidv4 } from './Utility.js';
+import { Asset } from './Asset.js';
+import { FlowAnimation } from './FlowAnimation.js';
+import { AnimationStage } from './AnimationStage.js';
+import { FlowEvent } from './FlowEvent.js';
 import { 
     DataFromArea, 
     SelectedEventFromArea, 
@@ -10,5 +10,5 @@ import {
     GetEventListFromSelection,
     SetAssetListFromSelection,
     GetAssetListFromSelection
-} from './UserControls';
+} from './UserControls.js';
 

@@ -1,1 +1,1 @@
-import { EntityID } from "./EntityID";
+import { EntityID } from "./EntityID.js";

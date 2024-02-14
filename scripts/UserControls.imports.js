@@ -1,4 +1,4 @@
 import { 
     UpdatePathPreview,
     UpdateEventList 
-} from './EditorControls';
+} from './EditorControls.js';
