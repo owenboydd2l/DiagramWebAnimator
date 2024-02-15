@@ -31,6 +31,7 @@ import {
     UpdateEventList,
     CreateStreamlineEvent,
     EditorLiveData,
+    ActivateImage,
     
     PLACEMENTMODE_STARTMODE,
     PLACEMENTMODE_ENDMODE,
