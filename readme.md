@@ -56,7 +56,7 @@ This is a mode allowing you to click a series of positions on an image and the c
 ### Generating/Exporting Data
 The debug pages mentioned above have a section at the bottom that automatically updates with any currently active animation being used. This data can be copied into a string variable and parsed by the diagram constructor. (** note that the export data has a blob for the image name and will need to be replaced to match your desired image)
 
-![Export](./static/images/preview/export_.gif)
+![Export](./static/images/preview/export_.png)
 
 ## Static Setup
 
