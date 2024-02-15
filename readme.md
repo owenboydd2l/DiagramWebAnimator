@@ -35,7 +35,7 @@ Static Files:
 
 The hosting system was created to support JavaScript modules. In order to allow modules the browser cannot access script files from the local file system (CORS errors).
 
-The build script [modules.build.js](modules.build.js) is used to generate the hosted module files by searching for matching filenames that have ".excludes." and ".includes." in their filename. This results in not having to hand edit two sets of files on changes.
+The build script [modules.build.js](modules.build.js) is used to generate the hosted module files by searching for matching filenames that have ".excludes." and ".includes.". This results in not having to hand edit two sets of files on changes.
 
 Exports and Includes are done manually (for now) although I'm sure there is a better system for doing this automatically.
 
