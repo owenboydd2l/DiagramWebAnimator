@@ -81,7 +81,10 @@ function DataFromArea(targetArea)
     let imageName = ImageFromDiagramArea(targetArea);
 
     if(typeof UserLiveData.animationCache === 'undefined')
+    {
+        console.warn('null animation cache');
         return null;
+    }
 
     return UserLiveData.animationCache.find( (cacheItem) => cacheItem.imageName === imageName );
 }
@@ -134,6 +137,9 @@ function GetAssetListFromSelection(targetArea)
 {
     
     let diagramData = DataFromArea(targetArea);
+
+    if(diagramData == null || diagramData.flowAnimations.length == 0)
+        return [];
 
     let animID = SelectedAnimationtFromArea(targetArea);
 

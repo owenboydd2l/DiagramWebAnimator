@@ -1,0 +1,152 @@
+<html>
+	<head>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/20.0.0/tween.umd.js"></script>
+		
+		<script src="scripts/Point.js"></script>
+		<script src="scripts/Utility.js"></script>
+		<script src="scripts/EntityID.js"></script>
+		<script src="scripts/OrderEntity.js"></script>
+
+		<script src="scripts/AnimationStage.js"></script>
+		<script src="scripts/FlowAnimation.js"></script>
+		<script src="scripts/FlowEvent.js"></script>
+		<script src="scripts/Asset.js"></script>
+		<script src="scripts/ShapeTransform.js"></script>
+		<script src="scripts/ProgressDisplay.js"></script>
+		<script src="scripts/DiagramImage.js"></script>
+		
+		<script src="data/test01.js"></script>
+		<script src="scripts/DATA.js"></script>
+
+		<script src="scripts/EditorControls.js"></script>
+
+		<script src="scripts/UserControls.js"></script>
+		
+		<script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
+
+		<script type="text/javascript" src="scripts/Page.js"></script>
+
+		<link rel="stylesheet" href="static/style/DiagramControls.css">
+		<link rel="stylesheet" href="static/style/DiagramAnimation.css">
+		<link rel="stylesheet" href="static/style/Editor.css">
+
+		<script>
+			window.addEventListener('load', () =>
+			{
+				
+				$('#file_image')[0].addEventListener('change', UploadFile_Change, false);
+				//let sampleData = [ test01 ];
+				//SetupDiagramAnimator(sampleData);
+			});
+
+			window.addEventListener('resize', () =>
+			{
+				//ResizeDiagramCanvas();
+			});
+
+			function UploadFile_Change()
+			{
+				let diagramImage = $('#diagram_image')[0];
+
+				if(this.files.length > 0)
+				{
+					let newFile = this.files[0];
+
+					diagramImage.src = URL.createObjectURL(newFile);
+
+					diagramImage.onload = () => {
+        				URL.revokeObjectURL(diagramImage.src);
+      				};
+
+					let imageSplit = diagramImage.src.split('/');   
+
+					let imageNameWithoutExtra = imageSplit[ imageSplit.length - 1];
+
+					let bareData = `[{
+  						"imageName": "${imageNameWithoutExtra}",
+  						"flowAnimations": [
+							{
+								"id" : "${uuidv4()}",
+								"name" : "TEST",
+								"stages": [
+									{
+										"id" : "${uuidv4()}",
+										"orderID" : 1,
+										"flowEvents": []
+									}
+								],
+								"assets" : ${JSON.stringify(default_assetList)}
+							}
+						]
+					}]`;
+
+					SetupDiagramAnimator( [ bareData ] );
+				}
+				else
+				{
+					console.warn('no file uploaded');
+				}
+			}
+
+			
+		</script>
+
+	</head>
+	<body>
+		<div style="position:fixed; top:0;left:500px;">
+			<div id='currentposition'></div>
+			<div id='imagePosition'></div>
+			<div id='isOverArea'></div>
+			<div id='pageScrollTop'></div>
+		</div>
+
+		<h1>Diagram Animation Playground</h1>
+
+		<h2>Step 1: Upload Image</h2>		
+		Diagram Image: <input type="file" id="file_image" />		
+
+		<h3>Step 2: Create </h3>
+
+		<div style="width:75%;margin-top:50px;">
+			<div id='diagram_area'>
+				<img id="box" class="box" style="display:none;" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTukEhbRDPETDiNMl5ZO8Lm3nQRSzPLnvdsPK30nTmMig&s" />			
+				<canvas id="diagram_canvas" class="diagramCanvas"></canvas>
+				<img id='diagram_image' src='static/images/Blank diagram.png' style='width: 100%' />			
+			</div>
+		</div>
+		<div class="floatingControls">				
+			<div style="height:150px;overflow:auto;">
+				<table id="controlTable">
+				</table>
+			</div>
+			<input type="button" value="New Event" onclick="CreateNewEvent()" />
+			<div style="text-align:right">
+				<input type="button" style="right:0;font-size:x-small;" value="Del Selected" onclick="DeleteSelected()" />
+			</div>
+			<hr />
+			<input type="textbox" id="txtNewAssetPath" /> <input type="button" value="New Asset" onclick="AddAsset()" />
+			<div id="assetTable">
+			</div>
+			<hr />
+			<input type='button' onclick='StartTween(document.getElementById("diagram_area"), RUNMODE_MULTIPLE)' value='Play All' />
+			<input type='button' onclick='PlaySingleFromEditor()' value='Play Event' />
+			<hr />
+			<input type='button' onclick='SetStart()' value='Set Start' />
+			<input type='button' onclick='SetEnd()' value='Set End' />
+			<hr />
+			<input type='button' onclick='ChangeStreamlineMode(targetArea = document.getElementById("diagram_area"))' value='Streamline Mode' />
+			<hr />
+			<input type='button' onclick='ChangePathPreviewMode(document.getElementById("diagram_area"))' value='Path Preview' />
+		</div>
+		
+		<br />
+		Start: <span id='startData'></span><br />
+		End: <span id='endData'></span>
+		<hr />
+		
+		<h3>Animation Data:</h3>
+		**Live data uses blob address from uploaded file. Replace [imageName] in payload below to match your image file <br />
+		<textarea id="event_json" rows="50" cols ="100"></textarea>
+
+	</body>
+</html>
