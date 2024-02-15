@@ -4,6 +4,10 @@
 
 JavaScript framework to add a layer of animation onto an in browser diagram (image)
 
+## Usage
+
+TBD
+
 ## Static Setup
 
 The static HTML files require no setup and can be run in browser from the file system.
@@ -27,6 +31,13 @@ Static Files:
 4. Access default server page
     - [localhost:3000/static/index.server.html](http://localhost:3000/static/index.server.html)
 
+### Hosted Dev Notes
+
+The hosting system was created to support JavaScript modules. In order to allow modules the browser cannot access script files from the local file system (CORS errors).
+
+The build script [modules.build.js](modules.build.js) is used to generate the hosted module files by searching for matching filenames that have ".excludes." and ".includes." in their filename. This results in not having to hand edit two sets of files on changes.
+
+Exports and Includes are done manually (for now) although I'm sure there is a better system for doing this automatically.
 
 ## Class Diagram
 
