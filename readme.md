@@ -25,7 +25,7 @@ Static Files:
     or
     `npm run start-dev`
 4. Access default server page
-    - [localhost:3000/static/index.server.html](localhost:3000/static/index.server.html)
+    - [localhost:3000/static/index.server.html](http://localhost:3000/static/index.server.html)
 
 
 ## Class Diagram
