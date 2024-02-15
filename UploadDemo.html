@@ -57,8 +57,30 @@
 					diagramImage.onload = () => {
         				URL.revokeObjectURL(diagramImage.src);
       				};
-					
-					SetupDiagramAnimator([]);
+
+					let imageSplit = diagramImage.src.split('/');   
+
+					let imageNameWithoutExtra = imageSplit[ imageSplit.length - 1];
+
+					let bareData = `[{
+  						"imageName": "${imageNameWithoutExtra}",
+  						"flowAnimations": [
+							{
+								"id" : "${uuidv4()}",
+								"name" : "TEST",
+								"stages": [
+									{
+										"id" : "${uuidv4()}",
+										"orderID" : 1,
+										"flowEvents": []
+									}
+								],
+								"assets" : ${JSON.stringify(default_assetList)}
+							}
+						]
+					}]`;
+
+					SetupDiagramAnimator( [ bareData ] );
 				}
 				else
 				{
@@ -70,7 +92,7 @@
 		</script>
 
 	</head>
-	<body style='background-color:grey'>
+	<body>
 		<div style="position:fixed; top:0;left:500px;">
 			<div id='currentposition'></div>
 			<div id='imagePosition'></div>
@@ -80,7 +102,10 @@
 
 		<h1>Diagram Animation Playground</h1>
 
+		<h2>Step 1: Upload Image</h2>		
 		Diagram Image: <input type="file" id="file_image" />		
+
+		<h3>Step 2: Create </h3>
 
 		<div style="width:75%;margin-top:50px;">
 			<div id='diagram_area'>
@@ -120,6 +145,7 @@
 		<hr />
 		
 		<h3>Animation Data:</h3>
+		**Live data uses blob address from uploaded file. Replace [imageName] in payload below to match your image file <br />
 		<textarea id="event_json" rows="50" cols ="100"></textarea>
 
 	</body>

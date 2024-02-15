@@ -132,12 +132,12 @@ function LoadSampleData(sampleData = null)
     for(let i=0; i != sampleData.length; ++i)
     {
         let rawData = JSON.parse(sampleData[i]);
-
-        for(let j=0; j != rawData.length; ++j)
+        
+        for(let j=0; j < rawData.length; ++j)
         {
             let animationList = [];
 
-            for(let k=0; k != rawData[j].flowAnimations.length;++k)
+            for(let k=0; k < rawData[j].flowAnimations.length;++k)
             {                
                 let flowAnim = Object.create(FlowAnimation.prototype, Object.getOwnPropertyDescriptors(rawData[j].flowAnimations[k]))
 
@@ -239,14 +239,7 @@ function StartTween(targetArea, runMode = RUNMODE_SINGLE)
 }
 
 
-function ActivateImage(image)
-{		
-    if(isStreamlineMode)
-        CreateStreamlineEvent(image);
-    else
-        PerformSingleEventStep(image);
-    
-}
+
 
 function OnFinishTween(targetArea)
 {

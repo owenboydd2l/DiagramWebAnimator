@@ -45,9 +45,8 @@ function CreateNewAnimation(targetArea)
         assets = default_assetList
     );
 
-    let diagramData = DataFromArea(targetArea);
+    let diagramData = DataFromArea(targetArea);    
 
-    
     diagramData.flowAnimations.push(flowAnimation);
 
     let animationOption = document.createElement("option");
