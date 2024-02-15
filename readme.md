@@ -111,19 +111,19 @@ UI is very programmer/functional. Not very modern looking.
 Should add some sort of indication when in streamline mode. Can use path preview to track existing placement but maybe something else?
 
 ### Reordering Items
-Order is pretty much set from start unless you delete everything after a part
+Order is pretty much set from start unless you delete everything.
 
 ### Icon size
-Need to work on making the icon sizes more flexible and properly center (like on grow/shrink transforms)
+Need to work on making the icon sizes more flexible and properly center (like on grow/shrink transforms).
 
 ### Global Variables/Functions
-All my framework code is pretty much free functions...this is no good. Should be wrapped in classes (static functions or const class)
+All my framework code is pretty much free functions...this is no good. Should be wrapped in classes (static functions or const class).
 
 ### Playback Control
 Make playback controls better. Like next automatically stop the current animation and start the next one. Next/prev is pretty much only for running single events.
 
-### animations
-I setup the 2 basic animation types but there is room for a lot more (and colour shifting maybe)
+### Transform Animations
+I setup the 2 basic animation types but there is room for a lot more (and colour shifting maybe).
 
-## Less HTML Required
-Would be nice to have only have to write a single element on the page (LIT?). The html5 code to write is pretty small but since the playback control is created dynamically other stuff should be able to
+### Less HTML Required
+Would be nice to have only have to write a single element on the page (LIT?). The html5 code to write is pretty small but since the playback control is created dynamically other stuff should be able to.
