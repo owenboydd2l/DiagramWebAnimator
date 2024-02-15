@@ -33,7 +33,7 @@ If you want to load custom data you can pass it into SetupDiagramAnimator when l
 6. Set End position of selected event
 7. Enable/Disable Streamline Mode (see below)
 
-![Editor](./static/images/preview/NewEvents.gif)
+![New Events](./static/images/preview/NewEvents.gif)
 
 Adding events works in most cases but there are edge cases where if the data is empty then starting up new data can throw errors.
 
@@ -42,10 +42,11 @@ The editor control table in the top right allows you to do the following with ex
 1. Clicking the image in the 3rd column will cycle the image used in rendering. Sourced from asset list below table.
 3. Clicking the image in the last column will cycle the image transform used during the event
 
-### Example Transformations
-![Editor](./static/images/preview/Grow.gif)
+**Example Transformations**
 
-![Editor](./static/images/preview/Shrink.gif)
+![Grow](./static/images/preview/Grow.gif)
+
+![Shrink](./static/images/preview/Shrink.gif)
 
 ### Streamline Mode
 This is a mode allowing you to click a series of positions on an image and the code will take care of setting up proper start/end positions based on each click. Not 100% perfect and mainly to use on empty animations. Requires clicking the button to 'finish' or turn off the mode.
@@ -55,7 +56,7 @@ This is a mode allowing you to click a series of positions on an image and the c
 ### Generating/Exporting Data
 The debug pages mentioned above have a section at the bottom that automatically updates with any currently active animation being used. This data can be copied into a string variable and parsed by the diagram constructor. (** note that the export data has a blob for the image name and will need to be replaced to match your desired image)
 
-![Export](./static/images/preview/export_gif)
+![Export](./static/images/preview/export_.gif)
 
 ## Static Setup
 
