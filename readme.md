@@ -6,7 +6,7 @@ JavaScript framework to add a layer of animation onto an in browser diagram (ima
 
 ## Usage
 
-![Animation Example](video/TestAnimation_0001-0308.mp4)
+![Animation Example](./video/TestAnimation_0001-0308.mp4)
 
 You can use either [UploadDemo.html](UploadDemo.html) to upload an image and start working with it or change the src tag in [index.dev.html](index.dev.html) and work with the debug tools.
 
